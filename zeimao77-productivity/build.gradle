@@ -1,0 +1,118 @@
+plugins {
+    id 'java'
+    id 'maven-publish'
+    id 'signing'
+}
+
+group 'top.zeimao77'
+archivesBaseName = "zeimao77-productivity"
+version '2.0.8'
+description '效率包'
+
+repositories {
+    maven {url "https://maven.aliyun.com/nexus/content/groups/public"}
+    mavenCentral()
+    mavenLocal()
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId = 'top.zeimao77'
+            artifactId = 'zeimao77-productivity'
+            from components.java
+            pom {
+                name = "zeimao77-productivity"
+                description = "Simple operation and maintenance (jdk17)"
+                url = "https://github.com/zeimao77/zeimao77-productivity"
+                developers {
+                    developer {
+                        id = "zeimao77"
+                        name = "zeimao77"
+                        email = "zeimao77@foxmail.com"
+                    }
+                }
+                licenses {
+                    license {
+                        name = "The Apache License, Version 2.0"
+                        url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                    }
+                }
+                scm {
+                    connection = "scm:git:https://github.com/zeimao77/zeimao77-productivity.git"
+                    developerConnection = "scm:git:https://github.com/zeimao77/zeimao77-productivity.git"
+                    url = "https://github.com/zeimao77/zeimao77-productivity.git"
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            name 'sonatype'
+            credentials {
+                username publishing_maven_sonatype_username
+                password publishing_maven_sonatype_password
+            }
+            url publishing_maven_sonatype_url
+        }
+        maven {
+            name 'aliyun'
+            credentials {
+                username publishing_maven_aliyun_username
+                password publishing_maven_aliyun_password
+            }
+            url publishing_maven_aliyun_url
+        }
+    }
+}
+
+signing {
+    sign publishing.publications.mavenJava
+    sign configurations.archives
+}
+
+dependencies {
+    testImplementation(platform('org.junit:junit-bom:5.8.2'))
+    testImplementation('org.junit.jupiter:junit-jupiter')
+    implementation group: 'mysql', name: 'mysql-connector-java', version: "8.0.29"
+    implementation group: 'redis.clients', name:'jedis', version: '4.1.1'
+    implementation group: 'com.sun.mail', name: 'jakarta.mail', version: '2.0.1'
+    implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.17.2'
+    implementation group: 'org.apache.logging.log4j', name: 'log4j-slf4j18-impl', version: '2.17.2'
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.13.2'
+    implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.13.2'
+    implementation group: 'com.guicedee.services', name: 'commons-beanutils', version: '1.2.2.1'
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
+
+tasks.withType(Javadoc) {
+    options.addStringOption("encoding","UTF-8")
+    options.addStringOption("charset","UTF-8")
+}
+
+task sourcesJar(type:Jar){
+    dependsOn classes
+    classifier 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type:Jar) {
+    from javadoc
+    classifier = 'javadoc'
+}
+
+java {
+    withSourcesJar()
+    withJavadocJar()
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+test {
+    useJUnitPlatform()
+}
