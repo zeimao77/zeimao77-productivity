@@ -14,7 +14,7 @@ public class BloomFilter<E> implements Serializable {
     private int bitSetSize;
     private double bitsPerElement;
     private int expectedNumberOfFilterElements;
-    private int numberOfAddedElements; // number of elements actually added to the Bloom filter
+    private int numberOfAddedElements;
     private int k;
 
     static final Charset charset = StandardCharsets.UTF_8;

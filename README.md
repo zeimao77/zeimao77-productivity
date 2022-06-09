@@ -157,7 +157,7 @@ nohup /home/jdk-17.0.3/bin/java -Dlog.file=app-main.log \
 ### 多线程任务模型
 
 - [令牌桶](https://github.com/zeimao77/zeimao77-productivity/blob/master/zeimao77-productivity/src/test/java/top/zeimao77/product/jobs/TokenBucketTest.java)
-- [多线程批量往一个表里灌入数据](https://github.com/zeimao77/zeimao77-productivity/blob/master/zeimao77-productivity/src/test/java/top/zeimao77/product/jobs/AbcMain.java)
+- [多线程消费处理任务模板示例](https://github.com/zeimao77/zeimao77-productivity/blob/master/zeimao77-productivity/src/test/java/top/zeimao77/product/jobs/JobExecTemplateTest.java)
 
 ### 列表与树
 

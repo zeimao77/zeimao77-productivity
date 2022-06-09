@@ -7,12 +7,17 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class LongIdGenerator implements IdGenerator<Long>{
 
-    private static Logger logger = LogManager.getLogger(LongIdGenerator.class);
+    /**
+     * 机器号0的实现
+     */
     public static final LongIdGenerator INSTANCE = new LongIdGenerator(0x00);
     private AtomicInteger ind = new AtomicInteger(0x00);
 
-    private Long macid = null;
-    private long timeoffset;
+    /**
+     * 机器ID 范围[0,63]
+     */
+    private final Long macid;
+    private final long timeoffset;
 
     public LongIdGenerator(long macid) {
         this(macid,0x018000000000L);

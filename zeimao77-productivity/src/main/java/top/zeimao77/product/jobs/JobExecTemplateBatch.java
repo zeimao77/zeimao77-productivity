@@ -82,7 +82,7 @@ public abstract class JobExecTemplateBatch<T extends IJob> implements JobExec{
     }
 
     /**
-     * 开始任务
+     * 开始任务 调用该方法会阻塞 直到任务执行完成
      * 如果任务执行超时或中断，剩余的任务将会被取消
      * 在执行过程中，可以通过调用 setStatus(5); 将结束任务，剩余的任务将被取消
      * @param nThreads 线程数
@@ -100,20 +100,21 @@ public abstract class JobExecTemplateBatch<T extends IJob> implements JobExec{
             executorService.execute(()->{
                 ArrayList<T> jobList = new ArrayList<>(pageSize);
                 while (status != 5) {
-                    for (int j = 0; j < pageSize; j++) {
-                        T job =jobs.poll();
-                        if(job != null)
-                            jobList.add(job);
-                    }
-                    if(jobList.isEmpty() && jobs.isEmpty() && 2 == status) {
-                        synchronized (JobExecTemplateBatch.class) {
-                            if(jobs.isEmpty() && 2 == status) {
-                                moreJob(page.getAndAdd(1));
-                            }
-                        }
-                        for (int j = 0; j < pageSize; j++) {
+                    synchronized (JobExecTemplateBatch.class) {
+                        int q = pageSize < jobs.size() ? pageSize : jobs.size();
+                        for (int j = 0; j < q; j++) {
                             T job =jobs.poll();
-                            jobList.add(job);
+                            if(job != null)
+                                jobList.add(job);
+                        }
+                        if(this.jobs.isEmpty() && 2 == status) {
+                            moreJob(page.getAndAdd(1));
+                        }
+                        q = pageSize < jobList.size() + jobs.size() ? pageSize : jobList.size() + this.jobs.size();
+                        for (int j = jobList.size(); j < q; j++) {
+                            T job =jobs.poll();
+                            if(job != null)
+                                jobList.add(job);
                         }
                     }
                     if(jobList.isEmpty()) {

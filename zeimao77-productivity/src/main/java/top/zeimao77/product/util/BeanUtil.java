@@ -14,8 +14,6 @@ import java.util.Map;
  */
 public class BeanUtil {
 
-    private static Logger logger = LogManager.getLogger(BeanUtil.class);
-
     private BeanUtil(){}
 
     /**
