@@ -1,6 +1,8 @@
 package top.zeimao77.product.mysql;
 
 import top.zeimao77.product.exception.BaseServiceRunException;
+import top.zeimao77.product.util.LongBitMap;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.function.Consumer;
@@ -24,27 +26,18 @@ public class SQL implements StatementParamResolver {
     public static final String COND_QREGEXP = "$regexp";
     private StringBuilder sqlBuilder = new StringBuilder(1024);
     ArrayList<StatementParameter> statementParams = new ArrayList<>();
-    /**
-     *  @see SQL#set(java.lang.String, java.lang.Object)
-     *  0000 0000 0000 0000 0000 0000 0000 0001 SET标志
-     *  @see SQL#addValues(boolean, java.lang.String, java.lang.Object)
-     *  0000 0000 0000 0000 0000 0000 0000 0010 VALUES标志
-     *  @see top.zeimao77.product.mysql.SQL#where(java.lang.String, java.lang.String, java.lang.String, java.lang.Object)
-     *  0000 0000 0000 0000 0000 0000 0000 0100 WHERE标志
-     *  @see SQL#on(java.lang.String, java.lang.String, java.lang.String)
-     *  0000 0000 0000 0000 0000 0000 0000 1000 ON标志
-     *  @see SQL#select(String)
-     *  0000 0000 0000 0000 0000 0000 0001 0000 SELECT标志
-     *
-     *
-     */
+    private static final int FLAG_SELECT = 0x01;
+    private static final int FLAG_SET = 0x02;
+    private static final int FLAG_VALUES = 0x04;
+    private static final int FLAG_WHERE = 0x08;
+    private static final int FLAG_ON = 0x10;
     private int whereOrSetFlag = 0;
     private int sqlType = 0; // 1 = SELECT ;2 = DELETE ;3 = UPDATE ;4 INSERT
     private int paramIndex = 0;
 
     public SQL select() {
         sqlBuilder.append("SELECT *");
-        whereOrSetFlag |= 0x10;
+        whereOrSetFlag |= FLAG_SELECT;
         this.sqlType = 1;
         return this;
     }
@@ -55,9 +48,9 @@ public class SQL implements StatementParamResolver {
     }
 
     public SQL select(String labelName) {
-        if((whereOrSetFlag & 0x10) == 0) {
+        if((whereOrSetFlag & FLAG_SELECT) == 0) {
             sqlBuilder.append("SELECT ");
-            whereOrSetFlag |= 0x10;
+            whereOrSetFlag |= FLAG_SELECT;
         } else {
             sqlBuilder.append(",");
         }
@@ -108,9 +101,9 @@ public class SQL implements StatementParamResolver {
     }
 
     public SQL on(String bind,String columnName,String columnName2) {
-        if((whereOrSetFlag & 0x08) == 0) {
+        if((whereOrSetFlag & FLAG_ON) == 0) {
             sqlBuilder.append(" ON ");
-            whereOrSetFlag |= 0x08;
+            whereOrSetFlag |= FLAG_ON;
         } else if(BIND_AND.equals(bind)) {
             sqlBuilder.append(" AND ");
         } else if(BIND_OR.equals(bind)) {
@@ -138,9 +131,9 @@ public class SQL implements StatementParamResolver {
      * @return this
      */
     public SQL where(String bind,String columnName,String cond,Object value) {
-        if((whereOrSetFlag & 0x04) == 0) {
+        if((whereOrSetFlag & FLAG_WHERE) == 0) {
             sqlBuilder.append(" WHERE ");
-            whereOrSetFlag |= 0x04;
+            whereOrSetFlag |= FLAG_WHERE;
         } else if(BIND_AND.equals(bind)) {
             sqlBuilder.append(" AND ");
         } else if(BIND_OR.equals(bind)) {
@@ -307,9 +300,9 @@ public class SQL implements StatementParamResolver {
      */
     public SQL addValues(boolean expression,String columnName,Object value) {
         if(expression) {
-            if((whereOrSetFlag & 0x02) == 0) {
+            if((whereOrSetFlag & FLAG_VALUES) == 0) {
                 sqlBuilder.append("(");
-                whereOrSetFlag |= 0x02;
+                whereOrSetFlag |= FLAG_VALUES;
             } else {
                 sqlBuilder.append(",");
             }
@@ -374,9 +367,9 @@ public class SQL implements StatementParamResolver {
     }
 
     public SQL set(String columnName,Object value) {
-        if((whereOrSetFlag & 0x01) == 0) {
+        if((whereOrSetFlag & FLAG_SET) == 0) {
             sqlBuilder.append(" SET ").append(columnName).append(" = ?");
-            whereOrSetFlag |= 0x01;
+            whereOrSetFlag |= FLAG_SET;
         } else {
             sqlBuilder.append(",").append(columnName).append(" = ?");
         }

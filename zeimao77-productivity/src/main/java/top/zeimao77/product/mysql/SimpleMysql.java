@@ -37,7 +37,11 @@ public class SimpleMysql implements AutoCloseable, Reposit {
     private String testSql = "SELECT USER() AS result";
 
     public SimpleMysql(DataSource dataSource) {
-        this(dataSource, DefaultPreparedStatementSetter.INSTANCE,DefaultResultSetResolve.INSTANCE);
+        this(dataSource,false, DefaultPreparedStatementSetter.INSTANCE,DefaultResultSetResolve.INSTANCE);
+    }
+
+    public SimpleMysql(DataSource dataSource,boolean newConnection) {
+        this(dataSource,newConnection, DefaultPreparedStatementSetter.INSTANCE,DefaultResultSetResolve.INSTANCE);
     }
 
     /**
@@ -45,10 +49,11 @@ public class SimpleMysql implements AutoCloseable, Reposit {
      * @param dataSource 数据源
      * @param resultSetResolvel 结果集解析器
      */
-    public SimpleMysql(DataSource dataSource, PreparedStatementSetter jdbcParamSetter, ResultSetResolve resultSetResolvel) {
+    public SimpleMysql(DataSource dataSource,boolean newConnection, PreparedStatementSetter jdbcParamSetter, ResultSetResolve resultSetResolvel) {
         this.dataSource = dataSource;
         this.jdbcParamSetter = jdbcParamSetter;
         this.resultSetResolvel = resultSetResolvel;
+        setNewConnection(newConnection);
     }
 
     public SimpleMysql(Connection connection){

@@ -6,7 +6,7 @@ plugins {
 
 group 'top.zeimao77'
 archivesBaseName = "zeimao77-productivity"
-version '2.0.8'
+version '2.0.9'
 description '效率包'
 
 repositories {
