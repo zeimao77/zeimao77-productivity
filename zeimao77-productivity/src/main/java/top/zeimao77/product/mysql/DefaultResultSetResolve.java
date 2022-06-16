@@ -1,5 +1,6 @@
 package top.zeimao77.product.mysql;
 
+import com.mysql.cj.protocol.Resultset;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import top.zeimao77.product.exception.BaseServiceRunException;
@@ -15,7 +16,9 @@ import java.nio.ByteBuffer;
 import java.sql.*;
 import java.time.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * ResultSet结果集解析器
@@ -398,6 +401,42 @@ public class DefaultResultSetResolve implements ResultSetResolve{
                     }
                 }
                 list.add(obj);
+            }
+        } catch (SQLException e) {
+            throw new BaseServiceRunException("SQL异常",e);
+        }
+    }
+
+    @Override
+    public void populateMap(ResultSet rs , List<Map<String,Object>> list) {
+        ResultSetMetaData rsmd = null;
+        try {
+            rsmd = rs.getMetaData();
+            int colCount = rsmd.getColumnCount();
+            while(rs.next()){
+                Map<String,Object> t = new HashMap<>();
+                for(int i = 1;i<=colCount;i++){
+                    String columnLabel = rsmd.getColumnLabel(i);
+                    Object fieldValue = null;
+                    if(!sorted) {
+                        synchronized (DefaultResultSetResolve.class) {
+                            if(!sorted) {
+                                resovers.sort(Orderd::compareTo);
+                                sorted = true;
+                            }
+                        }
+                    }
+                    Object value = rs.getObject(i);
+                    int type = rs.getType();
+                    switch (type) {
+                        case Types.VARCHAR,Types.LONGVARCHAR -> fieldValue = resolve(value,String.class);
+                        case Types.BIGINT -> fieldValue = resolve(value,Long.class);
+                        case Types.INTEGER -> fieldValue = resolve(value,Integer.class);
+                        case Types.DOUBLE -> fieldValue = resolve(value,Double.class);
+                    }
+                    t.put(columnLabel,fieldValue);
+                }
+                list.add(t);
             }
         } catch (SQLException e) {
             throw new BaseServiceRunException("SQL异常",e);
