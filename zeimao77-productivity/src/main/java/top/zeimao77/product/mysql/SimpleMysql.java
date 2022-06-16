@@ -359,6 +359,42 @@ public class SimpleMysql implements AutoCloseable, Reposit {
         return select(sql,new ArrayList(0),this.resultSetResolvel,clazz);
     }
 
+    public Map<String,Object> selectMap(String sqlt,Object param) {
+        ArrayList<Map<String, Object>> maps = selectListMap(sqlt, param);
+        return maps.get(0);
+    }
+
+    public ArrayList<Map<String,Object>> selectListMap(String sqlt,Object param) {
+        DefaultStatementParamResolver resolver = new DefaultStatementParamResolver(sqlt,param);
+        resolver.resolve();
+        String sql = resolver.getSql();
+        ArrayList<StatementParameter> statementParams = resolver.getStatementParams();
+        return selectMap(sql,statementParams,this.resultSetResolvel);
+    }
+
+    public ArrayList<Map<String,Object>> selectMap(String sql, ArrayList<StatementParameter> statementParams, ResultSetResolve resolve) {
+        ArrayList<Map<String,Object>> list = new ArrayList<>();
+        Connection contection = createContection();
+        try{
+            logger.debug("Prepared SQL:{}",sql);
+            PreparedStatement preparedStatement = contection.prepareStatement(sql);
+            for (StatementParameter statementParam : statementParams) {
+                Object o = statementParam.getValue();
+                setParam(preparedStatement,statementParam.getIndex(),statementParam.getJavaType(),statementParam.getJdbcType(),o);
+            }
+            preparedStatement.setQueryTimeout(queryTimeout);
+            long start = System.currentTimeMillis();
+            ResultSet resultSet = preparedStatement.executeQuery();
+            logger.debug("SQL执行耗时：{}ms",(System.currentTimeMillis() - start));
+            resolve.populateMap(resultSet,list);
+        } catch (SQLException e) {
+            throw new BaseServiceRunException("SQL错误",e);
+        } finally {
+            close(contection);
+        }
+        return list;
+    }
+
     /**
      * 查询对象列表
      * @param sql SQL 占位符使用： ?

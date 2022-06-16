@@ -16,10 +16,10 @@ class JedisLockImplTest extends BaseMain{
         Jedis jedis = ComponentFactory.createJedis("redis_top_zeimao77");
         JedisLockImpl jedisLock = new JedisLockImpl(jedis);
         String generate = UuidGenerator.INSTANCE.generate();
-        boolean lock = jedisLock.lock(generate, 2, 100);
+        boolean lock = jedisLock.lock(generate,"1", 2, 100);
         logger.info("LOCK(0):{}",lock);
         for (int i = 1; i < 12; i++) {
-            lock = jedisLock.lock(generate, 2, 100);
+            lock = jedisLock.lock(generate,"1", 2, 100);
             logger.info("LOCK({}):{}",i,lock);
             jedisLock.unLock(generate);
         }

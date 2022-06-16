@@ -98,4 +98,9 @@ class SimpleMysqlTest extends BaseMain {
         logger.info("更新{}行",update);
     }
 
+    @Test
+    void selectListMap() {
+        ArrayList<Map<String, Object>> maps = simpleMysql.selectListMap("SELECT a,b,e,g,o,q,s,u,w FROM abc LIMIT 0,10", null);
+        logger.info(maps.size());
+    }
 }

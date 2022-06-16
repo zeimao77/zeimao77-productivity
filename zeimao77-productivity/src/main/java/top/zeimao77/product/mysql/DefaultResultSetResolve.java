@@ -372,7 +372,9 @@ public class DefaultResultSetResolve implements ResultSetResolve{
                     try{
                         Field field = clazz.getDeclaredField(columnLabel);
                         // 基本数据类型
-                        if(field.getType() == long.class) {
+                        if(value == null) {
+                           fieldValue = null;
+                        } else if(field.getType() == long.class) {
                             fieldValue = value == null ? 0L : Long.valueOf(value.toString()).longValue();
                         } else if(field.getType() == int.class) {
                             fieldValue = value == null ? 0 : Integer.valueOf(value.toString()).intValue();
@@ -427,12 +429,17 @@ public class DefaultResultSetResolve implements ResultSetResolve{
                         }
                     }
                     Object value = rs.getObject(i);
-                    int type = rs.getType();
-                    switch (type) {
-                        case Types.VARCHAR,Types.LONGVARCHAR -> fieldValue = resolve(value,String.class);
-                        case Types.BIGINT -> fieldValue = resolve(value,Long.class);
-                        case Types.INTEGER -> fieldValue = resolve(value,Integer.class);
-                        case Types.DOUBLE -> fieldValue = resolve(value,Double.class);
+                    if(value == null) {
+                        fieldValue = null;
+                    } else {
+                        int columnType = rsmd.getColumnType(i);
+                        switch (columnType) {
+                            case Types.TIMESTAMP -> fieldValue = resolve(value,LocalDateTime.class);
+                            case Types.DATE -> fieldValue = resolve(value,LocalDate.class);
+                            case Types.TIME -> fieldValue = resolve(value,LocalTime.class);
+                            case Types.BINARY,Types.VARBINARY,Types.LONGVARBINARY -> fieldValue = resolve(value,ByteBuffer.class);
+                            default -> fieldValue = rs.getObject(i);
+                        }
                     }
                     t.put(columnLabel,fieldValue);
                 }
