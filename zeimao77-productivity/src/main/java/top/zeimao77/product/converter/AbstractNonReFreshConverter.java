@@ -15,7 +15,7 @@ public abstract class AbstractNonReFreshConverter<K> implements IConverter<K> {
      * 转换关系MAP
      */
     protected Map<K,Object> convRuleMap;
-    private ReentrantLock lock = new ReentrantLock();
+    protected ReentrantLock lock = new ReentrantLock();
 
     /**
      * 公开构造
@@ -42,13 +42,7 @@ public abstract class AbstractNonReFreshConverter<K> implements IConverter<K> {
 
     @Override
     public Object get(K key) {
-        if (this.convRuleMap.isEmpty()) {
-            lock.lock();
-            if (this.convRuleMap.isEmpty()) {
-                this.refreshRule();
-            }
-            lock.unlock();
-        }
+        this.refreshRule();
         Object result = defaultName(key);
         if(convRuleMap.containsKey(key)) {
             result = convRuleMap.get(key);
@@ -58,7 +52,13 @@ public abstract class AbstractNonReFreshConverter<K> implements IConverter<K> {
 
     @Override
     public void refreshRule() {
-        this.refresh();
+        if (this.convRuleMap.isEmpty()) {
+            lock.lock();
+            if (this.convRuleMap.isEmpty()) {
+                this.refresh();
+            }
+            lock.unlock();
+        }
     }
 
     protected abstract void refresh();

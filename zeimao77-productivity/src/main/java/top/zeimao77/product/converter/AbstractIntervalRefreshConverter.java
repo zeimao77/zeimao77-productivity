@@ -1,11 +1,6 @@
 package top.zeimao77.product.converter;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import top.zeimao77.product.util.LocalDateTimeUtil;
-
-import java.time.Instant;
-import java.time.ZoneId;
+import java.time.LocalDateTime;
 
 /**
  * @author zeimao77
@@ -13,8 +8,7 @@ import java.time.ZoneId;
  */
 public abstract class AbstractIntervalRefreshConverter<K> extends AbstractCustomRefreshConverter<K>{
 
-    private static Logger logger = LoggerFactory.getLogger(AbstractIntervalRefreshConverter.class);
-    private long cacheTime;
+    protected long cacheTime;
 
     /**
      * @param cacheTime 缓存时间 单位秒
@@ -33,9 +27,8 @@ public abstract class AbstractIntervalRefreshConverter<K> extends AbstractCustom
 
     @Override
     public void refreshRule() {
-        refresh();
-        setExpiryTime(Instant.ofEpochSecond(Instant.now().getEpochSecond() + this.cacheTime), ZoneId.systemDefault());
-        logger.info(String.format("[%s]最新刷新时间：%s", this.getClass().getSimpleName(), LocalDateTimeUtil.nowDateTime()));
+        super.refreshRule();
+        setExpiryTime(LocalDateTime.now().plusSeconds(this.cacheTime));
     }
 
 

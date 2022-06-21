@@ -97,7 +97,12 @@ public interface StatementParamResolver {
             if(value == null) {
                 execSqlBuilder.append("NULL");
             } else if(String.class.isAssignableFrom(javaType)) {
-                execSqlBuilder.append(QUOTATION_MARKS).append(value).append(QUOTATION_MARKS);
+                String s = value.toString();
+                if(s.contains("'")) {
+                    execSqlBuilder.append(QUOTATION_MARKS).append(s.replaceAll("'","\'")).append(QUOTATION_MARKS);
+                } else {
+                    execSqlBuilder.append(QUOTATION_MARKS).append(value).append(QUOTATION_MARKS);
+                }
             } else if(Long.class.isAssignableFrom(javaType)){
                 execSqlBuilder.append(value);
             } else if(Integer.class.isAssignableFrom(javaType)){

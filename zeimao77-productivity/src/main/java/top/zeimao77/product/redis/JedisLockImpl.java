@@ -14,6 +14,13 @@ public class JedisLockImpl {
         this.commands = commands;
     }
 
+    /**
+     * 尝试加锁 不阻塞
+     * @param lockId 锁KEY
+     * @param value 锁钥
+     * @param expire 过期时间 单位:秒
+     * @return 是否加锁成功
+     */
     public boolean tryLock(String lockId,String value,int expire) {
         String script = """
                 if redis.call('EXISTS',KEYS[1]) == 0 then
@@ -29,27 +36,52 @@ public class JedisLockImpl {
     }
 
     public boolean lock(String lockId,String value,int expire,int waitTimeOut) {
+        return lock(lockId,value,expire,20,waitTimeOut);
+    }
+
+
+    /**
+     * 加锁
+     * @param lockId 锁KEY
+     * @param value 锁钥
+     * @param expire 过期时间 单位:秒
+     * @param sleep 尝试周期 单位：毫秒
+     * @param waitTimeOut 等待时间 单位：毫秒
+     * @return 是否加锁成功
+     */
+    public boolean lock(String lockId,String value,int expire,int sleep,int waitTimeOut) {
         int wait = 0;
         while (wait < waitTimeOut) {
             if(tryLock(lockId,value,expire)) {
                 return true;
             }
             try {
-                TimeUnit.MICROSECONDS.sleep(20);
+                TimeUnit.MICROSECONDS.sleep(sleep);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
-            wait += 20;
+            wait += sleep;
         }
         return false;
     }
 
+    /**
+     * 解锁
+     * @param lockId 锁KEY
+     * @return true
+     */
     public boolean unLock(String lockId) {
         String unscript = "redis.call('DEL',KEYS[1]);";
         Object eval = this.commands.eval(unscript, List.of(lockId), new ArrayList<>(0));
         return true;
     }
 
+    /**
+     * 解锁
+     * @param lockId 锁KEY
+     * @param value 值
+     * @return 如果锁不存在或者解锁成功返回true
+     */
     public boolean unLock(String lockId,String value) {
         String script = """
                 if redis.call('GET',KEYS[1]) == ARGV[1] then

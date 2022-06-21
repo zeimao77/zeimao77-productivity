@@ -6,8 +6,6 @@ import top.zeimao77.product.config.ComponentFactory;
 import top.zeimao77.product.main.BaseMain;
 import top.zeimao77.product.util.UuidGenerator;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class JedisLockImplTest extends BaseMain{
 
     @Test
@@ -19,9 +17,11 @@ class JedisLockImplTest extends BaseMain{
         boolean lock = jedisLock.lock(generate,"1", 2, 100);
         logger.info("LOCK(0):{}",lock);
         for (int i = 1; i < 12; i++) {
+            delay_ms(1000);
             lock = jedisLock.lock(generate,"1", 2, 100);
             logger.info("LOCK({}):{}",i,lock);
-            jedisLock.unLock(generate);
+            boolean b = jedisLock.unLock(generate, "2");
+            logger.info("UNLOCK:{}",b);
         }
 
     }

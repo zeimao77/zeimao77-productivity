@@ -6,14 +6,17 @@ import top.zeimao77.product.main.BaseMain;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 
 public class AssertUtilTest extends BaseMain {
 
     @Test
     public void match() {
-        logger.info(String.class.isAssignableFrom(CharSequence.class));
-        logger.info(CharSequence.class.isAssignableFrom(String.class));
-        logger.info(LocalDateTime.ofInstant(Instant.ofEpochMilli(1654756287153L),ZoneId.systemDefault()));
+        LocalDateTime expiryTime = LocalDateTime.now();
+        LocalDateTime n = LocalDateTime.MIN;
+        logger.info("{}",LocalDateTimeUtil.toDateTime(n));
+        long between = ChronoUnit.SECONDS.between(n, expiryTime);
+        logger.info("{}",between);
     }
 
 }

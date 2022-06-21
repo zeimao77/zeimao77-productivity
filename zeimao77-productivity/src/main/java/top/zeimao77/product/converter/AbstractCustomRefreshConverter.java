@@ -21,11 +21,11 @@ public abstract class AbstractCustomRefreshConverter<K> implements IConverter<K>
     /**
      * 过期时间
      */
-    private LocalDateTime expiryTime = LocalDateTime.of(2022,1,1,0,0,0);
+    protected LocalDateTime expiryTime = LocalDateTime.of(2000,1,1,0,0,0);
     /**
      * 规则刷新锁，防止并发刷新规则;
      */
-    private ReentrantLock lock = new ReentrantLock();
+    protected ReentrantLock lock = new ReentrantLock();
     /**
      * 规则缓存
      */
@@ -37,7 +37,7 @@ public abstract class AbstractCustomRefreshConverter<K> implements IConverter<K>
      */
     protected void setExpiryTime(LocalDateTime expiryTime) {
         this.expiryTime = expiryTime;
-        logger.info(String.format("[%s]设置了过期时间：%s", this.getClass().getSimpleName(), LocalDateTimeUtil.toDateTime(this.expiryTime)));
+        logger.debug(String.format("[%s]设置了过期时间：%s", this.getClass().getSimpleName(), LocalDateTimeUtil.toDateTime(this.expiryTime)));
     }
 
     /**
@@ -66,15 +66,7 @@ public abstract class AbstractCustomRefreshConverter<K> implements IConverter<K>
      */
     @Override
     public Object get(K key) {
-        long between = ChronoUnit.MICROS.between(LocalDateTime.now(), expiryTime);
-        if(convRuleMap.isEmpty() || between <= 0) {
-            lock.lock();
-            between = ChronoUnit.MICROS.between(LocalDateTime.now(), expiryTime);
-            if(convRuleMap.isEmpty() || between <= 0) {
-                refreshRule();
-            }
-            lock.unlock();
-        }
+        refreshRule();
         Object resultValue = defaultName(key);
         if (this.convRuleMap.containsKey(key)) {
             resultValue = this.convRuleMap.get(key);
@@ -87,12 +79,23 @@ public abstract class AbstractCustomRefreshConverter<K> implements IConverter<K>
      */
     @Override
     public void refreshRule() {
-        refresh();
-        logger.info(String.format("[%s]最新刷新时间：%s", this.getClass().getSimpleName(), LocalDateTimeUtil.nowDateTime()));
+        long between = ChronoUnit.SECONDS.between(LocalDateTime.now(), expiryTime);
+        if(convRuleMap.isEmpty() || between <= 0) {
+            lock.lock();
+            between = ChronoUnit.SECONDS.between(LocalDateTime.now(), expiryTime);
+            if(convRuleMap.isEmpty() || between <= 0) {
+                refresh();
+            }
+            lock.unlock();
+        }
     }
 
     /**
      * 子类实现规则刷新
      */
     protected abstract void refresh();
+
+    public LocalDateTime getExpiryTime() {
+        return expiryTime;
+    }
 }

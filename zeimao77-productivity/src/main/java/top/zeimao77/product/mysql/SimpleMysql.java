@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 /**
  * 通过该工具使用MYSQL 注意
@@ -369,19 +370,21 @@ public class SimpleMysql implements AutoCloseable, Reposit {
         resolver.resolve();
         String sql = resolver.getSql();
         ArrayList<StatementParameter> statementParams = resolver.getStatementParams();
-        return selectMap(sql,statementParams,this.resultSetResolvel);
+        return selectListMap(sql, statement -> {
+            for (StatementParameter statementParam : statementParams) {
+                Object o = statementParam.getValue();
+                setParam(statement,statementParam.getIndex(),statementParam.getJavaType(),statementParam.getJdbcType(),o);
+            }
+        },this.resultSetResolvel);
     }
 
-    public ArrayList<Map<String,Object>> selectMap(String sql, ArrayList<StatementParameter> statementParams, ResultSetResolve resolve) {
+    public ArrayList<Map<String,Object>> selectListMap(String sql, Consumer<PreparedStatement> statementParamSetter, ResultSetResolve resolve) {
         ArrayList<Map<String,Object>> list = new ArrayList<>();
         Connection contection = createContection();
         try{
             logger.debug("Prepared SQL:{}",sql);
             PreparedStatement preparedStatement = contection.prepareStatement(sql);
-            for (StatementParameter statementParam : statementParams) {
-                Object o = statementParam.getValue();
-                setParam(preparedStatement,statementParam.getIndex(),statementParam.getJavaType(),statementParam.getJdbcType(),o);
-            }
+            statementParamSetter.accept(preparedStatement);
             preparedStatement.setQueryTimeout(queryTimeout);
             long start = System.currentTimeMillis();
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -404,15 +407,21 @@ public class SimpleMysql implements AutoCloseable, Reposit {
      * @return
      */
     public <T> ArrayList<T> select(String sql, ArrayList<StatementParameter> statementParams, ResultSetResolve resolve, Class<T> clazz) {
+        return select(sql,statement -> {
+            for (StatementParameter statementParam : statementParams) {
+                Object o = statementParam.getValue();
+                setParam(statement,statementParam.getIndex(),statementParam.getJavaType(),statementParam.getJdbcType(),o);
+            }
+        },resolve,clazz);
+    }
+
+    public <T> ArrayList<T> select(String sql, Consumer<PreparedStatement> statementParamSetter, ResultSetResolve resolve, Class<T> clazz) {
         ArrayList<T> list = new ArrayList<>();
         Connection contection = createContection();
         try{
             logger.debug("Prepared SQL:{}",sql);
             PreparedStatement preparedStatement = contection.prepareStatement(sql);
-            for (StatementParameter statementParam : statementParams) {
-                Object o = statementParam.getValue();
-                setParam(preparedStatement,statementParam.getIndex(),statementParam.getJavaType(),statementParam.getJdbcType(),o);
-            }
+            statementParamSetter.accept(preparedStatement);
             preparedStatement.setQueryTimeout(queryTimeout);
             long start = System.currentTimeMillis();
             ResultSet resultSet = preparedStatement.executeQuery();

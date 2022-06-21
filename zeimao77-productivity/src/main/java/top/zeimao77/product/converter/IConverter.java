@@ -13,6 +13,10 @@ public interface IConverter<K> {
      * 默认的INT类型转换
      */
     Function<Object, Integer> DEFAULT_INTEGER_NAME = o -> o == null ? null : (Integer)o;
+    /**
+     * 默认的LONG类型转换
+     */
+    Function<Object,Long> DEFAULT_LONG_NAME = o -> o == null ? null : (Long)o;
 
     /**
      *

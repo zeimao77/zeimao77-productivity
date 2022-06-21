@@ -12,8 +12,7 @@ import java.time.*;
  */
 public abstract class AbstractIntervalDayRefreshConverter<K> extends AbstractCustomRefreshConverter<K>{
 
-    private LocalTime cacheTime;
-    private static Logger logger = LoggerFactory.getLogger(AbstractIntervalDayRefreshConverter.class);
+    protected LocalTime cacheTime;
 
     /**
      * 如果在当天cacheTime之后来调用转换，没有刷新过则刷新
@@ -32,9 +31,8 @@ public abstract class AbstractIntervalDayRefreshConverter<K> extends AbstractCus
 
     @Override
     public void refreshRule() {
-        refresh();
+        super.refreshRule();
         setExpiryTime(LocalDateTime.of(LocalDate.now().plusDays(1),this.cacheTime));
-        logger.info(String.format("[%s]最新刷新时间：%s", this.getClass().getSimpleName(), LocalDateTimeUtil.nowDateTime()));
     }
 
 }
