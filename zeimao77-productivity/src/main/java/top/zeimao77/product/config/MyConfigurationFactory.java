@@ -7,10 +7,7 @@ import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.ConfigurationFactory;
 import org.apache.logging.log4j.core.config.ConfigurationSource;
 import org.apache.logging.log4j.core.config.Order;
-import org.apache.logging.log4j.core.config.builder.api.AppenderComponentBuilder;
-import org.apache.logging.log4j.core.config.builder.api.ConfigurationBuilder;
-import org.apache.logging.log4j.core.config.builder.api.LayoutComponentBuilder;
-import org.apache.logging.log4j.core.config.builder.api.RootLoggerComponentBuilder;
+import org.apache.logging.log4j.core.config.builder.api.*;
 import org.apache.logging.log4j.core.config.builder.impl.BuiltConfiguration;
 import org.apache.logging.log4j.core.config.plugins.Plugin;
 
@@ -28,6 +25,7 @@ public class MyConfigurationFactory extends ConfigurationFactory {
 
     private Level rootLevel;
     private String logfile;
+    private boolean rolling;
 
     /**
      * 配置Log4j2
@@ -46,6 +44,13 @@ public class MyConfigurationFactory extends ConfigurationFactory {
         this.rootLevel = rootLevel;
         this.logfile = logfile;
     }
+
+    public MyConfigurationFactory(Level rootLevel,String logfile,boolean rolling) {
+        this.rootLevel = rootLevel;
+        this.logfile = logfile;
+        this.rolling = rolling;
+    }
+
 
     /**
      * 配置标准输出日志
@@ -73,6 +78,20 @@ public class MyConfigurationFactory extends ConfigurationFactory {
         return fileComponentBuilder;
     }
 
+    public AppenderComponentBuilder rollingFile(ConfigurationBuilder<BuiltConfiguration> builder,LayoutComponentBuilder layoutComponentBuilder){
+        ComponentBuilder triggeringPolicy = builder.newComponent("Policies")
+                .addComponent(builder.newComponent("CronTriggeringPolicy").addAttribute("schedule", "0 0 0 * * ?"))
+                .addComponent(builder.newComponent("SizeBasedTriggeringPolicy").addAttribute("size", "500M"));
+
+        AppenderComponentBuilder fileComponentBuilder = builder.newAppender("rollingFile", "RollingFile")
+                .addAttribute("fileName", logfile)
+                .addAttribute("filePattern", logfile + "-%d{MM-dd-yy}.log.gz")
+                .addComponent(triggeringPolicy);
+        fileComponentBuilder.add(layoutComponentBuilder);
+        return fileComponentBuilder;
+    }
+
+
     private Configuration createConfiguration(final String name, ConfigurationBuilder<BuiltConfiguration> builder) {
         builder.setConfigurationName(name);
         LayoutComponentBuilder layoutComponentBuilder = builder.newLayout("PatternLayout").
@@ -80,9 +99,13 @@ public class MyConfigurationFactory extends ConfigurationFactory {
         builder.add(console(builder,layoutComponentBuilder));
         RootLoggerComponentBuilder rootLoggerComponentBuilder = builder.newRootLogger(rootLevel);
         rootLoggerComponentBuilder.add(builder.newAppenderRef("stdout"));
-        if(logfile != null) {
+        if(!rolling && logfile != null) {
             builder.add(file(builder,layoutComponentBuilder));
             rootLoggerComponentBuilder.add(builder.newAppenderRef("file"));
+        }
+        if(rolling && logfile != null) {
+           builder.add(rollingFile(builder,layoutComponentBuilder));
+            rootLoggerComponentBuilder.add(builder.newAppenderRef("rollingFile"));
         }
         builder.add(rootLoggerComponentBuilder);
         return builder.build();
