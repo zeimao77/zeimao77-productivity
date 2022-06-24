@@ -45,4 +45,13 @@ class ByteArrayCoDesUtilTest extends BaseMain {
         String s = ByteArrayCoDesUtil.hexEncode(xor);
         logger.info(s);
     }
+
+    @Test
+    void matchesCheckCode() {
+        byte[] bs1 = "hello world!".getBytes(StandardCharsets.UTF_8);
+        int i = ByteArrayCoDesUtil.checkCode(bs1);
+        logger.info("{}",ByteArrayCoDesUtil.matchesCheckCode(bs1,i));
+        byte[] bs2 = "hello world.".getBytes(StandardCharsets.UTF_8);
+        logger.info("{}",ByteArrayCoDesUtil.matchesCheckCode(bs2,i));
+    }
 }

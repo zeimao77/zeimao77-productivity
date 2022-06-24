@@ -1,9 +1,6 @@
 package top.zeimao77.product.mysql;
 
-import com.mysql.cj.protocol.Resultset;
-
 import java.sql.ResultSet;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 

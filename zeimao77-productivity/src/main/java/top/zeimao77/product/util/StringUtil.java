@@ -28,4 +28,6 @@ public class StringUtil {
         return cut(str,len,DEFAULT_SUFFIX);
     }
 
+
+
 }

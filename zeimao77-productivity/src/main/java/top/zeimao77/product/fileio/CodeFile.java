@@ -16,8 +16,6 @@ import java.util.Map;
  */
 public class CodeFile {
 
-    private Logger logger = LogManager.getLogger(CodeFile.class);
-
     protected List<String> _lines;
     protected String _fileName;
     protected String _path;

@@ -5,6 +5,7 @@ import top.zeimao77.product.exception.BaseServiceRunException;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.Base64;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -96,6 +97,14 @@ public class ByteArrayCoDesUtil {
         return result + 0x80;
     }
 
+    public static boolean matchesCheckCode(byte[] bs,int checkCode) {
+        int i = checkCode(bs);
+        if(i == checkCode) {
+            return true;
+        }
+        return false;
+    }
+
     /**
      * 将一个字节数组ZIP编码
      * @param bs 字节数组
@@ -162,6 +171,24 @@ public class ByteArrayCoDesUtil {
             }
         }
         return result;
+    }
+
+    public static byte[] toByteArray(Long aLong) {
+        ByteBuffer allocate = ByteBuffer.allocate(8);
+        ByteBuffer byteBuffer = allocate.putLong(aLong);
+        return byteBuffer.array();
+    }
+
+    public static byte[] toByteArray(Integer aInt) {
+        ByteBuffer allocate = ByteBuffer.allocate(4);
+        ByteBuffer byteBuffer = allocate.putInt(aInt);
+        return byteBuffer.array();
+    }
+
+    public static byte[] toByteArray(Double aDou) {
+        ByteBuffer allocate = ByteBuffer.allocate(8);
+        ByteBuffer byteBuffer = allocate.putDouble(aDou);
+        return byteBuffer.array();
     }
 
 }

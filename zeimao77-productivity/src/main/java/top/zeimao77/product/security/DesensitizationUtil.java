@@ -92,4 +92,12 @@ public class DesensitizationUtil {
         return sBuiler.toString();
     }
 
+    /**
+     * 身份证脱敏
+     */
+    public static String identityCard(String id) {
+        return desensitization(id,6,14);
+    }
+
+
 }

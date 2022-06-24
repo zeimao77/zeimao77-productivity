@@ -7,16 +7,19 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
+import java.util.regex.Pattern;
 
 public class AssertUtilTest extends BaseMain {
 
     @Test
     public void match() {
-        LocalDateTime expiryTime = LocalDateTime.now();
-        LocalDateTime n = LocalDateTime.MIN;
-        logger.info("{}",LocalDateTimeUtil.toDateTime(n));
-        long between = ChronoUnit.SECONDS.between(n, expiryTime);
-        logger.info("{}",between);
+        String k = "01";
+        boolean matches = k.matches("\\d+");
+        if(matches) {
+            logger.info("YES");
+        } else {
+            logger.info("NO");
+        }
     }
 
 }
