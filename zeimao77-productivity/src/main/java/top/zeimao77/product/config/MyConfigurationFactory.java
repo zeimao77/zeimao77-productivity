@@ -25,7 +25,15 @@ public class MyConfigurationFactory extends ConfigurationFactory {
 
     private Level rootLevel;
     private String logfile;
+    /**
+     * 是否滚动自动日志
+     */
     private boolean rolling;
+
+    /**
+     * 滚动日志时 最多保留日志个数
+     */
+    private int rolloverStrategyMax;
 
     /**
      * 配置Log4j2
@@ -45,12 +53,12 @@ public class MyConfigurationFactory extends ConfigurationFactory {
         this.logfile = logfile;
     }
 
-    public MyConfigurationFactory(Level rootLevel,String logfile,boolean rolling) {
+    public MyConfigurationFactory(Level rootLevel,String logfile,boolean rolling,int rolloverStrategyMax) {
         this.rootLevel = rootLevel;
         this.logfile = logfile;
         this.rolling = rolling;
+        this.rolloverStrategyMax = rolloverStrategyMax;
     }
-
 
     /**
      * 配置标准输出日志
@@ -81,12 +89,17 @@ public class MyConfigurationFactory extends ConfigurationFactory {
     public AppenderComponentBuilder rollingFile(ConfigurationBuilder<BuiltConfiguration> builder,LayoutComponentBuilder layoutComponentBuilder){
         ComponentBuilder triggeringPolicy = builder.newComponent("Policies")
                 .addComponent(builder.newComponent("CronTriggeringPolicy").addAttribute("schedule", "0 0 0 * * ?"))
-                .addComponent(builder.newComponent("SizeBasedTriggeringPolicy").addAttribute("size", "500M"));
+                // .addComponent(builder.newComponent("TimeBasedTriggeringPolicy").addAttribute("interval",3))
+                .addComponent(builder.newComponent("SizeBasedTriggeringPolicy").addAttribute("size", "500MB"));
+
+        ComponentBuilder rolloverStrategy = builder.newComponent("DefaultRolloverStrategy")
+                .addAttribute("max",rolloverStrategyMax);
 
         AppenderComponentBuilder fileComponentBuilder = builder.newAppender("rollingFile", "RollingFile")
                 .addAttribute("fileName", logfile)
-                .addAttribute("filePattern", logfile + "-%d{MM-dd-yy}.log.gz")
-                .addComponent(triggeringPolicy);
+                .addAttribute("filePattern", logfile + "-%d{MM-dd-yy}-%i.log.gz")
+                .addComponent(triggeringPolicy)
+                .addComponent(rolloverStrategy);
         fileComponentBuilder.add(layoutComponentBuilder);
         return fileComponentBuilder;
     }

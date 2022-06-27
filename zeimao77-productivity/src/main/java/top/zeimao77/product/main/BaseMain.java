@@ -81,8 +81,11 @@ public class BaseMain {
     private static void initLogger(){
         String levelName = getPropertyOrEnv("log.level","DEBUG");
         String logfile = getPropertyOrEnv("log.file",null);
+        String rolling = getPropertyOrEnv("log.rolling", "FALSE");
+        int rolloverStrategyMax = Integer.valueOf(getPropertyOrEnv("log.rolloverStrategyMax", "10"));
+        boolean rollingLog = "FALSE".equals(rolling) ? false : true;
         Level level = Level.valueOf(levelName);
-        ConfigurationFactory.setConfigurationFactory(new MyConfigurationFactory(level,logfile));
+        ConfigurationFactory.setConfigurationFactory(new MyConfigurationFactory(level,logfile,rollingLog,rolloverStrategyMax));
         logger = LogManager.getLogger(BaseMain.class);
     }
 

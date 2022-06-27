@@ -15,10 +15,11 @@ public class AssertUtilTest extends BaseMain {
     public void match() {
         String k = "01";
         boolean matches = k.matches("\\d+");
-        if(matches) {
-            logger.info("YES");
-        } else {
-            logger.info("NO");
+        RandomStringUtil randomStringUtil = new RandomStringUtil(0x0F);
+        for (int i = 0; i < 10000; i++) {
+            logger.info(randomStringUtil.randomStr(64));
+
+            delay_ms(2);
         }
     }
 
