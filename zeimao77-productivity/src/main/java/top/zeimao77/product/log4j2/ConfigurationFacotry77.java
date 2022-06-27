@@ -1,4 +1,4 @@
-package top.zeimao77.product.config;
+package top.zeimao77.product.log4j2;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.LoggerContext;
@@ -11,58 +11,42 @@ import org.apache.logging.log4j.core.config.builder.api.*;
 import org.apache.logging.log4j.core.config.builder.impl.BuiltConfiguration;
 import org.apache.logging.log4j.core.config.plugins.Plugin;
 
-import java.net.URI;
-
-/**
- * @author zeimao77
- * 如果需要使用此文件配置，需要在Log加载之前手动加载
- * ConfigurationFactory.setConfigurationFactory(new MyConfigurationFactory(...));
- * 它仅仅可以定义日志级别以及日志文件位置，文件以及标准输出流将使用相同的日志级别
- */
-
 @Plugin(name = "MyConfigurationFactory", category = ConfigurationFactory.CATEGORY)
-@Order(0)
-public class MyConfigurationFactory extends ConfigurationFactory {
+@Order(2)
+public class ConfigurationFacotry77 extends ConfigurationFactory {
 
-    private Level rootLevel;
-    private String logfile;
-    /**
-     * 是否滚动自动日志
-     */
-    private boolean rolling;
+    Level rootLevel;
+    String logfile;
+    boolean rolling;
+    int rolloverStrategyMax;
 
-    /**
-     * 滚动日志时 最多保留日志个数
-     */
-    private int rolloverStrategyMax;
-
-    public MyConfigurationFactory() {
-        this(Level.DEBUG,null,false,10);
+    public ConfigurationFacotry77(){
+        String logLevel = getPropertyOrEnv("log.level","DEBUG");
+        this.rootLevel = Level.valueOf(logLevel);
+        logfile = getPropertyOrEnv("log.file",null);
+        String logRolling = getPropertyOrEnv("log.rolling", "FALSE");
+        this.rolling = "TRUE".equalsIgnoreCase(logRolling) || "1".equals(logRolling) ? true : false;
+        rolloverStrategyMax = Integer.valueOf(getPropertyOrEnv("log.rolloverStrategyMax", "10"));
     }
 
-    /**
-     * 配置Log4j2
-     * @param rootLevel 日志级别
-     */
-    public MyConfigurationFactory(Level rootLevel) {
-        this.rootLevel = rootLevel;
+    private static String getPropertyOrEnv(String key,String defaultValue) {
+        String value = System.getProperty(key);
+        if(value == null){
+            value = System.getenv(key);
+        }
+        return value == null ? defaultValue : value;
     }
 
-    /**
-     * 配置Log4j2
-     * @param rootLevel 日志级别
-     * @param logfile 日志文件
-     */
-    public MyConfigurationFactory(Level rootLevel,String logfile) {
-        this.rootLevel = rootLevel;
-        this.logfile = logfile;
+
+    @Override
+    protected String[] getSupportedTypes() {
+        return new String[]{".77"};
     }
 
-    public MyConfigurationFactory(Level rootLevel,String logfile,boolean rolling,int rolloverStrategyMax) {
-        this.rootLevel = rootLevel;
-        this.logfile = logfile;
-        this.rolling = rolling;
-        this.rolloverStrategyMax = rolloverStrategyMax;
+    @Override
+    public Configuration getConfiguration(LoggerContext loggerContext, ConfigurationSource source) {
+        ConfigurationBuilder<BuiltConfiguration> builder = newConfigurationBuilder();
+        return createConfiguration(loggerContext.getName(), builder);
     }
 
     /**
@@ -71,7 +55,7 @@ public class MyConfigurationFactory extends ConfigurationFactory {
      * @param layoutComponentBuilder --
      * @return --
      */
-    private AppenderComponentBuilder console(ConfigurationBuilder<BuiltConfiguration> builder,LayoutComponentBuilder layoutComponentBuilder){
+    private AppenderComponentBuilder console(ConfigurationBuilder<BuiltConfiguration> builder, LayoutComponentBuilder layoutComponentBuilder){
         AppenderComponentBuilder consoleComponentBuilder = builder.newAppender("stdout", "CONSOLE").
                 addAttribute("target", ConsoleAppender.Target.SYSTEM_OUT);
         consoleComponentBuilder.add(layoutComponentBuilder);
@@ -115,6 +99,7 @@ public class MyConfigurationFactory extends ConfigurationFactory {
         LayoutComponentBuilder layoutComponentBuilder = builder.newLayout("PatternLayout").
                 addAttribute("pattern", "%d [%t] %-5level: %msg%n%throwable");
         builder.add(console(builder,layoutComponentBuilder));
+
         RootLoggerComponentBuilder rootLoggerComponentBuilder = builder.newRootLogger(rootLevel);
         rootLoggerComponentBuilder.add(builder.newAppenderRef("stdout"));
         if(!rolling && logfile != null) {
@@ -122,41 +107,12 @@ public class MyConfigurationFactory extends ConfigurationFactory {
             rootLoggerComponentBuilder.add(builder.newAppenderRef("file"));
         }
         if(rolling && logfile != null) {
-           builder.add(rollingFile(builder,layoutComponentBuilder));
+            builder.add(rollingFile(builder,layoutComponentBuilder));
             rootLoggerComponentBuilder.add(builder.newAppenderRef("rollingFile"));
         }
         builder.add(rootLoggerComponentBuilder);
         return builder.build();
     }
 
-    @Override
-    protected String[] getSupportedTypes() {
-        return new String[] {"*"};
-    }
-
-    @Override
-    public Configuration getConfiguration(LoggerContext loggerContext, ConfigurationSource source) {
-        return null;
-    }
-
-    /**
-    @Override
-    public Configuration getConfiguration(final LoggerContext loggerContext, final ConfigurationSource source) {
-        return getConfiguration(loggerContext, source.toString(), null);
-    }
-
-    @Override
-    public Configuration getConfiguration(final LoggerContext loggerContext, final String name, final URI configLocation) {
-
-        ConfigurationBuilder<BuiltConfiguration> builder = newConfigurationBuilder();
-        return createConfiguration(name, builder);
-    }
-     **/
-
-    @Override
-    public Configuration getConfiguration(final LoggerContext loggerContext, final String name, final URI configLocation, final ClassLoader loader) {
-        Configuration configuration = super.getConfiguration(loggerContext, name, configLocation, loader);
-        return configuration;
-    }
 
 }

@@ -1,11 +1,9 @@
 package top.zeimao77.product.main;
 
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.core.config.ConfigurationFactory;
+import org.apache.logging.log4j.core.config.plugins.util.PluginManager;
 import top.zeimao77.product.config.LocalContext;
-import top.zeimao77.product.config.MyConfigurationFactory;
 import top.zeimao77.product.exception.BaseServiceRunException;
 
 import java.io.*;
@@ -22,7 +20,8 @@ public class BaseMain {
     protected static Logger logger;
 
     static {
-        initLogger();
+        initLoggerConfig();
+        logger = LogManager.getLogger(BaseMain.class);
         initLocalContext();
     }
 
@@ -78,15 +77,8 @@ public class BaseMain {
         }
     }
 
-    private static void initLogger(){
-        String levelName = getPropertyOrEnv("log.level","DEBUG");
-        String logfile = getPropertyOrEnv("log.file",null);
-        String rolling = getPropertyOrEnv("log.rolling", "FALSE");
-        int rolloverStrategyMax = Integer.valueOf(getPropertyOrEnv("log.rolloverStrategyMax", "10"));
-        boolean rollingLog = "FALSE".equals(rolling) ? false : true;
-        Level level = Level.valueOf(levelName);
-        ConfigurationFactory.setConfigurationFactory(new MyConfigurationFactory(level,logfile,rollingLog,rolloverStrategyMax));
-        logger = LogManager.getLogger(BaseMain.class);
+    private static void initLoggerConfig(){
+        PluginManager.addPackage("top.zeimao77.product.log4j2");
     }
 
     /**
