@@ -1,8 +1,6 @@
 package top.zeimao77.product.util;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.core.config.plugins.util.PluginManager;
 
 import org.junit.jupiter.api.Test;
 public class AssertUtilTest2{

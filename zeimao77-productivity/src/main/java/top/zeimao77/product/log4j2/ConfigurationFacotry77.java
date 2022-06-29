@@ -12,7 +12,7 @@ import org.apache.logging.log4j.core.config.builder.impl.BuiltConfiguration;
 import org.apache.logging.log4j.core.config.plugins.Plugin;
 
 @Plugin(name = "MyConfigurationFactory", category = ConfigurationFactory.CATEGORY)
-@Order(2)
+@Order(3)
 public class ConfigurationFacotry77 extends ConfigurationFactory {
 
     Level rootLevel;
@@ -40,7 +40,7 @@ public class ConfigurationFacotry77 extends ConfigurationFactory {
 
     @Override
     protected String[] getSupportedTypes() {
-        return new String[]{".77"};
+        return new String[]{".77.conf"};
     }
 
     @Override
@@ -75,10 +75,16 @@ public class ConfigurationFacotry77 extends ConfigurationFactory {
         return fileComponentBuilder;
     }
 
+    /**
+     * 滚动文件日志
+     * @param builder --
+     * @param layoutComponentBuilder --
+     * @return --
+     */
     public AppenderComponentBuilder rollingFile(ConfigurationBuilder<BuiltConfiguration> builder,LayoutComponentBuilder layoutComponentBuilder){
         ComponentBuilder triggeringPolicy = builder.newComponent("Policies")
                 .addComponent(builder.newComponent("CronTriggeringPolicy").addAttribute("schedule", "0 0 0 * * ?"))
-                // .addComponent(builder.newComponent("TimeBasedTriggeringPolicy").addAttribute("interval",3))
+                // .addComponent(builder.newComponent("TimeBasedTriggeringPolicy").addAttribute("interval",3))  // 每3秒时间间隔滚动日志
                 .addComponent(builder.newComponent("SizeBasedTriggeringPolicy").addAttribute("size", "500MB"));
 
         ComponentBuilder rolloverStrategy = builder.newComponent("DefaultRolloverStrategy")
