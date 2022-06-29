@@ -7,7 +7,12 @@
 
 ### BaseMain
 
-  - 它实现了一个初步的日志配置，可以使用环境变量或者命令参数(`log.level`,`log.file`)来配置它;
+  - 它实现了一个默认的日志配置，支持使用环境变量或者命令参数利用以下参数来简单配置它;
+    - `log.level` : 日志级别;
+    - `log.file` : 开启文件日志，并指定日志文件路径;
+    - `log.rolling` : TRUE:开启滚动日志;
+    - `log.rolloverStrategyMax` : 最多保留几个历史日志,缺省值10
+  - 该配置是一个优先值为3的实现，如果您对它不满意完全可以自己利用`log4j2.xml`等文件重新配置,配置文件有较高的优先级;
   - 它实现了一个初步的环境配置，默认读取工作变量或者类路径的`localcontext.properties`文件;可以使用环境变量或者命令参数(`local.context.file`)来配置它;
 
 ### 可执行JAR包
@@ -37,7 +42,7 @@ tasks.withType(JavaCompile) {
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
-    implementation group: 'top.zeimao77',name:'zeimao77-productivity',version: '2.0.7'
+    implementation group: 'top.zeimao77',name:'zeimao77-productivity',version: '2.0.9'
 }
 
 application {
@@ -95,14 +100,14 @@ public class Main extends BaseMain {
 4. 分析依赖
 
 ```bash
-/home/jdk-17.0.3/bin/jdeps -cp '/home/libs/*' --module-path '/home/libs/*' \
+/jdk-17.0.3/bin/jdeps -cp '/home/libs/*' --module-path '/home/libs/*' \
 --multi-release 9 --print-module-deps --ignore-missing-deps libs/app-main.jar
 ```
 
 5. 打包JRE
 
 ```bash
-/home/jdk-17.0.3/bin/jlink --add-modules java.base,java.compiler,java.desktop,java.management\
+/jdk-17.0.3/bin/jlink --add-modules java.base,java.compiler,java.desktop,java.management\
 ,java.naming,java.net.http,java.rmi,java.scripting,java.security.sasl,java.sql,jdk.unsupported \
 --output app-main-with-jre
 ```
@@ -110,7 +115,7 @@ public class Main extends BaseMain {
 6. 执行
 
 ```bash
-nohup /home/jdk-17.0.3/bin/java -Dlog.file=app-main.log \
+nohup /jdk-17.0.3/bin/java -Dlog.file=app-main.log \
 -jar /home/libs/app-main.jar >> /dev/null 2>&1 &
 ```
 
