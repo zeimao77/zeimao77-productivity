@@ -1,6 +1,7 @@
 package top.zeimao77.product.jobs;
 
 import org.junit.jupiter.api.Test;
+import top.zeimao77.product.exception.BaseServiceRunException;
 import top.zeimao77.product.main.BaseMain;
 import top.zeimao77.product.tree.RandomVoter;
 import top.zeimao77.product.tree.Voter;
@@ -47,11 +48,11 @@ class JobExecTemplateTest extends BaseMain {
         }
 
         @Override
-        public int handle(IJob job) {
+        public Result handle(IJob job) {
             if(randomVoter.vote(null) == Voter.ACCESS_GRANTED) {
-                return SUCCESSED;
+                return Result.SUCCESS;
             }
-            return FAILED;
+            throw new BaseServiceRunException("处理失败");
         }
     }
 

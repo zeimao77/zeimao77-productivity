@@ -3,7 +3,7 @@ package top.zeimao77.product.exception;
 /**
  * 受检查的异常
  */
-public class BaseServiceException extends Exception{
+public class BaseServiceException extends Exception implements ExceptionCodeDefinition{
 
     private Integer code;
 

@@ -1,6 +1,7 @@
 package top.zeimao77.product.jobs;
 
 import org.junit.jupiter.api.Test;
+import top.zeimao77.product.exception.BaseServiceRunException;
 import top.zeimao77.product.main.BaseMain;
 import top.zeimao77.product.tree.RandomVoter;
 import top.zeimao77.product.tree.Voter;
@@ -50,14 +51,14 @@ class JobExecTemplateBatchTest extends BaseMain {
         }
 
         @Override
-        public int handle(List<Job> jobs) {
+        public Result handle(List<Job> jobs) {
             for (Job job : jobs) {
                 logger.info("正在处理任务({}):{}",++i,job.jobId);
             }
             if(randomVoter.vote(null) == Voter.ACCESS_GRANTED) {  // 模拟任务有3%的概率处理失败的场景
-                return SUCCESSED;
+                return Result.SUCCESS;
             }
-            return FAILED;
+            throw new BaseServiceRunException("处理失败");
         }
     }
 

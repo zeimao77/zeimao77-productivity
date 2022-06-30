@@ -2,6 +2,9 @@ package top.zeimao77.product.jobs;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import top.zeimao77.product.exception.BaseServiceRunException;
+import top.zeimao77.product.exception.ExceptionCodeDefinition;
+import top.zeimao77.product.exception.NonRetryableRuntimeException;
 
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -62,7 +65,7 @@ public abstract class JobExecTemplate<T extends IJob> implements JobExec{
      * @see JobExec#SUCCESSED  成功
      * @see JobExec#FAILED 失败
      */
-    public abstract int handle(T job);
+    public abstract Result handle(T job);
 
     /**
      * 失败了，如果
@@ -70,12 +73,12 @@ public abstract class JobExecTemplate<T extends IJob> implements JobExec{
      * 处理失败，将调用此函数进行下一步处理
      * @param job
      */
-    public void failed(T job){
-        if (job.consume() > 0) {
+    public void failed(T job,Result result){
+        if(result.retrieable() && job.consume() > 0) {
             logger.warn("任务(ID:{})处理失败，即将重新处理!",job.jobId());
             addJob(job);
         } else {
-            logger.warn("任务(ID:{})处理失败，即将放弃处理!",job.jobId());
+            logger.warn("任务(ID:{})处理失败,失败原因:{},即将放弃处理!",job.jobId(),result.getResultMsg());
         }
     }
 
@@ -118,11 +121,25 @@ public abstract class JobExecTemplate<T extends IJob> implements JobExec{
                         logger.debug("线程({})没有取到更多任务，即将退出",Thread.currentThread().getName());
                         break;
                     }
-                    int handle = handle(job);
-                    if(SUCCESSED == handle) {
-                        successed(job);
-                    } else if(FAILED == handle) {
-                        failed(job);
+                    try{
+                        Result handle = handle(job);
+                        if(handle == Result.SUCCESS || SUCCESSED == handle.getResultCode()) {
+                            successed(job);
+                        } else {
+                            failed(job,handle);
+                        }
+                    } catch (NonRetryableRuntimeException e) {
+                        logger.error("任务处理异常",e);
+                        Result fail = Result.fail(e.getCode(), e.getMessage());
+                        failed(job,fail);
+                    } catch (BaseServiceRunException e) {
+                        logger.error("任务处理异常",e);
+                        Result fail = Result.fail(e.getCode(), e.getMessage());
+                        failed(job,fail);
+                    }  catch (Exception e) {
+                        logger.error("任务处理异常",e);
+                        Result fail = Result.fail(ExceptionCodeDefinition.UNKNOWN,"未知的异常");
+                        failed(job,fail);
                     }
                 }
             });

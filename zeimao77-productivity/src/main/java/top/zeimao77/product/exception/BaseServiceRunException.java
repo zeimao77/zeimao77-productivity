@@ -3,16 +3,7 @@ package top.zeimao77.product.exception;
 /**
  * 不受检查的异常
  */
-public class BaseServiceRunException extends RuntimeException{
-
-    /**
-     * 不确定、未知的异常类型编码
-     */
-    public static final Integer UNKNOWN = 10000;
-    /**
-     * 自定义的异常类型编码
-     */
-    public static final Integer CUSTOM = 10001;
+public class BaseServiceRunException extends RuntimeException implements ExceptionCodeDefinition {
 
     private Integer code;
 
@@ -23,7 +14,7 @@ public class BaseServiceRunException extends RuntimeException{
 
     public BaseServiceRunException(String message, Throwable cause) {
         super(message,cause);
-        this.code = 10001;
+        this.code = CUSTOM;
     }
 
     public BaseServiceRunException(String message) {
