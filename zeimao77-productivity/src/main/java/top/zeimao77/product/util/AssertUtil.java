@@ -1,6 +1,7 @@
 package top.zeimao77.product.util;
 
 import top.zeimao77.product.exception.BaseServiceRunException;
+import static top.zeimao77.product.exception.ExceptionCodeDefinition.CUSTOM;
 
 import java.util.regex.Pattern;
 
@@ -17,9 +18,13 @@ public class AssertUtil {
      * @param message 异常返回的信息
      */
     public static void assertTure(boolean expression,String message) {
-       if(!expression) {
-           throw new BaseServiceRunException(message);
-       }
+       assertTrue(expression,CUSTOM,message);
+    }
+
+    public static void assertTrue(boolean expression,Integer code,String message) {
+        if(!expression) {
+            throw new BaseServiceRunException(code,message);
+        }
     }
 
     /**

@@ -8,6 +8,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiFunction;
+import static top.zeimao77.product.exception.ExceptionCodeDefinition.*;
 
 public class SimpleRepository<T,W> extends AbstractRepository<T, W> {
 
@@ -170,7 +171,7 @@ public class SimpleRepository<T,W> extends AbstractRepository<T, W> {
                     sql.where(SQL.BIND_AND,codeNameToDbName(name),SQL.COND_QIS,idParseFunc.apply(id,name));
                 }
             } else {
-                throw new BaseServiceRunException("悲剧了,我无法解释该主键");
+                throw new BaseServiceRunException(CUSTOM | NON_RETRYABLE,"悲剧了,我无法解释该主键");
             }
         }
     }
@@ -192,7 +193,7 @@ public class SimpleRepository<T,W> extends AbstractRepository<T, W> {
                     sql.where(SQL.BIND_AND,codeNameToDbName(name),SQL.COND_QIS,idParseFunc.apply(id,name));
                 }
             } else {
-                throw new BaseServiceRunException("悲剧了,我无法解释该主键");
+                throw new BaseServiceRunException(CUSTOM | NON_RETRYABLE,"悲剧了,我无法解释该主键");
             }
         }
     }

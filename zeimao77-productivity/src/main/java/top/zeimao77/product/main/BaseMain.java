@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.config.plugins.util.PluginManager;
 import top.zeimao77.product.config.LocalContext;
 import top.zeimao77.product.exception.BaseServiceRunException;
+import top.zeimao77.product.exception.ExceptionCodeDefinition;
 
 import java.io.*;
 import java.util.concurrent.TimeUnit;
@@ -42,7 +43,7 @@ public class BaseMain {
                 logger.debug("尝试加载配置文件:{}",contextFile);
                 LocalContext.putByProperties(fileInputStream);
             } catch (FileNotFoundException e) {
-                throw new BaseServiceRunException("文件不存在",e);
+                throw new BaseServiceRunException(ExceptionCodeDefinition.WRONG_SOURCE,"文件不存在",e);
             } catch (IOException e) {
                 logger.error("IO错误",e);
             }
@@ -64,7 +65,7 @@ public class BaseMain {
                 try {
                     resourceAsStream.close();
                 } catch (IOException e) {
-                    throw new BaseServiceRunException("IO错误",e);
+                    throw new BaseServiceRunException(ExceptionCodeDefinition.IOEXCEPTION,"IO错误",e);
                 } finally {
                     try {
                         resourceAsStream.close();

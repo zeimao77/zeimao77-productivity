@@ -128,10 +128,6 @@ public abstract class JobExecTemplate<T extends IJob> implements JobExec{
                         } else {
                             failed(job,handle);
                         }
-                    } catch (NonRetryableRuntimeException e) {
-                        logger.error("任务处理异常",e);
-                        Result fail = Result.fail(e.getCode(), e.getMessage());
-                        failed(job,fail);
                     } catch (BaseServiceRunException e) {
                         logger.error("任务处理异常",e);
                         Result fail = Result.fail(e.getCode(), e.getMessage());

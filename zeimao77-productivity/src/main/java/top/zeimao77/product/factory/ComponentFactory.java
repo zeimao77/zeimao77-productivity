@@ -1,9 +1,10 @@
-package top.zeimao77.product.config;
+package top.zeimao77.product.factory;
 
 import com.mysql.cj.jdbc.MysqlDataSource;
 import redis.clients.jedis.HostAndPort;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisCluster;
+import top.zeimao77.product.config.LocalContext;
 import top.zeimao77.product.email.SimpleEmailSender;
 import top.zeimao77.product.mysql.SimpleMysql;
 import top.zeimao77.product.redis.JedisBuilder;

@@ -3,27 +3,22 @@ package top.zeimao77.product.exception;
 /**
  * 不可重试的异常
  */
-public class NonRetryableRuntimeException extends RuntimeException implements ExceptionCodeDefinition {
-
-    private Integer code;
+public class NonRetryableRuntimeException extends BaseServiceRunException {
 
     public NonRetryableRuntimeException(Integer code, String message, Throwable cause) {
-        super(message, cause);
-        this.code = code | NON_RETRYABLE;
+        super(code | NON_RETRYABLE,message, cause);
+    }
+
+    public NonRetryableRuntimeException(Integer code,String message) {
+        super(code | NON_RETRYABLE,message);
     }
 
     public NonRetryableRuntimeException(String message, Throwable cause) {
-        super(message,cause);
-        this.code = CUSTOM | NON_RETRYABLE;
+        super(CUSTOM | NON_RETRYABLE,message,cause);
     }
 
     public NonRetryableRuntimeException(String message) {
-        super(message);
-        this.code = CUSTOM | NON_RETRYABLE;
-    }
-
-    public Integer getCode() {
-        return code;
+        super(CUSTOM | NON_RETRYABLE,message);
     }
 
 }

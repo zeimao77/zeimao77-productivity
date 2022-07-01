@@ -1,6 +1,9 @@
 package top.zeimao77.product.http;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import top.zeimao77.product.exception.BaseServiceRunException;
+import static top.zeimao77.product.exception.ExceptionCodeDefinition.*;
 import top.zeimao77.product.util.StreamUtil;
 
 import java.io.IOException;
@@ -13,6 +16,7 @@ import java.util.Map;
 
 public class HttpClientUtil8 implements IHttpClient {
 
+    private static Logger logger = LogManager.getLogger(HttpClientUtil8.class);
     public static final HttpClientUtil8 INSTANCE = new HttpClientUtil8();
 
     @Override
@@ -40,15 +44,15 @@ public class HttpClientUtil8 implements IHttpClient {
             result = StreamUtil.readStream(is);
             conn.getInputStream().close();
         } catch (MalformedURLException e) {
-            throw new BaseServiceRunException("URL错误",e);
+            throw new BaseServiceRunException(WRONG_SOURCE,"URL错误",e);
         } catch (IOException e) {
-            throw new BaseServiceRunException("IO错误",e);
+            throw new BaseServiceRunException(IOEXCEPTION,"IO错误",e);
         } finally {
             if(is != null) {
                 try {
                     is.close();
                 } catch (IOException e) {
-                    throw new BaseServiceRunException("IO错误",e);
+                    throw new BaseServiceRunException(IOEXCEPTION,"IO错误",e);
                 }
             }
         }
@@ -72,15 +76,15 @@ public class HttpClientUtil8 implements IHttpClient {
             is = conn.getInputStream();
             result = StreamUtil.readStream(is);
         } catch (MalformedURLException e) {
-            throw new BaseServiceRunException("URL错误",e);
+            throw new BaseServiceRunException(WRONG_SOURCE,"URL错误",e);
         } catch (IOException e) {
-            throw new BaseServiceRunException("IO错误",e);
+            throw new BaseServiceRunException(IOEXCEPTION,"IO错误",e);
         } finally {
             if(is != null) {
                 try {
                     is.close();
                 } catch (IOException e) {
-                    throw new BaseServiceRunException("IO错误",e);
+                    logger.error("关闭资源出错",e);
                 }
             }
         }

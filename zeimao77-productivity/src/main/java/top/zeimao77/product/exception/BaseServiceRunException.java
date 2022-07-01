@@ -12,6 +12,11 @@ public class BaseServiceRunException extends RuntimeException implements Excepti
         this.code = code;
     }
 
+    public BaseServiceRunException(Integer code, String message) {
+        super(message);
+        this.code = code;
+    }
+
     public BaseServiceRunException(String message, Throwable cause) {
         super(message,cause);
         this.code = CUSTOM;

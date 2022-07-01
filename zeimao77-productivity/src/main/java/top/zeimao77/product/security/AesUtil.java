@@ -14,8 +14,6 @@ import java.util.Base64;
  * 对秤加密
  */
 public class AesUtil {
-
-    private static Logger logger = LogManager.getLogger(AesUtil.class);
     private SecretKey secretKey;
 
     /**

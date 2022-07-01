@@ -1,6 +1,5 @@
 package top.zeimao77.product.mysql;
 
-import com.mysql.cj.protocol.Resultset;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import top.zeimao77.product.exception.BaseServiceRunException;

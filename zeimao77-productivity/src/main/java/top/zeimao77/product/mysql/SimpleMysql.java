@@ -4,6 +4,7 @@ import com.mysql.cj.jdbc.MysqlDataSource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import top.zeimao77.product.exception.BaseServiceRunException;
+import static top.zeimao77.product.exception.ExceptionCodeDefinition.*;
 import top.zeimao77.product.util.AssertUtil;
 import javax.sql.DataSource;
 import java.sql.*;
@@ -78,7 +79,7 @@ public class SimpleMysql implements AutoCloseable, Reposit {
             String s = this.selectString(testSql, null);
             logger.info("test connection 结果:{}",s);
         } catch (RuntimeException e) {
-            logger.error("SQL错误",e);
+            logger.error("测试连接错误",e);
         }
         return false;
     }
@@ -99,7 +100,7 @@ public class SimpleMysql implements AutoCloseable, Reposit {
                 this.connection = this.dataSource.getConnection();
             }
         } catch (SQLException e) {
-            throw new BaseServiceRunException("获取连接错误",e);
+            throw new BaseServiceRunException(SQLEXCEPTION,"获取连接错误",e);
         }
         return this.connection;
     }
@@ -114,7 +115,7 @@ public class SimpleMysql implements AutoCloseable, Reposit {
         try {
             createContection().setAutoCommit(autoCommlit);
         } catch (SQLException e) {
-            throw new BaseServiceRunException("SQL错误",e);
+            throw new BaseServiceRunException(SQLEXCEPTION,"SQL错误",e);
         }
     }
 
@@ -123,7 +124,7 @@ public class SimpleMysql implements AutoCloseable, Reposit {
         try {
             createContection().commit();
         } catch (SQLException e) {
-            throw new BaseServiceRunException("SQL错误",e);
+            throw new BaseServiceRunException(SQLEXCEPTION,"SQL错误",e);
         }
     }
 
@@ -132,7 +133,7 @@ public class SimpleMysql implements AutoCloseable, Reposit {
         try {
             createContection().close();
         } catch (SQLException e) {
-            throw new BaseServiceRunException("SQL错误",e);
+            throw new BaseServiceRunException(SQLEXCEPTION,"SQL错误",e);
         }
     }
 
@@ -145,7 +146,7 @@ public class SimpleMysql implements AutoCloseable, Reposit {
                 connection.close();
             }
         } catch (SQLException e) {
-            throw new BaseServiceRunException("SQL错误",e);
+            throw new BaseServiceRunException(SQLEXCEPTION,"SQL错误",e);
         }
     }
 
@@ -154,7 +155,7 @@ public class SimpleMysql implements AutoCloseable, Reposit {
         try {
             createContection().rollback();
         } catch (SQLException e) {
-            throw new BaseServiceRunException("SQL错误",e);
+            throw new BaseServiceRunException(SQLEXCEPTION,"SQL错误",e);
         }
     }
 
@@ -163,7 +164,7 @@ public class SimpleMysql implements AutoCloseable, Reposit {
         try {
             createContection().rollback(savepoint);
         } catch (SQLException e) {
-            throw new BaseServiceRunException("SQL错误",e);
+            throw new BaseServiceRunException(SQLEXCEPTION,"SQL错误",e);
         }
     }
 
@@ -172,7 +173,7 @@ public class SimpleMysql implements AutoCloseable, Reposit {
         try {
             return createContection().setSavepoint();
         } catch (SQLException e) {
-            throw new BaseServiceRunException("SQL错误",e);
+            throw new BaseServiceRunException(SQLEXCEPTION,"SQL错误",e);
         }
     }
 
@@ -181,7 +182,7 @@ public class SimpleMysql implements AutoCloseable, Reposit {
         try {
             return createContection().setSavepoint(name);
         } catch (SQLException e) {
-            throw new BaseServiceRunException("SQL错误",e);
+            throw new BaseServiceRunException(SQLEXCEPTION,"SQL错误",e);
         }
     }
 
@@ -198,7 +199,7 @@ public class SimpleMysql implements AutoCloseable, Reposit {
         try {
             createContection().setTransactionIsolation(level);
         } catch (SQLException e) {
-            throw new BaseServiceRunException("SQL错误",e);
+            throw new BaseServiceRunException(SQLEXCEPTION,"SQL错误",e);
         }
     }
 
@@ -260,7 +261,7 @@ public class SimpleMysql implements AutoCloseable, Reposit {
             logger.debug("SQL执行耗时：{}ms",(System.currentTimeMillis() - start));
             return update;
         } catch (SQLException e) {
-            throw new BaseServiceRunException("SQL错误",e);
+            throw new BaseServiceRunException(SQLEXCEPTION,"SQL错误",e);
         } finally {
             close(connection);
         }
@@ -391,7 +392,7 @@ public class SimpleMysql implements AutoCloseable, Reposit {
             logger.debug("SQL执行耗时：{}ms",(System.currentTimeMillis() - start));
             resolve.populateMap(resultSet,list);
         } catch (SQLException e) {
-            throw new BaseServiceRunException("SQL错误",e);
+            throw new BaseServiceRunException(SQLEXCEPTION,"SQL错误",e);
         } finally {
             close(contection);
         }
@@ -428,7 +429,7 @@ public class SimpleMysql implements AutoCloseable, Reposit {
             logger.debug("SQL执行耗时：{}ms",(System.currentTimeMillis() - start));
             resolve.populate(resultSet, clazz,list);
         } catch (SQLException e) {
-            throw new BaseServiceRunException("SQL错误",e);
+            throw new BaseServiceRunException(SQLEXCEPTION,"SQL错误",e);
         } finally {
             close(contection);
         }
@@ -550,7 +551,7 @@ public class SimpleMysql implements AutoCloseable, Reposit {
                 result += anInt;
             }
         } catch (SQLException e) {
-            throw new BaseServiceRunException("IO错误",e);
+            throw new BaseServiceRunException(IOEXCEPTION,"IO错误",e);
         } finally {
             close(connection);
         }

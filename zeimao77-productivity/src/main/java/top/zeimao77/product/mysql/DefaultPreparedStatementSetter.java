@@ -1,5 +1,7 @@
 package top.zeimao77.product.mysql;
 
+import top.zeimao77.product.exception.BaseServiceRunException;
+import static top.zeimao77.product.exception.ExceptionCodeDefinition.SQLEXCEPTION;
 import top.zeimao77.product.util.CalendarDateUtil;
 import top.zeimao77.product.util.LocalDateTimeUtil;
 
@@ -59,7 +61,7 @@ public class DefaultPreparedStatementSetter implements PreparedStatementSetter {
                 preparedStatement.setBytes(index, ((ByteBuffer) value).array());
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new BaseServiceRunException(SQLEXCEPTION,"SQL错误",e);
         }
     }
 

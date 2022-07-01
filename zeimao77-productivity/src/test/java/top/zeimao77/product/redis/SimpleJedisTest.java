@@ -2,7 +2,7 @@ package top.zeimao77.product.redis;
 
 import org.junit.jupiter.api.Test;
 import redis.clients.jedis.Jedis;
-import top.zeimao77.product.config.ComponentFactory;
+import top.zeimao77.product.factory.ComponentFactory;
 import top.zeimao77.product.main.BaseMain;
 
 import java.util.ArrayList;

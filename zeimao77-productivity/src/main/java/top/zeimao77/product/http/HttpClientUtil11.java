@@ -3,6 +3,7 @@ package top.zeimao77.product.http;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import top.zeimao77.product.exception.BaseServiceRunException;
+import static top.zeimao77.product.exception.ExceptionCodeDefinition.*;
 
 import java.io.IOException;
 import java.net.URI;
@@ -93,7 +94,7 @@ public class HttpClientUtil11 implements AutoCloseable,IHttpClient {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             result = response.body();
         } catch (IOException e) {
-            throw new BaseServiceRunException("GET请求IO异常",e);
+            throw new BaseServiceRunException(IOEXCEPTION,"GET请求IO异常",e);
         } catch (InterruptedException e) {
             logger.error("线程中断错误",e);
             Thread.currentThread().interrupt();
@@ -128,7 +129,7 @@ public class HttpClientUtil11 implements AutoCloseable,IHttpClient {
             HttpResponse<String> response = client.send(request,HttpResponse.BodyHandlers.ofString());
             result = response.body();
         } catch (IOException e) {
-            throw new BaseServiceRunException("POST请求IO异常",e);
+            throw new BaseServiceRunException(IOEXCEPTION,"POST请求IO异常",e);
         } catch (InterruptedException e){
             logger.error("线程中断错误",e);
             Thread.currentThread().interrupt();

@@ -6,6 +6,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import top.zeimao77.product.exception.BaseServiceRunException;
+import static top.zeimao77.product.exception.ExceptionCodeDefinition.*;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -47,9 +48,9 @@ public abstract class AbstractXmlBuiler<T> {
             builder = factory.newDocumentBuilder();
             document = builder.parse(is);
         } catch (ParserConfigurationException e) {
-            throw new BaseServiceRunException("XML解析配置错误",e);
+            throw new BaseServiceRunException(WRONG_SOURCE,"XML解析配置错误",e);
         } catch (IOException e) {
-            throw new BaseServiceRunException("IO错误",e);
+            throw new BaseServiceRunException(IOEXCEPTION,"IO错误",e);
         } catch (SAXException e) {
             throw new BaseServiceRunException("XML文件解析错误",e);
         }
@@ -66,9 +67,9 @@ public abstract class AbstractXmlBuiler<T> {
             builder = factory.newDocumentBuilder();
             document = builder.parse(file);
         } catch (ParserConfigurationException e) {
-            throw new BaseServiceRunException("XML解析配置错误",e);
+            throw new BaseServiceRunException(WRONG_SOURCE,"XML解析配置错误",e);
         } catch (IOException e) {
-            throw new BaseServiceRunException("IO错误",e);
+            throw new BaseServiceRunException(IOEXCEPTION,"IO错误",e);
         } catch (SAXException e) {
             throw new BaseServiceRunException("XML文件解析错误",e);
         }
@@ -85,9 +86,9 @@ public abstract class AbstractXmlBuiler<T> {
             builder = factory.newDocumentBuilder();
             document = builder.parse(path);
         } catch (ParserConfigurationException e) {
-            throw new BaseServiceRunException("XML解析配置错误",e);
+            throw new BaseServiceRunException(WRONG_SOURCE,"XML解析配置错误",e);
         } catch (IOException e) {
-            throw new BaseServiceRunException("IO错误",e);
+            throw new BaseServiceRunException(IOEXCEPTION,"IO错误",e);
         } catch (SAXException e) {
             throw new BaseServiceRunException("XML文件解析错误",e);
         }

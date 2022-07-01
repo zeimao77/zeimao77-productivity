@@ -2,9 +2,8 @@ package top.zeimao77.product.util;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import top.zeimao77.product.exception.BaseServiceRunException;
+import static top.zeimao77.product.exception.ExceptionCodeDefinition.*;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
@@ -26,7 +25,7 @@ public class BeanUtil {
             Map<String, Object> describe = PropertyUtils.describe(obj);
             return describe;
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            throw new BaseServiceRunException("错误",e);
+            throw new BaseServiceRunException(WRONG_SOURCE,"错误",e);
         }
     }
 
@@ -43,7 +42,7 @@ public class BeanUtil {
             BeanUtils.populate(bean,map);
             return bean;
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            throw new BaseServiceRunException("错误",e);
+            throw new BaseServiceRunException(WRONG_SOURCE,"错误",e);
         }
     }
 
@@ -56,7 +55,7 @@ public class BeanUtil {
         try {
             return PropertyUtils.getPropertyType(bean,name);
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            throw new BaseServiceRunException("获取属性类型错误",e);
+            throw new BaseServiceRunException(WRONG_SOURCE,"获取属性类型错误",e);
         }
     }
 
@@ -70,7 +69,7 @@ public class BeanUtil {
         try {
             PropertyUtils.setProperty(bean,name,value);
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            throw new BaseServiceRunException("设置属性错误",e);
+            throw new BaseServiceRunException(WRONG_SOURCE,"设置属性错误",e);
         }
     }
 
@@ -84,7 +83,7 @@ public class BeanUtil {
         try {
             return PropertyUtils.getProperty(bean,name);
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            throw new BaseServiceRunException("获取属性错误",e);
+            throw new BaseServiceRunException(WRONG_SOURCE,"获取属性错误",e);
         }
     }
 

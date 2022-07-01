@@ -1,6 +1,8 @@
 package top.zeimao77.product.util;
 
 import top.zeimao77.product.exception.BaseServiceRunException;
+import static top.zeimao77.product.exception.ExceptionCodeDefinition.IOEXCEPTION;
+import static top.zeimao77.product.exception.ExceptionCodeDefinition.WRONG_SOURCE;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -62,7 +64,7 @@ public class StreamUtil {
             PrintWriter printWriter = new PrintWriter(writer,false);
             return printWriter;
         } catch (FileNotFoundException e) {
-            throw new BaseServiceRunException("文件未找到");
+            throw new BaseServiceRunException(WRONG_SOURCE,"文件未找到");
         }
     }
 
@@ -82,7 +84,7 @@ public class StreamUtil {
             }
             zipos.closeEntry();
         } catch (IOException e) {
-            throw new BaseServiceRunException("IO错误",e);
+            throw new BaseServiceRunException(IOEXCEPTION,"IO错误",e);
         }
     }
 

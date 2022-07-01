@@ -1,6 +1,7 @@
 package top.zeimao77.product.mysql;
 
 import top.zeimao77.product.exception.BaseServiceRunException;
+import static top.zeimao77.product.exception.ExceptionCodeDefinition.WRONG_SOURCE;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -62,7 +63,7 @@ public class BaseSearch {
             return;
         Matcher matcher = pattern.matcher(str);
         if(!matcher.matches()){
-            throw new BaseServiceRunException("SQL不允许包含敏感字符");
+            throw new BaseServiceRunException(WRONG_SOURCE,"SQL不允许包含敏感字符");
         }
     }
 }

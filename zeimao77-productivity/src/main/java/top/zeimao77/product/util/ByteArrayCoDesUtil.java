@@ -1,6 +1,7 @@
 package top.zeimao77.product.util;
 
 import top.zeimao77.product.exception.BaseServiceRunException;
+import static top.zeimao77.product.exception.ExceptionCodeDefinition.IOEXCEPTION;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -123,7 +124,7 @@ public class ByteArrayCoDesUtil {
             zos.closeEntry();
             result = baos.toByteArray();
         } catch (IOException e) {
-            throw new BaseServiceRunException("IO错误",e);
+            throw new BaseServiceRunException(IOEXCEPTION,"IO错误",e);
         }
         return result;
     }
@@ -149,7 +150,7 @@ public class ByteArrayCoDesUtil {
                 bs = baos.toByteArray();
             }
         } catch (IOException e) {
-            throw new BaseServiceRunException("IO错误",e);
+            throw new BaseServiceRunException(IOEXCEPTION,"IO错误",e);
         }
         return bs;
     }

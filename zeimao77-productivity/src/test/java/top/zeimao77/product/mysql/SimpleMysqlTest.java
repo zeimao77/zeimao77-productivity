@@ -1,14 +1,12 @@
 package top.zeimao77.product.mysql;
 
 import org.junit.jupiter.api.Test;
-import top.zeimao77.product.config.ComponentFactory;
+import top.zeimao77.product.factory.ComponentFactory;
 import top.zeimao77.product.main.BaseMain;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class SimpleMysqlTest extends BaseMain {
 
