@@ -85,10 +85,16 @@ public abstract class AbstractRepository<T,W> {
         return repositoryImpl.batchUpdate(list,(o1,o2)->this.upsert(o1,o2));
     }
 
+
+    protected void beforeInsert(SQL sql,T t) {};
+    protected void afterInsert(T t) {};
     public int insert(T t) {
         SQL sql = new SQL();
         insert(sql,t);
-        return repositoryImpl.updateByResolver(sql);
+        beforeInsert(sql,t);
+        int i = repositoryImpl.updateByResolver(sql);
+        afterInsert(t);
+        return i;
     }
 
     public T insertAndGet(T t) {
@@ -97,22 +103,38 @@ public abstract class AbstractRepository<T,W> {
         return id == null ? null : get(id);
     }
 
+    protected void beforeUpsert(SQL sql,T t){};
+    protected void afterUpsert(T t){};
     public int upsert(T t) {
         SQL sql = new SQL();
         upsert(sql,t);
-        return repositoryImpl.updateByResolver(sql);
+        beforeUpsert(sql,t);
+        int i = repositoryImpl.updateByResolver(sql);
+        afterUpsert(t);
+        return i;
     }
 
+
+    protected void beforeUpdate(SQL sql,T t){};
+    protected void afterUpdate(T t){};
     public int update(T t) {
         SQL sql = new SQL();
         update(sql,t);
-        return repositoryImpl.updateByResolver(sql);
+        beforeUpdate(sql,t);
+        int i = repositoryImpl.updateByResolver(sql);
+        afterUpdate(t);
+        return i;
     }
 
+    protected void beforeDelete(SQL sql,W id){};
+    protected void afterDelete(W id){};
     public int delete(W id) {
         SQL sql = new SQL();
         delete(sql,id);
-        return repositoryImpl.updateByResolver(sql);
+        beforeDelete(sql,id);
+        int i = repositoryImpl.updateByResolver(sql);
+        afterDelete(id);
+        return i;
     }
 
     public T get(W id) {
