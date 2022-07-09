@@ -103,13 +103,11 @@ public class ComponentFactory {
         return simpleEmailSender;
     }
 
+    public static final String APP_DEFAULT_PRINTWRITER_PATH = "app_default_printwriter_path";
+
     public static PrintWriter createPrintWriter(String key) {
         PrintWriter printStream = StreamUtil.printWriter(LocalContext.getString(key));
         return printStream;
-    }
-
-    public static PrintWriter createPrintWriter() {
-        return createPrintWriter("app_default_printwriter_path");
     }
 
 }

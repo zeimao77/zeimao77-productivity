@@ -20,6 +20,7 @@ public interface ExceptionCodeDefinition extends LongBitMap {
     Integer NO_PERMISSION = 0x001003;  // 没有权限;
     Integer TRY_AGAIN_LATER = 0x001004; // 稍后再试;
     Integer WRONG_SOURCE = 0x001005 | NON_RETRYABLE;   // 错误的参数或源;
+    Integer NOT_SUPPORTED = 0x001006 | NON_RETRYABLE;   // 不支持的操作;
 
     Integer IOEXCEPTION = 0x002001 | CONVERTIBLE;  // IO错误异常;
     Integer SQLEXCEPTION = 0x002002 | CONVERTIBLE;  // SQL错误异常;

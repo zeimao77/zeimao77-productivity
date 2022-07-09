@@ -3,6 +3,7 @@ package top.zeimao77.product.mysql;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import top.zeimao77.product.exception.BaseServiceRunException;
+import static top.zeimao77.product.exception.ExceptionCodeDefinition.*;
 import top.zeimao77.product.model.Orderd;
 import top.zeimao77.product.util.CalendarDateUtil;
 import top.zeimao77.product.util.LocalDateTimeUtil;
@@ -337,8 +338,59 @@ public class DefaultResultSetResolve implements ResultSetResolve{
         } catch (InvocationTargetException e) {
             throw new BaseServiceRunException("错误",e);
         } catch (NoSuchMethodException e) {
-            throw new BaseServiceRunException("构造方法未找到",e);
+            throw new BaseServiceRunException(NOT_SUPPORTED,"构造方法未找到",e);
         }
+    }
+
+    public <T> T mapRow(ResultSet rs, int rowNo, Class<T> clazz,ResultSetMetaData rsmd) throws SQLException {
+        T obj = newObj(clazz);
+        int colCount = rsmd.getColumnCount();
+        for(int i = 1;i<=colCount;i++){
+            String columnLabel = rsmd.getColumnLabel(i);
+            Object fieldValue = null;
+            if(!sorted) {
+                synchronized (DefaultResultSetResolve.class) {
+                    if(!sorted) {
+                        resovers.sort(Orderd::compareTo);
+                        sorted = true;
+                    }
+                }
+            }
+            Object value = rs.getObject(i);
+            try{
+                Field field = clazz.getDeclaredField(columnLabel);
+                // 基本数据类型
+                if(value == null) {
+                    fieldValue = null;
+                } else if(field.getType() == long.class) {
+                    fieldValue = value == null ? 0L : Long.valueOf(value.toString()).longValue();
+                } else if(field.getType() == int.class) {
+                    fieldValue = value == null ? 0 : Integer.valueOf(value.toString()).intValue();
+                } else if(field.getType() == float.class) {
+                    fieldValue = value == null ? 0F : Float.valueOf(value.toString()).floatValue();
+                } else if(field.getType() == double.class) {
+                    fieldValue = value == null ? 0D : Double.valueOf(value.toString()).doubleValue();
+                } else if(field.getType() == short.class) {
+                    fieldValue = value == null ? 0 : Short.valueOf(value.toString()).shortValue();
+                } else if(field.getType() == byte.class) {
+                    fieldValue = value == null ? 0x00 : Byte.valueOf(value.toString());
+                } else if(field.getType() == char.class) {
+                    fieldValue = value == null ? 0x00 : value.toString().charAt(0);
+                } else if(field.getType() == boolean.class) {
+                    fieldValue = value == null ? false : Boolean.valueOf(value.toString()).booleanValue();
+                } else {
+                    // 非基本数据类型
+                    fieldValue = resolve(value,field.getType());
+                }
+                field.setAccessible(true);
+                field.set(obj,fieldValue);
+            } catch (NoSuchFieldException e) {
+                logger.warn("字段未找到:{}",columnLabel);
+            } catch (IllegalAccessException e) {
+                throw new BaseServiceRunException("参数错误",e);
+            }
+        }
+        return obj;
     }
 
     /**
@@ -353,58 +405,12 @@ public class DefaultResultSetResolve implements ResultSetResolve{
         ResultSetMetaData rsmd = null;
         try {
             rsmd = rs.getMetaData();
-            int colCount = rsmd.getColumnCount();
             while(rs.next()){
-                T obj = newObj(clazz);
-                for(int i = 1;i<=colCount;i++){
-                    String columnLabel = rsmd.getColumnLabel(i);
-                    Object fieldValue = null;
-                    if(!sorted) {
-                        synchronized (DefaultResultSetResolve.class) {
-                            if(!sorted) {
-                                resovers.sort(Orderd::compareTo);
-                                sorted = true;
-                            }
-                        }
-                    }
-                    Object value = rs.getObject(i);
-                    try{
-                        Field field = clazz.getDeclaredField(columnLabel);
-                        // 基本数据类型
-                        if(value == null) {
-                           fieldValue = null;
-                        } else if(field.getType() == long.class) {
-                            fieldValue = value == null ? 0L : Long.valueOf(value.toString()).longValue();
-                        } else if(field.getType() == int.class) {
-                            fieldValue = value == null ? 0 : Integer.valueOf(value.toString()).intValue();
-                        } else if(field.getType() == float.class) {
-                            fieldValue = value == null ? 0F : Float.valueOf(value.toString()).floatValue();
-                        } else if(field.getType() == double.class) {
-                            fieldValue = value == null ? 0D : Double.valueOf(value.toString()).doubleValue();
-                        } else if(field.getType() == short.class) {
-                            fieldValue = value == null ? 0 : Short.valueOf(value.toString()).shortValue();
-                        } else if(field.getType() == byte.class) {
-                            fieldValue = value == null ? 0x00 : Byte.valueOf(value.toString());
-                        } else if(field.getType() == char.class) {
-                            fieldValue = value == null ? 0x00 : value.toString().charAt(0);
-                        } else if(field.getType() == boolean.class) {
-                            fieldValue = value == null ? false : Boolean.valueOf(value.toString()).booleanValue();
-                        } else {
-                            // 非基本数据类型
-                            fieldValue = resolve(value,field.getType());
-                        }
-                        field.setAccessible(true);
-                        field.set(obj,fieldValue);
-                    } catch (NoSuchFieldException e) {
-                        logger.warn("字段未找到:{}",columnLabel);
-                    } catch (IllegalAccessException e) {
-                        throw new BaseServiceRunException("参数错误",e);
-                    }
-                }
+                T obj = mapRow(rs,rs.getRow(),clazz,rsmd);
                 list.add(obj);
             }
         } catch (SQLException e) {
-            throw new BaseServiceRunException("SQL异常",e);
+            throw new BaseServiceRunException(SQLEXCEPTION,"SQL异常",e);
         }
     }
 
@@ -445,7 +451,7 @@ public class DefaultResultSetResolve implements ResultSetResolve{
                 list.add(t);
             }
         } catch (SQLException e) {
-            throw new BaseServiceRunException("SQL异常",e);
+            throw new BaseServiceRunException(SQLEXCEPTION,"SQL异常",e);
         }
     }
 

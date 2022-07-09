@@ -67,7 +67,7 @@ public class SQL implements StatementParamResolver {
         if(alias == null || columnName.equals(alias)) {
             return select(columnName);
         } else {
-            String labelName = String.format("%s AS %s",columnName,alias);
+            String labelName = String.format("%s AS \"%s\"",columnName,alias);
             return select(labelName);
         }
     }
