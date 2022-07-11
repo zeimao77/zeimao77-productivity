@@ -1,7 +1,8 @@
-package top.zeimao77.product.mysql;
+package top.zeimao77.product.sql;
 
 import top.zeimao77.product.exception.BaseServiceRunException;
 import static top.zeimao77.product.exception.ExceptionCodeDefinition.SQLEXCEPTION;
+
 import top.zeimao77.product.util.CalendarDateUtil;
 import top.zeimao77.product.util.LocalDateTimeUtil;
 

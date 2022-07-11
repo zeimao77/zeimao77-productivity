@@ -1,4 +1,4 @@
-package top.zeimao77.product.mysql;
+package top.zeimao77.product.sql;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,7 +23,7 @@ import java.util.Map;
 /**
  * ResultSet结果集解析器
  */
-public class DefaultResultSetResolve implements ResultSetResolve{
+public class DefaultResultSetResolve implements ResultSetResolve {
 
     private static Logger logger = LogManager.getLogger(DefaultResultSetResolve.class);
     public static final DefaultResultSetResolve INSTANCE = new DefaultResultSetResolve();

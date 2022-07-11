@@ -1,4 +1,4 @@
-package top.zeimao77.product.mysql;
+package top.zeimao77.product.sql;
 
 import top.zeimao77.product.model.ImmutablePair;
 
@@ -113,22 +113,7 @@ public class SelectCond extends PageSearch {
         this.searchCondNodeList = searchCondNodeList;
     }
 
-    public static class SelectCondNode {
-
-        public static final String BIND_AND = SQL.BIND_AND;
-        public static final String BIND_OR = SQL.BIND_OR;
-        public static final String COND_QIN = SQL.COND_QIN;
-        public static final String COND_QNIN = SQL.COND_QNIN;
-        public static final String COND_QIS = SQL.COND_QIS;
-        public static final String COND_QNE = SQL.COND_QNE;
-        public static final String COND_QLIKE = SQL.COND_QLIKE;
-        public static final String COND_QLLIKE = SQL.COND_QLLIKE;  // 左边添加百分号
-        public static final String COND_QRLIKE = SQL.COND_QRLIKE;  // 右边添加百分号
-        public static final String COND_QGT = SQL.COND_QGT;
-        public static final String COND_QGTE = SQL.COND_QGTE;
-        public static final String COND_QLT = SQL.COND_QLT;
-        public static final String COND_QLTE = SQL.COND_QLTE;
-        public static final String COND_QREGEXP = SQL.COND_QREGEXP;
+    public static class SelectCondNode implements IWhere {
 
         private String bind;
         private String fieldName;

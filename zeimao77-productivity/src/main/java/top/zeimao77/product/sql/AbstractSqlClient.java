@@ -1,0 +1,372 @@
+package top.zeimao77.product.sql;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import top.zeimao77.product.exception.BaseServiceRunException;
+import top.zeimao77.product.util.AssertUtil;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+
+import static top.zeimao77.product.exception.ExceptionCodeDefinition.IOEXCEPTION;
+import static top.zeimao77.product.exception.ExceptionCodeDefinition.SQLEXCEPTION;
+
+public abstract class AbstractSqlClient implements Reposit,AutoCloseable {
+
+    private static Logger logger = LogManager.getLogger(AbstractSqlClient.class);
+
+    protected PreparedStatementSetter preparedStatementSetter;
+    protected ResultSetResolve resultSetResolvel;
+    protected int queryTimeout = 10;
+
+    protected ConnectFacotry connectFacotry;
+
+    public AbstractSqlClient(ConnectFacotry connectFacotry, PreparedStatementSetter preparedStatementSetter, ResultSetResolve resultSetResolvel) {
+        this.connectFacotry = connectFacotry;
+        this.preparedStatementSetter = preparedStatementSetter;
+        this.resultSetResolvel = resultSetResolvel;
+    }
+
+    public <T> ArrayList<T> selectByResolver(StatementParamResolver sql,ResultSetResolve resolve, Class<T> clazz) {
+        ArrayList<StatementParameter> statementParams = sql.getStatementParams();
+        Consumer<PreparedStatement> con = o -> {
+            for (StatementParameter statementParam : statementParams) {
+                setParam(o,statementParam.getIndex(),statementParam.getJavaType(),statementParam.getJdbcType()
+                        ,statementParam.getValue());
+            }
+        };
+        return select(sql.getSql(),con,resolve,clazz);
+    }
+
+    @Override
+    public int updateByResolver(StatementParamResolver sql) {
+        ArrayList<StatementParameter> statementParams = sql.getStatementParams();
+        Consumer<PreparedStatement> con = o -> {
+            for (StatementParameter statementParam : statementParams) {
+                setParam(o,statementParam.getIndex(),statementParam.getJavaType(),statementParam.getJdbcType()
+                        ,statementParam.getValue());
+            }
+        };
+        return update(sql.getSql(),con);
+    }
+
+    @Override
+    public <Z> int batchUpdate(List<Z> list, BiConsumer<SQL, Z> con) {
+        long start = System.currentTimeMillis();
+        PreparedStatement preparedStatement = null;
+        String lastSql = null;
+        int result = 0;
+        Connection connection = createContection();
+        try {
+            for (Z z : list) {
+                SQL sql = new SQL();
+                con.accept(sql,z);
+                if(!sql.getSql().equals(lastSql) || preparedStatement == null) {
+                    lastSql = sql.getSql();
+                    logger.debug("Prepared SQL:{}",lastSql);
+                    if(preparedStatement != null) {
+                        int[] ints = preparedStatement.executeBatch();
+                        for (int anInt : ints) {
+                            result += anInt;
+                        }
+                    }
+                    preparedStatement = connection.prepareStatement(sql.getSql());
+                }
+                ArrayList<StatementParameter> statementParamterList = sql.getStatementParams();
+                for (StatementParameter param : statementParamterList) {
+                    setParam(preparedStatement,param.getIndex(),param.getJavaType(),param.getJdbcType()
+                            ,param.getValue());
+                }
+                preparedStatement.addBatch();
+            }
+            int[] ints = preparedStatement.executeBatch();
+            for (int anInt : ints) {
+                result += anInt;
+            }
+        } catch (SQLException e) {
+            throw new BaseServiceRunException(IOEXCEPTION,"IO错误",e);
+        } finally {
+            close(connection);
+        }
+        logger.debug("SQL执行耗时：{}ms",(System.currentTimeMillis() - start));
+        return result;
+    }
+
+    @Override
+    public int update(String sql) {
+        return update(sql,null);
+    }
+
+    public <T> ArrayList<T> selectListObj(String sql,ResultSetResolve resolve, Class<T> clazz) {
+        return select(sql,null,resolve,clazz);
+    }
+
+    public int update(String sqlt,Object params) {
+        DefaultStatementParamResolver defaultStatementParamResolver = new DefaultStatementParamResolver(sqlt, params);
+        defaultStatementParamResolver.resolve();
+        ArrayList<StatementParameter> statementParams = defaultStatementParamResolver.getStatementParams();
+        Consumer<PreparedStatement> con = o -> {
+            for (StatementParameter statementParam : statementParams) {
+                setParam(o,statementParam.getIndex(),statementParam.getJavaType(),statementParam.getJdbcType(),statementParam.getValue());
+            }
+        };
+        return update(defaultStatementParamResolver.getSql(),con);
+    }
+
+    public int update(String sql,Consumer<PreparedStatement> statementParamSetter) {
+        Connection connection = createContection();
+        try {
+            logger.debug("Prepared SQL:{}",sql);
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            if(statementParamSetter != null) {
+                statementParamSetter.accept(preparedStatement);
+            }
+            long start = System.currentTimeMillis();
+            int update = preparedStatement.executeUpdate();
+            logger.debug("SQL执行耗时：{}ms",(System.currentTimeMillis() - start));
+            return update;
+        } catch (SQLException e) {
+            throw new BaseServiceRunException(SQLEXCEPTION,"SQL错误",e);
+        } finally {
+            close(connection);
+        }
+    }
+
+    public <T> ArrayList<T> select(String sql, Consumer<PreparedStatement> statementParamSetter
+            , ResultSetResolve resolve, Class<T> clazz){
+        ArrayList<T> list = new ArrayList<>();
+        Connection contection = createContection();
+        try{
+            logger.debug("Prepared SQL:{}",sql);
+            PreparedStatement preparedStatement = contection.prepareStatement(sql);
+            if(statementParamSetter != null) {
+                statementParamSetter.accept(preparedStatement);
+            }
+            preparedStatement.setQueryTimeout(queryTimeout);
+            long start = System.currentTimeMillis();
+            ResultSet resultSet = preparedStatement.executeQuery();
+            logger.debug("SQL执行耗时：{}ms",(System.currentTimeMillis() - start));
+            resolve.populate(resultSet, clazz,list);
+        } catch (SQLException e) {
+            throw new BaseServiceRunException(SQLEXCEPTION,"SQL错误",e);
+        } finally {
+            close(contection);
+        }
+        return list;
+    }
+
+    /**
+     * 为preparedStatement对象设置参数
+     * @param preparedStatement
+     * @param index 参数位置
+     * @param javaType JAVA类型
+     * @param jdbcType MYSQL数据库类型
+     * @param value 值
+     */
+    protected void setParam(PreparedStatement preparedStatement,int index,Class<?> javaType,int jdbcType,Object value) {
+        logger.debug("param({}):{}",index,value);
+        this.preparedStatementSetter.setParam(preparedStatement,index,javaType,jdbcType,value);
+    }
+
+
+    /**
+     * 注意: 返回值需要使用 result 作为别名
+     * @param sqlt SQL语句 使用#{*}点位符替换 如果参数是数组使用?占位
+     * @param param  参数 支持 Map、Bean、数组参数
+     * @return 查询结果
+     */
+    public ArrayList<String> selectListString(String sqlt, Object param) {
+        DefaultStatementParamResolver defaultStatementParamResolver = new DefaultStatementParamResolver(sqlt, param);
+        defaultStatementParamResolver.resolve();
+        ArrayList<StatementParameter> statementParams = defaultStatementParamResolver.getStatementParams();
+        Consumer<PreparedStatement> con = o -> {
+            for (StatementParameter statementParam : statementParams) {
+                setParam(o,statementParam.getIndex(),statementParam.getJavaType(),statementParam.getJdbcType()
+                        ,statementParam.getValue());
+            }
+        };
+        List<ResultStr> objects = select(defaultStatementParamResolver.getSql(),con,DefaultResultSetResolve.INSTANCE,ResultStr.class);
+        ArrayList<String> collect = objects.stream().map(ResultStr::getResult)
+                .collect(ArrayList::new,ArrayList::add,ArrayList::addAll);
+        return collect;
+    }
+
+    public String selectString(String sqlt, Object param) {
+        ArrayList<String> strings = selectListString(sqlt, param);
+        return strings.isEmpty() ? null : strings.get(0);
+    }
+
+    public Long selectLong(String sqlt,Object param) {
+        String s = selectString(sqlt, param);
+        return s == null ? null : Long.valueOf(s);
+    }
+
+    public ArrayList<Map<String,Object>> selectListMap(String sql, Consumer<PreparedStatement> statementParamSetter, ResultSetResolve resolve) {
+        ArrayList<Map<String,Object>> list = new ArrayList<>();
+        Connection contection = createContection();
+        try{
+            logger.debug("Prepared SQL:{}",sql);
+            PreparedStatement preparedStatement = contection.prepareStatement(sql);
+            statementParamSetter.accept(preparedStatement);
+            preparedStatement.setQueryTimeout(queryTimeout);
+            long start = System.currentTimeMillis();
+            ResultSet resultSet = preparedStatement.executeQuery();
+            logger.debug("SQL执行耗时：{}ms",(System.currentTimeMillis() - start));
+            resolve.populateMap(resultSet,list);
+        } catch (SQLException e) {
+            throw new BaseServiceRunException(SQLEXCEPTION,"SQL错误",e);
+        } finally {
+            close(contection);
+        }
+        return list;
+    }
+
+
+    @Override
+    public <T> ArrayList<T> selectByResolver(StatementParamResolver sql, Class<T> clazz) {
+        ArrayList<StatementParameter> statementParams = sql.getStatementParams();
+        Consumer<PreparedStatement> con = o -> {
+            for (StatementParameter statementParam : statementParams) {
+                setParam(o,statementParam.getIndex(),statementParam.getJavaType(),statementParam.getJdbcType()
+                        ,statementParam.getValue());
+            }
+        };
+        return select(sql.getSql(),con,this.resultSetResolvel,clazz);
+    }
+
+    @Override
+    public <T> ArrayList<T> selectListObj(String sql, Class<T> clazz) {
+        return select(sql,null,this.resultSetResolvel,clazz);
+    }
+
+    @Override
+    public ArrayList<Map<String, Object>> selectListMap(String sqlt, Object param) {
+        DefaultStatementParamResolver defaultStatementParamResolver = new DefaultStatementParamResolver(sqlt, param);
+        defaultStatementParamResolver.resolve();
+        ArrayList<StatementParameter> statementParams = defaultStatementParamResolver.getStatementParams();
+        Consumer<PreparedStatement> con = o -> {
+            for (StatementParameter statementParam : statementParams) {
+                setParam(o,statementParam.getIndex(),statementParam.getJavaType(),statementParam.getJdbcType()
+                        ,statementParam.getValue());
+            }
+        };
+        return selectListMap(sqlt,con,this.resultSetResolvel);
+    }
+
+    public <T> T selectFirstObj(String sqlt,Object param,Class<T> clazz) {
+        DefaultStatementParamResolver defaultStatementParamResolver = new DefaultStatementParamResolver(sqlt, param);
+        defaultStatementParamResolver.resolve();
+        ArrayList<StatementParameter> statementParams = defaultStatementParamResolver.getStatementParams();
+        Consumer<PreparedStatement> con = o -> {
+            for (StatementParameter statementParam : statementParams) {
+                setParam(o,statementParam.getIndex(),statementParam.getJavaType(),statementParam.getJdbcType()
+                        ,statementParam.getValue());
+            }
+        };
+        ArrayList<T> select = select(defaultStatementParamResolver.getSql(), con, this.resultSetResolvel, clazz);
+        return select.isEmpty() ? null : select.get(0);
+    }
+
+
+    public <T> ArrayList<T> call(String sqlt, Map<String,Object> param, Class<T> clazz) {
+        return call(sqlt,param,this.resultSetResolvel,clazz);
+    }
+
+    /**
+     * 调用存储过程
+     * 示例：call("call clean_table_student(#{resultCode,javaType=Integer,jdbcType=INT,mode=OUT}
+     *          ,#{message,javaType=String,MODE=OUT,jdbcType=VARCHAR});",param);
+     * @param sqlt
+     * @param param
+     */
+    public <T> ArrayList<T> call(String sqlt, Map<String,Object> param, ResultSetResolve resolve, Class<T> clazz) {
+        AssertUtil.notNull(param,"参数 param 必需");
+        ArrayList<T> resultList = new ArrayList<>();
+        DefaultStatementParamResolver resolver = new DefaultStatementParamResolver(sqlt,param);
+        resolver.resolve();
+        String sql = resolver.getSql();
+        ArrayList<StatementParameter> statementParams = resolver.getStatementParams();
+        ArrayList<StatementParameter> outParams = new ArrayList<>();
+        Connection contection = createContection();
+        try {
+            logger.debug("Prepared SQL:{}",sql);
+            CallableStatement callableStatement = contection.prepareCall(sql);
+            callableStatement.setQueryTimeout(queryTimeout);
+            for (StatementParameter statementParam : statementParams) {
+                if(statementParam.getMode() == 1) {
+                    setParam(callableStatement,statementParam.getIndex(),statementParam.getJavaType(),statementParam.getJdbcType(),statementParam.getValue());
+                } else if(statementParam.getMode() == 2) {
+                    callableStatement.registerOutParameter(statementParam.getIndex(),statementParam.getJdbcType());
+                    outParams.add(statementParam);
+                }
+            }
+            long start = System.currentTimeMillis();
+            callableStatement.execute();
+            logger.debug("SQL执行耗时：{}ms",(System.currentTimeMillis() - start));
+            ResultSet resultSet = callableStatement.getResultSet();
+            if(resultSet != null && clazz != null && clazz != Void.class) {
+                resolve.populate(resultSet,clazz,resultList);
+            }
+            for (StatementParameter outParam : outParams) {
+                Object object = callableStatement.getObject(outParam.getIndex());
+                Object out = resolve.resolve(object, outParam.getJavaType());
+                param.put(outParam.getName(),out);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            close(contection);
+        }
+        return resultList;
+    }
+
+
+    public Connection createContection() {
+        return this.connectFacotry.createContection();
+    }
+
+    public void close(Connection connection) {
+        this.connectFacotry.close(connection);
+    }
+
+    @Override
+    public void close() throws Exception {
+        this.connectFacotry.close();
+    }
+
+    public PreparedStatementSetter getPreparedStatementSetter() {
+        return preparedStatementSetter;
+    }
+
+    public void setPreparedStatementSetter(PreparedStatementSetter preparedStatementSetter) {
+        this.preparedStatementSetter = preparedStatementSetter;
+    }
+
+    public ResultSetResolve getResultSetResolvel() {
+        return resultSetResolvel;
+    }
+
+    public void setResultSetResolvel(ResultSetResolve resultSetResolvel) {
+        this.resultSetResolvel = resultSetResolvel;
+    }
+
+    public int getQueryTimeout() {
+        return queryTimeout;
+    }
+
+    public void setQueryTimeout(int queryTimeout) {
+        this.queryTimeout = queryTimeout;
+    }
+
+    public ConnectFacotry getConnectFacotry() {
+        return connectFacotry;
+    }
+
+    public void setConnectFacotry(ConnectFacotry connectFacotry) {
+        this.connectFacotry = connectFacotry;
+    }
+}

@@ -1,4 +1,4 @@
-package top.zeimao77.product.mysql;
+package top.zeimao77.product.sql;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -7,12 +7,13 @@ import java.io.Closeable;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.BiConsumer;
 
 /**
  * 一个仅将可执行SQL输出的SQL执行器
  */
-public class OnlyPrintReposit implements Reposit, Closeable {
+public class OnlyPrintReposit implements  Reposit, Closeable {
 
     private static Logger logger = LogManager.getLogger(OnlyPrintReposit.class);
 
@@ -56,6 +57,26 @@ public class OnlyPrintReposit implements Reposit, Closeable {
         return 0;
     }
 
+    @Override
+    public int update(String sql) {
+        logger.debug(sql);
+        writer.println(sql);
+        return 0;
+    }
+
+    @Override
+    public <T> ArrayList<T> selectListObj(String sql, Class<T> clazz) {
+        logger.debug(sql);
+        writer.println(sql);
+        return new ArrayList<>();
+    }
+
+    @Override
+    public ArrayList<Map<String, Object>> selectListMap(String sqlt, Object param) {
+        logger.debug(sqlt);
+        writer.println(sqlt);
+        return new ArrayList<>();
+    }
 
     @Override
     public void close() {

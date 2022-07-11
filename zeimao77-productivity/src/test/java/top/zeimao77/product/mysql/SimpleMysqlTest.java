@@ -3,6 +3,7 @@ package top.zeimao77.product.mysql;
 import org.junit.jupiter.api.Test;
 import top.zeimao77.product.factory.ComponentFactory;
 import top.zeimao77.product.main.BaseMain;
+import top.zeimao77.product.sql.SQL;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,7 +23,6 @@ class SimpleMysqlTest extends BaseMain {
      *   PRIMARY KEY (`demo_id`)
      * ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
      */
-
     public SimpleMysql simpleMysql = ComponentFactory.createSimpleMysql("mysql_top_zeimao77");
 
     @Test

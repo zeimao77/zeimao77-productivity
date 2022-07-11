@@ -1,20 +1,20 @@
-package top.zeimao77.product.mysql;
+package top.zeimao77.product.oracle;
 
 import org.apache.logging.log4j.LogManager;
-
 import org.apache.logging.log4j.Logger;
+import top.zeimao77.product.mysql.SimpleMysql;
 import top.zeimao77.product.sql.*;
 
-public class SimpleMysql extends AbstractSqlClient {
+public class SimpleOracle  extends AbstractSqlClient {
 
     private static Logger logger = LogManager.getLogger(SimpleMysql.class);
-    private String testSql = "SELECT USER() AS result";
+    private String testSql = "SELECT 1 AS result FROM dual";
 
-    public SimpleMysql(ConnectFacotry connectFacotry) {
+    public SimpleOracle(ConnectFacotry connectFacotry) {
         super(connectFacotry,DefaultPreparedStatementSetter.INSTANCE,DefaultResultSetResolve.INSTANCE);
     }
 
-    public SimpleMysql(ConnectFacotry connectFacotry, PreparedStatementSetter preparedStatementSetter, ResultSetResolve resultSetResolvel) {
+    public SimpleOracle(ConnectFacotry connectFacotry, PreparedStatementSetter preparedStatementSetter, ResultSetResolve resultSetResolvel) {
         super(connectFacotry,preparedStatementSetter,resultSetResolvel);
     }
 
@@ -29,5 +29,6 @@ public class SimpleMysql extends AbstractSqlClient {
         }
         return false;
     }
+
 
 }

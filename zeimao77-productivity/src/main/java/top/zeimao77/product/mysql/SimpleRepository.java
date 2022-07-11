@@ -1,6 +1,9 @@
 package top.zeimao77.product.mysql;
 
 import top.zeimao77.product.exception.BaseServiceRunException;
+import top.zeimao77.product.sql.AbstractRepository;
+import top.zeimao77.product.sql.Reposit;
+import top.zeimao77.product.sql.SQL;
 import top.zeimao77.product.util.AssertUtil;
 import top.zeimao77.product.util.BeanUtil;
 

@@ -1,29 +1,15 @@
-package top.zeimao77.product.mysql;
+package top.zeimao77.product.sql;
 
 import top.zeimao77.product.exception.BaseServiceRunException;
-import top.zeimao77.product.util.LongBitMap;
+import top.zeimao77.product.util.AssertUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-public class SQL implements StatementParamResolver {
+public class SQL implements StatementParamResolver, IWhere {
 
-    public static final String BIND_AND = "AND";
-    public static final String BIND_OR = "OR";
-    public static final String COND_QIN = "$in";
-    public static final String COND_QNIN = "$nin";
-    public static final String COND_QIS = "$is";
-    public static final String COND_QNE = "$ne";
-    public static final String COND_QLIKE = "$like";
-    public static final String COND_QLLIKE = "$llike";  // 左边添加百分号
-    public static final String COND_QRLIKE = "$rlike";  // 右边添加百分号
-    public static final String COND_QGT = "$gt";
-    public static final String COND_QGTE = "$gte";
-    public static final String COND_QLT = "$lt";
-    public static final String COND_QLTE = "$lte";
-    public static final String COND_QREGEXP = "$regexp";
     private StringBuilder sqlBuilder = new StringBuilder(1024);
     ArrayList<StatementParameter> statementParams = new ArrayList<>();
     private static final int FLAG_SELECT = 0x01;
@@ -113,11 +99,13 @@ public class SQL implements StatementParamResolver {
         return this;
     }
 
+    public SQL where(String bind,String columnName,String cond,Object value) {
+        return where(true,bind,columnName,cond,null,null,value);
+    }
+
+
     public SQL where(boolean expression,String bind,String columnName,String cond,Object value) {
-        if(expression) {
-            return where(bind,columnName,cond,value);
-        }
-        return this;
+        return where(expression,bind,columnName,cond,null,null,value);
     }
 
     /**
@@ -130,7 +118,10 @@ public class SQL implements StatementParamResolver {
      * @param value 值
      * @return this
      */
-    public SQL where(String bind,String columnName,String cond,Object value) {
+    public SQL where(boolean expression,String bind,String columnName,String cond,String valSetPre,String valSetPost,Object value) {
+        if(!expression) {
+            return this;
+        }
         if((whereOrSetFlag & FLAG_WHERE) == 0) {
             sqlBuilder.append(" WHERE ");
             whereOrSetFlag |= FLAG_WHERE;
@@ -148,43 +139,96 @@ public class SQL implements StatementParamResolver {
         };
         switch (cond) {
             case COND_QIS -> {
-                sqlBuilder.append(" = ?");
+                sqlBuilder.append(" = ");
+                if(!AssertUtil.isEmpty(valSetPre))
+                    sqlBuilder.append(valSetPre);
+                sqlBuilder.append("?");
+                if(!AssertUtil.isEmpty(valSetPost))
+                    sqlBuilder.append(valSetPost);
                 con.accept(value);
             }
             case COND_QGT -> {
-                sqlBuilder.append(" > ?");
+                sqlBuilder.append(" > ");
+                if(!AssertUtil.isEmpty(valSetPre))
+                    sqlBuilder.append(valSetPre);
+                sqlBuilder.append("?");
+                if(!AssertUtil.isEmpty(valSetPost))
+                    sqlBuilder.append(valSetPost);
                 con.accept(value);
             }
             case COND_QGTE -> {
-                sqlBuilder.append(" >= ?");
+                sqlBuilder.append(" >= ");
+                if(!AssertUtil.isEmpty(valSetPre))
+                    sqlBuilder.append(valSetPre);
+                sqlBuilder.append("?");
+                if(!AssertUtil.isEmpty(valSetPost))
+                    sqlBuilder.append(valSetPost);
                 con.accept(value);
             }
             case COND_QLT -> {
-                sqlBuilder.append(" < ?");
+                sqlBuilder.append(" < ");
+                if(!AssertUtil.isEmpty(valSetPre))
+                    sqlBuilder.append(valSetPre);
+                sqlBuilder.append("?");
+                if(!AssertUtil.isEmpty(valSetPost))
+                    sqlBuilder.append(valSetPost);
                 con.accept(value);
             }
             case COND_QLTE -> {
-                sqlBuilder.append(" <= ?");
+                sqlBuilder.append(" <= ");
+                if(!AssertUtil.isEmpty(valSetPre))
+                    sqlBuilder.append(valSetPre);
+                sqlBuilder.append("?");
+                if(!AssertUtil.isEmpty(valSetPost))
+                    sqlBuilder.append(valSetPost);
                 con.accept(value);
             }
             case COND_QLIKE -> {
-                sqlBuilder.append(" LIKE CONCAT('%',?,'%'");
+                sqlBuilder.append(" LIKE CONCAT('%',");
+                if(!AssertUtil.isEmpty(valSetPre))
+                    sqlBuilder.append(valSetPre);
+                sqlBuilder.append("?");
+                if(!AssertUtil.isEmpty(valSetPost))
+                    sqlBuilder.append(valSetPost);
+                sqlBuilder.append(",'%')");
                 con.accept(value);
             }
             case COND_QLLIKE -> {
-                sqlBuilder.append(" LIKE CONCAT('%',?)");
+                sqlBuilder.append(" LIKE CONCAT('%',");
+                if(!AssertUtil.isEmpty(valSetPre))
+                    sqlBuilder.append(valSetPre);
+                sqlBuilder.append("?");
+                if(!AssertUtil.isEmpty(valSetPost))
+                    sqlBuilder.append(valSetPost);
+                sqlBuilder.append(")");
                 con.accept(value);
             }
             case COND_QRLIKE -> {
-                sqlBuilder.append(" LIKE CONCAT(?,'%')");
+                sqlBuilder.append(" LIKE CONCAT(");
+                if(!AssertUtil.isEmpty(valSetPre))
+                    sqlBuilder.append(valSetPre);
+                sqlBuilder.append("?");
+                if(!AssertUtil.isEmpty(valSetPost))
+                    sqlBuilder.append(valSetPost);
+                sqlBuilder.append(",'%')");
                 con.accept(value);
             }
             case COND_QREGEXP -> {
-                sqlBuilder.append(" REGEXP ?");
+                sqlBuilder.append(" REGEXP ");
+                if(!AssertUtil.isEmpty(valSetPre))
+                    sqlBuilder.append(valSetPre);
+                sqlBuilder.append("?");
+                if(!AssertUtil.isEmpty(valSetPost))
+                    sqlBuilder.append(valSetPost);
                 con.accept(value);
             }
             case COND_QNE -> {
-                sqlBuilder.append(" <> ?");
+                sqlBuilder.append(" <> ");
+                if(!AssertUtil.isEmpty(valSetPre))
+                    sqlBuilder.append(valSetPre);
+                sqlBuilder.append("?");
+                if(!AssertUtil.isEmpty(valSetPost))
+                    sqlBuilder.append(valSetPost);
                 con.accept(value);
             }
             case COND_QIN -> {
@@ -197,11 +241,13 @@ public class SQL implements StatementParamResolver {
                         values = (Object[]) value;
                     }
                     for (int i = 0; i < values.length; i++) {
-                        if(i == 0) {
-                            sqlBuilder.append("?");
-                        } else {
-                            sqlBuilder.append(",?");
-                        }
+                        if(i > 0)
+                            sqlBuilder.append(",");
+                        if(!AssertUtil.isEmpty(valSetPre))
+                            sqlBuilder.append(valSetPre);
+                        sqlBuilder.append("?");
+                        if(!AssertUtil.isEmpty(valSetPost))
+                            sqlBuilder.append(valSetPost);
                         con.accept(values[i]);
                     }
                 }
@@ -217,11 +263,13 @@ public class SQL implements StatementParamResolver {
                         values = (Object[]) value;
                     }
                     for (int i = 0; i < values.length; i++) {
-                        if(i == 0) {
-                            sqlBuilder.append("?");
-                        } else {
-                            sqlBuilder.append(",?");
-                        }
+                        if(i > 0)
+                            sqlBuilder.append(",");
+                        if(!AssertUtil.isEmpty(valSetPre))
+                            sqlBuilder.append(valSetPre);
+                        sqlBuilder.append("?");
+                        if(!AssertUtil.isEmpty(valSetPost))
+                            sqlBuilder.append(valSetPost);
                         con.accept(values[i]);
                     }
                 }
@@ -299,6 +347,10 @@ public class SQL implements StatementParamResolver {
      * @return this
      */
     public SQL addValues(boolean expression,String columnName,Object value) {
+        return addValues(expression,columnName,null,null,value);
+    }
+
+    public SQL addValues(boolean expression,String columnName,String valSetPre,String valSetPost,Object value) {
         if(expression) {
             if((whereOrSetFlag & FLAG_VALUES) == 0) {
                 sqlBuilder.append("(");
@@ -307,7 +359,7 @@ public class SQL implements StatementParamResolver {
                 sqlBuilder.append(",");
             }
             sqlBuilder.append(columnName);
-            addJdbcParam(columnName,value);
+            addJdbcParam(columnName,valSetPre,valSetPost,value);
         }
         return this;
     }
@@ -348,11 +400,11 @@ public class SQL implements StatementParamResolver {
             if(predicate.test(jdbcParameter)) {
                 if(firstUpdate) {
                     sqlBuilder.append(String.format("%s = ?", jdbcParameter.getName()));
-                    addJdbcParam(jdbcParameter.getName(), jdbcParameter.getValue());
+                    addJdbcParam(jdbcParameter.getName(),jdbcParameter.getValSetPre(),jdbcParameter.getValSetPost(), jdbcParameter.getValue());
                     firstUpdate = false;
                 } else {
                     sqlBuilder.append(String.format(" ,%s = ?", jdbcParameter.getName()));
-                    addJdbcParam(jdbcParameter.getName(), jdbcParameter.getValue());
+                    addJdbcParam(jdbcParameter.getName(),jdbcParameter.getValSetPre(),jdbcParameter.getValSetPost(), jdbcParameter.getValue());
                 }
             }
         }
@@ -373,14 +425,16 @@ public class SQL implements StatementParamResolver {
         } else {
             sqlBuilder.append(",").append(columnName).append(" = ?");
         }
-        addJdbcParam(columnName,value);
+        addJdbcParam(columnName,null,null,value);
         return this;
     }
 
-    protected boolean addJdbcParam(String columnName,Object value) {
+    protected boolean addJdbcParam(String columnName,String valSetPre,String valSetPost,Object value) {
         StatementParameter objectJdbcParam = new StatementParameter<>(++paramIndex, columnName);
         objectJdbcParam.setJavaType(value == null ? null : value.getClass());
         objectJdbcParam.setValue(value);
+        objectJdbcParam.setValSetPre(valSetPre);
+        objectJdbcParam.setValSetPost(valSetPost);
         return statementParams.add(objectJdbcParam);
     }
 

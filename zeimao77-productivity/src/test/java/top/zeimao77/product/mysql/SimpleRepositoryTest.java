@@ -4,6 +4,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import top.zeimao77.product.factory.ComponentFactory;
 import top.zeimao77.product.main.BaseMain;
+import top.zeimao77.product.sql.OnlyPrintReposit;
+import top.zeimao77.product.sql.Reposit;
 import top.zeimao77.product.util.LongIdGenerator;
 import top.zeimao77.product.util.WordUtil;
 

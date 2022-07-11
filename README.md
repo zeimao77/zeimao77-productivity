@@ -125,8 +125,6 @@ nohup /jdk-17.0.3/bin/java -Dlog.file=app-main.log \
 
 - [MYSQL数据库操作示例](https://github.com/zeimao77/zeimao77-productivity/blob/master/zeimao77-productivity/src/test/java/top/zeimao77/product/mysql/SimpleMysqlTest.java)
 - [基于实体Model的增删改查](https://github.com/zeimao77/zeimao77-productivity/blob/master/zeimao77-productivity/src/test/java/top/zeimao77/product/mysql/SimpleRepositoryTest.java)
-- 利用`top.zeimao77.product.mysql.SQL` 可以轻松实现动态SQL
-- 通过`top.zeimao77.product.mysql.StatementParamResolver#getExecSql`可以输出可以手工执行的SQL，可以用于生成SQL脚本使用;
 - [REDIS单节点操作示例](https://github.com/zeimao77/zeimao77-productivity/blob/master/zeimao77-productivity/src/test/java/top/zeimao77/product/redis/SimpleJedisTest.java)
 - [REDIS集群发布者](https://github.com/zeimao77/zeimao77-productivity/blob/master/zeimao77-productivity/src/test/java/top/zeimao77/product/redis/JedisClusterBuilderTest2.java)
 - [REDIS集群订阅者](https://github.com/zeimao77/zeimao77-productivity/blob/master/zeimao77-productivity/src/test/java/top/zeimao77/product/redis/JedisClusterBuilderTest.java)

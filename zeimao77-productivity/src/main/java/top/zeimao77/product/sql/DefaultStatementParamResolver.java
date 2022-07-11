@@ -1,4 +1,4 @@
-package top.zeimao77.product.mysql;
+package top.zeimao77.product.sql;
 
 import java.util.ArrayList;
 import java.util.Map;

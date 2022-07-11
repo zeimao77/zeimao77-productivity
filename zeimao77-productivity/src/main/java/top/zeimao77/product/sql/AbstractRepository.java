@@ -1,4 +1,4 @@
-package top.zeimao77.product.mysql;
+package top.zeimao77.product.sql;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -7,7 +7,7 @@ import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractRepository<T,W> {
+public abstract class AbstractRepository<T,W> implements Repository<T,W> {
 
     private static Logger logger = LogManager.getLogger(AbstractRepository.class);
     protected Reposit repositoryImpl;
@@ -34,7 +34,7 @@ public abstract class AbstractRepository<T,W> {
      * @param t 对象
      * @return 主键
      */
-    protected abstract W insert(SQL sql,T t);
+    protected abstract W insert(SQL sql, T t);
 
     /**
      * 将要存储或更新的对象转化到SQL对象中
@@ -88,6 +88,7 @@ public abstract class AbstractRepository<T,W> {
 
     protected void beforeInsert(SQL sql,T t) {};
     protected void afterInsert(T t) {};
+    @Override
     public int insert(T t) {
         SQL sql = new SQL();
         insert(sql,t);
@@ -117,6 +118,7 @@ public abstract class AbstractRepository<T,W> {
 
     protected void beforeUpdate(SQL sql,T t){};
     protected void afterUpdate(T t){};
+    @Override
     public int update(T t) {
         SQL sql = new SQL();
         update(sql,t);
@@ -128,6 +130,7 @@ public abstract class AbstractRepository<T,W> {
 
     protected void beforeDelete(SQL sql,W id){};
     protected void afterDelete(W id){};
+    @Override
     public int delete(W id) {
         SQL sql = new SQL();
         delete(sql,id);
@@ -137,6 +140,7 @@ public abstract class AbstractRepository<T,W> {
         return i;
     }
 
+    @Override
     public T get(W id) {
         SQL mysql = new SQL();
         get(mysql,id);
@@ -144,6 +148,7 @@ public abstract class AbstractRepository<T,W> {
         return ts.isEmpty() ? null : ts.get(0);
     }
 
+    @Override
     public List<T> list(SelectCond selectCond) {
         if(selectCond.isPaging()) {
             SQL sql = new SQL()

@@ -1,9 +1,9 @@
-package top.zeimao77.product.mysql;
+package top.zeimao77.product.sql;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class PageSearch extends BaseSearch{
+public class PageSearch extends BaseSearch {
 
     private static Logger logger = LogManager.getLogger(PageSearch.class);
 

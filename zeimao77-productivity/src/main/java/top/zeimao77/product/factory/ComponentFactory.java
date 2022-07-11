@@ -9,6 +9,8 @@ import top.zeimao77.product.email.SimpleEmailSender;
 import top.zeimao77.product.mysql.SimpleMysql;
 import top.zeimao77.product.redis.JedisBuilder;
 import top.zeimao77.product.redis.JedisClusterBuilder;
+import top.zeimao77.product.sql.PrototypeConnectionFactory;
+import top.zeimao77.product.sql.ThreadExclusiveConnectionFactory;
 import top.zeimao77.product.util.StreamUtil;
 
 import javax.sql.DataSource;
@@ -26,15 +28,9 @@ public class ComponentFactory {
      * @return SimpleMysql实例
      */
     public static SimpleMysql createSimpleMysql(String prefx) {
-        String url = LocalContext.getString(prefx+"_url");
-        String username = LocalContext.getString(prefx+"_username");
-        String password = LocalContext.getString(prefx+"_password");
-        SimpleMysql build = SimpleMysql.Builder.create8()
-                .url(url)
-                .username(username)
-                .password(password)
-                .build();
-        return build;
+        DataSource dataSource = createDataSource(prefx);
+        ThreadExclusiveConnectionFactory prototypeConnectionFactory = new ThreadExclusiveConnectionFactory.Builder(dataSource).build(true);
+        return new SimpleMysql(prototypeConnectionFactory);
     }
 
     public static DataSource createDataSource(String prefx) {

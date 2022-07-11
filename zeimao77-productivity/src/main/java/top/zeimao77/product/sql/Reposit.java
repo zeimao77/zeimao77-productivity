@@ -1,7 +1,8 @@
-package top.zeimao77.product.mysql;
+package top.zeimao77.product.sql;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.BiConsumer;
 
 /**
@@ -24,5 +25,11 @@ public interface Reposit {
     <T> ArrayList<T> selectByResolver(StatementParamResolver sql, Class<T> clazz);
     int updateByResolver(StatementParamResolver sql);
     <Z> int batchUpdate(List<Z> list, BiConsumer<SQL,Z> con);
+
+    int update(String sql);
+
+    <T> ArrayList<T> selectListObj(String sql,Class<T> clazz);
+
+    ArrayList<Map<String,Object>> selectListMap(String sqlt, Object param);
 
 }

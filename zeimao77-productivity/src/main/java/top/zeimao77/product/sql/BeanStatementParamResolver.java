@@ -1,4 +1,4 @@
-package top.zeimao77.product.mysql;
+package top.zeimao77.product.sql;
 
 import top.zeimao77.product.util.BeanUtil;
 
@@ -9,7 +9,7 @@ public class BeanStatementParamResolver extends AbstractStatementParamResolver {
 
     private Object params;
 
-    BeanStatementParamResolver(String sqlt, Object params){
+    public BeanStatementParamResolver(String sqlt, Object params){
         this.sqlt = sqlt;
         this.params = params;
     }

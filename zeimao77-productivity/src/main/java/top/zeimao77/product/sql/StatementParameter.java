@@ -1,4 +1,4 @@
-package top.zeimao77.product.mysql;
+package top.zeimao77.product.sql;
 
 import top.zeimao77.product.util.JsonBeanUtil;
 
@@ -27,7 +27,26 @@ public class StatementParameter<T> {
      */
     private int mode = 1;
     private Class<T> javaType;
+
+    private String valSetPre;
+    private String valSetPost;
     private T value;
+
+    public String getValSetPre() {
+        return valSetPre;
+    }
+
+    public void setValSetPre(String valSetPre) {
+        this.valSetPre = valSetPre;
+    }
+
+    public String getValSetPost() {
+        return valSetPost;
+    }
+
+    public void setValSetPost(String valSetPost) {
+        this.valSetPost = valSetPost;
+    }
 
     public StatementParameter(){}
 
