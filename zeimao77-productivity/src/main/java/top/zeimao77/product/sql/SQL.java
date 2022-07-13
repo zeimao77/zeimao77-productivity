@@ -375,9 +375,17 @@ public class SQL implements StatementParamResolver, IWhere {
     }
 
     public SQL endValue(int c) {
-        sqlBuilder.append(") VALUES (?");
-        for (int i = 1; i < c; i++) {
-            sqlBuilder.append(",?");
+        sqlBuilder.append(") VALUES (");
+        for (int i = 0; i < paramIndex; i++) {
+            StatementParameter statementParameter = statementParams.get(i);
+            if(i > 0)
+                sqlBuilder.append(",");
+            if(AssertUtil.isNotEmpty(statementParameter.getValSetPre()))
+                sqlBuilder.append(statementParameter.getValSetPre());
+            sqlBuilder.append("?");
+            if(AssertUtil.isNotEmpty(statementParameter.getValSetPost()))
+                sqlBuilder.append(statementParameter.getValSetPost());
+
         }
         sqlBuilder.append(")");
         return this;
@@ -398,33 +406,45 @@ public class SQL implements StatementParamResolver, IWhere {
         for (int i = 0; i < l; i++){
             StatementParameter jdbcParameter = statementParams.get(i);
             if(predicate.test(jdbcParameter)) {
-                if(firstUpdate) {
-                    sqlBuilder.append(String.format("%s = ?", jdbcParameter.getName()));
-                    addJdbcParam(jdbcParameter.getName(),jdbcParameter.getValSetPre(),jdbcParameter.getValSetPost(), jdbcParameter.getValue());
-                    firstUpdate = false;
-                } else {
-                    sqlBuilder.append(String.format(" ,%s = ?", jdbcParameter.getName()));
-                    addJdbcParam(jdbcParameter.getName(),jdbcParameter.getValSetPre(),jdbcParameter.getValSetPost(), jdbcParameter.getValue());
-                }
+                if(!firstUpdate)
+                    sqlBuilder.append(",");
+                sqlBuilder.append(jdbcParameter.getName());
+                sqlBuilder.append(" = ");
+                if(AssertUtil.isNotEmpty(jdbcParameter.getValSetPre()))
+                    sqlBuilder.append(jdbcParameter.getValSetPre());
+                sqlBuilder.append("?");
+                if(AssertUtil.isNotEmpty(jdbcParameter.getValSetPost()))
+                    sqlBuilder.append(jdbcParameter.getValSetPost());
+                addJdbcParam(jdbcParameter.getName(),jdbcParameter.getValSetPre(),jdbcParameter.getValSetPost(), jdbcParameter.getValue());
+                firstUpdate = false;
             }
         }
         return this;
     }
 
     public SQL set(boolean expression,String columnName,Object value) {
-        if(expression) {
-            return set(columnName,value);
-        }
-        return this;
+        return set(expression,columnName,null,null,value);
     }
 
     public SQL set(String columnName,Object value) {
+        return set(true,columnName,value);
+    }
+
+    public SQL set(boolean expression,String columnName,String valSetPre,String valSetPost,Object value) {
+        if(!expression)
+            return this;
         if((whereOrSetFlag & FLAG_SET) == 0) {
-            sqlBuilder.append(" SET ").append(columnName).append(" = ?");
+            sqlBuilder.append(" SET ");
             whereOrSetFlag |= FLAG_SET;
         } else {
-            sqlBuilder.append(",").append(columnName).append(" = ?");
+            sqlBuilder.append(",");
         }
+        sqlBuilder.append(columnName).append(" = ");
+        if(AssertUtil.isNotEmpty(valSetPre))
+            sqlBuilder.append(valSetPre);
+        sqlBuilder.append("?");
+        if(AssertUtil.isNotEmpty(valSetPost))
+            sqlBuilder.append(valSetPost);
         addJdbcParam(columnName,null,null,value);
         return this;
     }

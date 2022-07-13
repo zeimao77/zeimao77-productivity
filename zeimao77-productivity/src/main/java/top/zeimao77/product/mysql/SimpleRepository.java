@@ -4,6 +4,7 @@ import top.zeimao77.product.exception.BaseServiceRunException;
 import top.zeimao77.product.sql.AbstractRepository;
 import top.zeimao77.product.sql.Reposit;
 import top.zeimao77.product.sql.SQL;
+import top.zeimao77.product.sql.StatementParameterInfo;
 import top.zeimao77.product.util.AssertUtil;
 import top.zeimao77.product.util.BeanUtil;
 
@@ -119,8 +120,12 @@ public class SimpleRepository<T,W> extends AbstractRepository<T, W> {
         for (Field declaredMethod : declaredFields) {
             String name = declaredMethod.getName();
             Object property = BeanUtil.getProperty(t, name);
-            if(!isIgnoreField(name)) {
-                sql.addValues(codeNameToDbName(name),property);
+            StatementParameterInfo info = declaredMethod.getAnnotation(StatementParameterInfo.class);
+            int mode = info == null ? 1 : info.mode();
+            String valSetPre = info == null ? null : info.valSetPre();
+            String valSetPost = info == null ? null : info.valSetPost();
+            if(!isIgnoreField(name) && mode == 1) {
+                sql.addValues(true,codeNameToDbName(name),valSetPre,valSetPost,property);
             }
         }
         sql.endValues();
@@ -141,21 +146,28 @@ public class SimpleRepository<T,W> extends AbstractRepository<T, W> {
         for (Field declaredMethod : declaredFields) {
             String name = declaredMethod.getName();
             Object property = BeanUtil.getProperty(t, name);
+            StatementParameterInfo info = declaredMethod.getAnnotation(StatementParameterInfo.class);
+            int mode = info == null ? 1 : info.mode();
+            String valSetPre = info == null ? null : info.valSetPre();
+            String valSetPost = info == null ? null : info.valSetPost();
             boolean ignoreOrPrimary = false;
             if(isPrimaryKeyField(name)) {
                 ignoreOrPrimary = true;
                 whereField.add(declaredMethod);
-            } else if(isIgnoreField(name)) {
+            } else if(isIgnoreField(name) && mode == 1) {
                 ignoreOrPrimary = true;
             }
             if(!ignoreOrPrimary) {
-                sql.set(codeNameToDbName(name),property);
+                sql.set(true,codeNameToDbName(name),valSetPre,valSetPost,property);
             }
         }
         for (Field declaredMethod : whereField) {
+            StatementParameterInfo info = declaredMethod.getAnnotation(StatementParameterInfo.class);
+            String valSetPre = info == null ? null : info.valSetPre();
+            String valSetPost = info == null ? null : info.valSetPost();
             String name = declaredMethod.getName();
             Object property = BeanUtil.getProperty(t, name);
-            sql.where(SQL.BIND_AND,codeNameToDbName(name),SQL.COND_QIS,property);
+            sql.where(true,SQL.BIND_AND,codeNameToDbName(name),SQL.COND_QIS,valSetPre,valSetPost,property);
         }
     }
 

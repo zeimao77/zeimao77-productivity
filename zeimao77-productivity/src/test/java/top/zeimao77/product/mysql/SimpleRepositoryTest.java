@@ -36,7 +36,7 @@ class SimpleRepositoryTest extends BaseMain {
 
     @Test
     public void batchInsert() {
-        DemoRepository demoRepository = new DemoRepository(simpleMysql);
+        DemoRepository demoRepository = new DemoRepository(onlyPrintReposit);
         ArrayList<DemoModel> list = new ArrayList<>();
         for (int i = 0; i < 20; i++) {
             list.add(DemoModel.DemoFactory.create());
@@ -47,7 +47,7 @@ class SimpleRepositoryTest extends BaseMain {
 
     @Test
     public void delete() {
-        DemoRepository demoRepository = new DemoRepository(simpleMysql);
+        DemoRepository demoRepository = new DemoRepository(onlyPrintReposit);
         int delete = demoRepository.delete(22309205499183114L);
         logger.info("删除{}行",delete);
     }
@@ -63,7 +63,7 @@ class SimpleRepositoryTest extends BaseMain {
     @Test
     public void upsert() {
         Long id = LongIdGenerator.INSTANCE.generate();
-        DemoRepository demoRepository = new DemoRepository(simpleMysql);
+        DemoRepository demoRepository = new DemoRepository(onlyPrintReposit);
         DemoModel demoModel = DemoModel.DemoFactory.create();
         demoModel.setDemoId(id);
         int insert = demoRepository.insert(demoModel);
