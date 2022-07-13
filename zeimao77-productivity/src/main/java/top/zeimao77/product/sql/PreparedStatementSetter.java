@@ -1,7 +1,5 @@
 package top.zeimao77.product.sql;
 
-import top.zeimao77.product.sql.StatementParameter;
-
 import java.sql.PreparedStatement;
 
 /**

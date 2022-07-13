@@ -1,6 +1,5 @@
 package top.zeimao77.product.sql;
 
-import top.zeimao77.product.sql.StatementParameter;
 import top.zeimao77.product.util.ByteArrayCoDesUtil;
 import top.zeimao77.product.util.CalendarDateUtil;
 import top.zeimao77.product.util.LocalDateTimeUtil;

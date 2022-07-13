@@ -1,8 +1,5 @@
 package top.zeimao77.product.sql;
 
-import top.zeimao77.product.sql.StatementParamResolver;
-import top.zeimao77.product.sql.StatementParameter;
-
 import java.util.ArrayList;
 
 public class ObjectsStatementParamResolver implements StatementParamResolver {

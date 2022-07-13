@@ -113,6 +113,8 @@ public class StatementParameter<T> {
         private String name;
         private Class<?> javaType;
 
+        private String valSetPre,valSetPost;
+
         public static final BiPredicate<String,Class<?>> pre = (o1,o2) -> {
             if(o1.equals(o2.getSimpleName()) || o1.equals(o2.getName())) {
                 return true;
@@ -172,6 +174,16 @@ public class StatementParameter<T> {
 
         public Builder javaType(Class<?> javaType) {
             this.javaType = javaType;
+            return this;
+        }
+
+        public Builder valSetPre(String valSetPre) {
+            this.valSetPre = valSetPre;
+            return this;
+        }
+
+        public Builder valSetPost(String valSetPost) {
+            this.valSetPost = valSetPost;
             return this;
         }
 
@@ -239,6 +251,8 @@ public class StatementParameter<T> {
             procedureParam.setMode(mode);
             procedureParam.setJavaType(javaType);
             procedureParam.setJdbcType(jdbcType);
+            procedureParam.setValSetPre(valSetPre);
+            procedureParam.setValSetPost(valSetPost);
             return procedureParam;
         }
 
