@@ -27,11 +27,6 @@ public class OnlyPrintReposit implements  Reposit, Closeable {
     }
 
     @Override
-    public boolean testConnection() {
-        return true;
-    }
-
-    @Override
     public <T> ArrayList<T> selectByResolver(StatementParamResolver sql, Class<T> clazz) {
         String execSql = sql.getExecSql();
         logger.debug(execSql);
@@ -65,6 +60,15 @@ public class OnlyPrintReposit implements  Reposit, Closeable {
     }
 
     @Override
+    public <T> ArrayList<T> selectListObj(String sqlt, Object param, Class<T> clazz) {
+        DefaultStatementParamResolver defaultStatementParamResolver = new DefaultStatementParamResolver(sqlt, param);
+        String execSql = defaultStatementParamResolver.getExecSql();
+        logger.debug(execSql);
+        writer.println(execSql);
+        return new ArrayList<>();
+    }
+
+    @Override
     public <T> ArrayList<T> selectListObj(String sql, Class<T> clazz) {
         logger.debug(sql);
         writer.println(sql);
@@ -73,8 +77,10 @@ public class OnlyPrintReposit implements  Reposit, Closeable {
 
     @Override
     public ArrayList<Map<String, Object>> selectListMap(String sqlt, Object param) {
-        logger.debug(sqlt);
-        writer.println(sqlt);
+        DefaultStatementParamResolver defaultStatementParamResolver = new DefaultStatementParamResolver(sqlt, param);
+        String execSql = defaultStatementParamResolver.getExecSql();
+        logger.debug(execSql);
+        writer.println(execSql);
         return new ArrayList<>();
     }
 

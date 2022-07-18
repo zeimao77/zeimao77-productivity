@@ -11,13 +11,13 @@ import java.sql.SQLException;
 
 import static top.zeimao77.product.exception.ExceptionCodeDefinition.SQLEXCEPTION;
 
-public class PrototypeConnectionFactory implements ConnectFacotry{
+public class DataSourceTransactionFactory implements TransactionFactory {
 
-    private static Logger logger = LogManager.getLogger(PrototypeConnectionFactory.class);
+    private static Logger logger = LogManager.getLogger(DataSourceTransactionFactory.class);
 
     private DataSource dataSource;
 
-    public PrototypeConnectionFactory(DataSource dataSource) {
+    public DataSourceTransactionFactory(DataSource dataSource) {
         this.dataSource = dataSource;
     }
 

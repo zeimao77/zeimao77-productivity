@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Test;
 import top.zeimao77.product.factory.ComponentFactory;
 import top.zeimao77.product.main.BaseMain;
 import top.zeimao77.product.sql.SQL;
+import top.zeimao77.product.sql.SimpleSqlClient;
+import top.zeimao77.product.sql.SimpleSqlFacroty;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,8 +24,14 @@ class SimpleMysqlTest extends BaseMain {
      *   `de` decimal(10,4) DEFAULT '0.0000',
      *   PRIMARY KEY (`demo_id`)
      * ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+     *
      */
-    public SimpleMysql simpleMysql = ComponentFactory.createSimpleMysql("mysql_top_zeimao77");
+    static SimpleSqlClient simpleMysql;
+
+    static {
+        SimpleSqlFacroty simpleSqlFacroty= ComponentFactory.initSimpleSqlFacroty("mysql_top_zeimao77");
+        simpleMysql = simpleSqlFacroty.openSession();
+    }
 
     @Test
     void batchUpdate() {
@@ -46,7 +54,6 @@ class SimpleMysqlTest extends BaseMain {
         logger.info("插入{}行;",i);
     }
 
-
     @Test
     void selectLong() {
         Long aLong = simpleMysql.selectLong("SELECT COUNT(1) AS result FROM demo WHERE demo_id > ?", new Object[]{1});
@@ -63,7 +70,6 @@ class SimpleMysqlTest extends BaseMain {
         ArrayList<DemoModel> demoModels = simpleMysql.selectListObj("SELECT demo_id AS demoId,demo_name AS demoName FROM demo WHERE 1 = 1", DemoModel.class);
         demoModels.forEach(logger::info);
     }
-
 
     @Test
     void selectByResolver() {
@@ -101,4 +107,5 @@ class SimpleMysqlTest extends BaseMain {
         ArrayList<Map<String, Object>> maps = simpleMysql.selectListMap("SELECT a,b,e,g,o,q,s,u,w FROM abc LIMIT 0,10", null);
         logger.info(maps.size());
     }
+
 }

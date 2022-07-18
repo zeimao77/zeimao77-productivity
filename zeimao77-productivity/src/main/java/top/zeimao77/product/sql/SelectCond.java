@@ -1,82 +1,28 @@
 package top.zeimao77.product.sql;
 
-import top.zeimao77.product.model.ImmutablePair;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class SelectCond extends PageSearch {
 
     protected List<SelectCondNode> searchCondNodeList = new ArrayList<>();
-    ArrayList<ImmutablePair<String,String>> queryColumnList = new ArrayList();
-
     public SelectCond() {}
-
-    public SelectCond(Integer pageNo, Integer pageSize) {
-        super(pageNo, pageSize);
-    }
 
     public static SelectCond select() {
         return new SelectCond();
     }
 
-    public static SelectCond select(Integer pageNo, Integer pageSize) {
-        return new SelectCond(pageNo,pageSize);
-    }
-
-    /**
-     * 设置查询列
-     * @param colomn 列名
-     * @param alias 别名
-     * @return this
-     */
-    public SelectCond putQueryColumnAsAlias(String colomn,String alias) {
-        safe(colomn);
-        safe(alias);
-        queryColumnList.add(new ImmutablePair<>(colomn,alias));
-        return this;
-    }
-
-    protected void setQueryColumn(String queryColumn) {
-        if("*".equals(queryColumn)) {
-            this.queryColumn = "*";
-        }
-        String[] split = queryColumn.split(",| ");
-        for (String s : split) {
-            safe(s);
-        }
-        this.queryColumn = queryColumn;
-    }
-
-    public SelectCond putQueryColumn(String... columns) {
-        for (String column : columns) {
-            safe(column);
-            queryColumnList.add(new ImmutablePair<>(column,null));
-        }
-        return this;
+    public static SelectCond select(List<String> queryFields) {
+        SelectCond selectCond = new SelectCond();
+        selectCond.setQueryFields(queryFields);
+        return selectCond;
     }
 
     public SelectCond from(String tableName) {
-        if(tableName != null) {
-            setTableName(tableName);
-        }
-        if(!queryColumnList.isEmpty()) {
-            StringBuilder sBuiler = new StringBuilder();
-            for (ImmutablePair<String, String> pair : queryColumnList) {
-                if(sBuiler.length() > 0 && pair.getRight() == null) {
-                    sBuiler.append(String.format(",%s",pair.getLeft()));
-                } else if(sBuiler.length() > 0 && pair.getRight() != null) {
-                    sBuiler.append(String.format(",%s AS %s",pair.getLeft(),pair.getRight()));
-                } else if(sBuiler.length() == 0 && pair.getRight() == null){
-                    sBuiler.append(String.format("%s",pair.getLeft()));
-                } else {
-                    sBuiler.append(String.format("%s AS %s",pair.getLeft(),pair.getRight()));
-                }
-            }
-            setQueryColumn(sBuiler.toString());
-        }
+        this.tableName = tableName;
         return this;
     }
+
 
     public SelectCond noPage(){
         set_paging(false);
@@ -84,10 +30,7 @@ public class SelectCond extends PageSearch {
     }
 
     public SelectCond orderBy(String... orderBy) {
-        for (String order : orderBy) {
-            safe(order);
-        }
-        super.setOrderBy(orderBy);
+        setOrderBys(List.of(orderBy));
         return this;
     }
 

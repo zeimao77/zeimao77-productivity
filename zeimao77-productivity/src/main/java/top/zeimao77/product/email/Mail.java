@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.function.Consumer;
 
+
 /**
  * @author zeimao77
  * 邮件实体对象

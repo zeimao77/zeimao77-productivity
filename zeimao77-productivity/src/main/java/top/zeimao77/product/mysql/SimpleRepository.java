@@ -1,10 +1,7 @@
 package top.zeimao77.product.mysql;
 
 import top.zeimao77.product.exception.BaseServiceRunException;
-import top.zeimao77.product.sql.AbstractRepository;
-import top.zeimao77.product.sql.Reposit;
-import top.zeimao77.product.sql.SQL;
-import top.zeimao77.product.sql.StatementParameterInfo;
+import top.zeimao77.product.sql.*;
 import top.zeimao77.product.util.AssertUtil;
 import top.zeimao77.product.util.BeanUtil;
 
@@ -226,4 +223,63 @@ public class SimpleRepository<T,W> extends AbstractRepository<T, W> {
         return idParseFunc;
     }
 
+    @Override
+    public List<T> list(SelectCond selectCond) {
+        SQL sql = new SQL();
+        if(selectCond.isPaging()) {
+            selectCond.calcpage();
+            sql.select("COUNT(1)","result");
+            sql.from(tableName);
+            List<SelectCond.SelectCondNode> searchCondNodeList = selectCond.getSearchCondNodeList();
+            for (SelectCond.SelectCondNode selectCondNode : searchCondNodeList) {
+                sql.where(selectCondNode.getBind(),codeNameToDbName(selectCondNode.getFieldName()),selectCondNode.getCondition(),selectCondNode.getContent());
+            }
+            ArrayList<ResultStr> resultStrs = repositoryImpl.selectByResolver(sql, ResultStr.class);
+            String result = resultStrs.isEmpty() ? null : resultStrs.get(0).getResult();
+            Long total = AssertUtil.isEmpty(result) ? -1L : Long.valueOf(result);
+            selectCond.setTotal(total);
+            if(total <= 0) {
+                return new ArrayList<>();
+            }
+            sql = new SQL();
+        }
+        if(selectCond.getQueryFields() == null || selectCond.getQueryFields().isEmpty()) {
+            Field[] declaredFields = getTClass().getDeclaredFields();
+            for (Field declaredField : declaredFields) {
+                String name = declaredField.getName();
+                String columnName = codeNameToDbName(name);
+                sql.select(columnName,name);
+            }
+        } else {
+            List<String> queryFields = selectCond.getQueryFields();
+            for (String queryField : queryFields) {
+                String columnName = codeNameToDbName(queryField);
+                if(AssertUtil.isNotEmpty(columnName))
+                    sql.select(columnName,queryField);
+            }
+        }
+        sql.from(tableName);
+        List<SelectCond.SelectCondNode> searchCondNodeList = selectCond.getSearchCondNodeList();
+        for (SelectCond.SelectCondNode selectCondNode : searchCondNodeList) {
+            sql.where(selectCondNode.getBind(),codeNameToDbName(selectCondNode.getFieldName()),selectCondNode.getCondition(),selectCondNode.getContent());
+        }
+        List<String> orderBys = selectCond.getOrderBys();
+        if(orderBys != null && !orderBys.isEmpty()) {
+            String[] orderByArray = new String[orderBys.size()];
+            int i = 0;
+            for (String orderBy : orderBys) {
+                if("DESC".equalsIgnoreCase(orderBy) || "ASC".equalsIgnoreCase(orderBy)) {
+                    orderByArray[i] = orderBy;
+                } else {
+                    orderByArray[i] = codeNameToDbName(orderBy);
+                }
+                i++;
+            }
+            sql.orderBy(orderByArray);
+        }
+        if(selectCond.isPaging()) {
+           sql.limit(selectCond.get_limit(),selectCond.get_offset());
+        }
+        return repositoryImpl.selectByResolver(sql,getTClass());
+    }
 }

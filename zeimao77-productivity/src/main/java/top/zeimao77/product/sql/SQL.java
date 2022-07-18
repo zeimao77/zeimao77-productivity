@@ -312,7 +312,7 @@ public class SQL implements StatementParamResolver, IWhere {
             if(i == 0) {
                 sqlBuilder.append(orderBy[i]);
             } else if("DESC".equalsIgnoreCase(orderBy[i]) || "ASC".equalsIgnoreCase(orderBy[i])) {
-                sqlBuilder.append(" ").append(orderBy[i]);
+                sqlBuilder.append(" ").append(orderBy[i].toUpperCase());
             } else {
                 sqlBuilder.append(" ,").append(orderBy[i]);
             }

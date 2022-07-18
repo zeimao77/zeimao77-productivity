@@ -3,6 +3,7 @@ package top.zeimao77.product.sql;
 import top.zeimao77.product.exception.BaseServiceRunException;
 import static top.zeimao77.product.exception.ExceptionCodeDefinition.WRONG_SOURCE;
 
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,7 +15,7 @@ public class BaseSearch {
     /**
      * 默认查询*
      */
-    protected String queryColumn = "*";
+    protected List<String> queryFields = null;
     /**
      * 表名
      */
@@ -28,6 +29,7 @@ public class BaseSearch {
      * @param tableName 表名
      */
     public void setTableName(String tableName) {
+        safe(tableName);
         this.tableName = tableName;
     }
 
@@ -38,12 +40,15 @@ public class BaseSearch {
         return tableName;
     }
 
-    public String getQueryColumn() {
-        return queryColumn;
+    public List<String> getQueryFields() {
+        return queryFields;
     }
 
-    protected void setQueryColumn(String queryColumn) {
-        this.queryColumn = queryColumn;
+    public void setQueryFields(List<String> queryFields) {
+        for (String queryField : queryFields) {
+            safe(queryField);
+        }
+        this.queryFields = queryFields;
     }
 
     public Pattern getPattern() {

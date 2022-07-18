@@ -2,7 +2,7 @@ package top.zeimao77.product.sql;
 
 import java.sql.Connection;
 
-public interface ConnectFacotry extends AutoCloseable {
+public interface TransactionFactory extends AutoCloseable {
 
     Connection createContection();
 

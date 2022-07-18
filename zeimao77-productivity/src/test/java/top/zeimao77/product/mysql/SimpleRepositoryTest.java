@@ -2,15 +2,16 @@ package top.zeimao77.product.mysql;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import top.zeimao77.product.factory.ComponentFactory;
 import top.zeimao77.product.main.BaseMain;
 import top.zeimao77.product.sql.OnlyPrintReposit;
 import top.zeimao77.product.sql.Reposit;
+import top.zeimao77.product.sql.SelectCond;
 import top.zeimao77.product.util.LongIdGenerator;
 import top.zeimao77.product.util.WordUtil;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.List;
 
 class SimpleRepositoryTest extends BaseMain {
 
@@ -26,7 +27,7 @@ class SimpleRepositoryTest extends BaseMain {
         }
     }
 
-    public SimpleMysql simpleMysql = ComponentFactory.createSimpleMysql("mysql_top_zeimao77");
+
     public OnlyPrintReposit onlyPrintReposit = new OnlyPrintReposit(new PrintWriter(System.out));
 
     @AfterEach
@@ -54,7 +55,7 @@ class SimpleRepositoryTest extends BaseMain {
 
     @Test
     public void update() {
-        DemoRepository demoRepository = new DemoRepository(simpleMysql);
+        DemoRepository demoRepository = new DemoRepository(onlyPrintReposit);
         DemoModel demoModel = demoRepository.get(22309205499183119L);
         demoModel.setCh(66);
         demoRepository.update(demoModel);
@@ -73,5 +74,13 @@ class SimpleRepositoryTest extends BaseMain {
         int upsert = demoRepository.upsert(demoModel);
         logger.info("影响{}行",upsert);
     }
+
+    @Test
+    public void list() {
+        DemoRepository demoRepository = new DemoRepository(onlyPrintReposit);
+        List<DemoModel> demo = demoRepository.list(SelectCond.select().from("demo").is("createDate","2022").orderBy("createDate","desc","de","asc"));
+
+    }
+
 
 }

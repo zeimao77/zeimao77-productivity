@@ -65,6 +65,27 @@ public class JedisLockImpl {
         return false;
     }
 
+
+    /**
+     * 为锁延时
+     * @param lockId 锁KEY
+     * @param value 锁值
+     * @param expire 延时时间 单位:秒
+     * @return
+     */
+    public boolean reLook(String lockId,String value,int expire) {
+        String script = """
+                if redis.call('GET',KEYS[1]) == ARGV[1] then
+                  redis.call('EXPIRE',KEYS[1],ARGV[2]);
+                  return 1;
+                else 
+                  return 0;
+                end
+                """;
+        Object eval = this.commands.eval(script, List.of(lockId), List.of(value,String.valueOf(expire)));
+        return "1".equals(eval.toString());
+    }
+
     /**
      * 解锁
      * @param lockId 锁KEY

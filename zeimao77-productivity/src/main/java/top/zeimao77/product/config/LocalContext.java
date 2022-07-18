@@ -29,7 +29,8 @@ public class LocalContext {
     }
 
     public static String getString(String key) {
-        return get(key).toString();
+        Object o = get(key);
+        return o != null ? o.toString() : null;
     }
 
     public static Object remove(String key) {

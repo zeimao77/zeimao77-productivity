@@ -11,12 +11,6 @@ import java.util.function.BiConsumer;
 public interface Reposit {
 
     /**
-     * 测试一个连接是否可以使用
-     * @return
-     */
-    boolean testConnection();
-
-    /**
      * @param sql SQL及参数对象封装
      * @param clazz 返回类型
      * @return 查询结果列表
@@ -28,6 +22,7 @@ public interface Reposit {
 
     int update(String sql);
 
+    <T> ArrayList<T> selectListObj(String sqlt,Object param, Class<T> clazz);
     <T> ArrayList<T> selectListObj(String sql,Class<T> clazz);
 
     ArrayList<Map<String,Object>> selectListMap(String sqlt, Object param);

@@ -115,7 +115,6 @@ public abstract class AbstractRepository<T,W> implements Repository<T,W> {
         return i;
     }
 
-
     protected void beforeUpdate(SQL sql,T t){};
     protected void afterUpdate(T t){};
     @Override
@@ -146,36 +145,6 @@ public abstract class AbstractRepository<T,W> implements Repository<T,W> {
         get(mysql,id);
         ArrayList<T> ts = repositoryImpl.selectByResolver(mysql,getTClass());
         return ts.isEmpty() ? null : ts.get(0);
-    }
-
-    @Override
-    public List<T> list(SelectCond selectCond) {
-        if(selectCond.isPaging()) {
-            SQL sql = new SQL()
-                .select("COUNT(1) AS result")
-                .from(this.tableName);
-            for (SelectCond.SelectCondNode selectCondNode : selectCond.getSearchCondNodeList()) {
-                sql.where(selectCondNode.getBind(),selectCondNode.getFieldName(),selectCondNode.getCondition(),selectCondNode.getContent());
-            }
-            ArrayList<String> strings = repositoryImpl.selectByResolver(sql, String.class);
-            Long total = strings.isEmpty() ? 0 : Long.valueOf(strings.get(0));
-            selectCond.setTotal(total);
-            if(total == 0L) {
-                return new ArrayList<>();
-            }
-        }
-        SQL sql = new SQL()
-                .select(selectCond.getQueryColumn())
-                .from(this.tableName);
-        for (SelectCond.SelectCondNode selectCondNode : selectCond.getSearchCondNodeList()) {
-            sql.where(selectCondNode.getBind(),selectCondNode.getFieldName(),selectCondNode.getCondition(),selectCondNode.getContent());
-        }
-        sql.orderBy(selectCond.getOrderBy());
-        if(selectCond.isPaging()) {
-            selectCond.calcpage();
-            sql.limit(selectCond.get_limit(),selectCond.get_offset());
-        }
-        return repositoryImpl.selectByResolver(sql,getTClass());
     }
 
     public String getTableName() {

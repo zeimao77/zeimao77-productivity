@@ -3,6 +3,8 @@ package top.zeimao77.product.sql;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.List;
+
 public class PageSearch extends BaseSearch {
 
     private static Logger logger = LogManager.getLogger(PageSearch.class);
@@ -18,7 +20,7 @@ public class PageSearch extends BaseSearch {
     protected Integer pageNo;
     protected Integer pageSize;
     protected Long total;
-    private String[] orderBy;
+    private List<String> orderBys;
 
     public PageSearch(){
         this.pageNo = DEFAULT_PAGENO;
@@ -70,12 +72,15 @@ public class PageSearch extends BaseSearch {
         this.total = total;
     }
 
-    public String[] getOrderBy() {
-        return orderBy;
+    public List<String> getOrderBys() {
+        return orderBys;
     }
 
-    protected void setOrderBy(String... orderBy) {
-        this.orderBy = orderBy;
+    public void setOrderBys(List<String> orderBys) {
+        for (String orderBy : orderBys) {
+            safe(orderBy);
+        }
+        this.orderBys = orderBys;
     }
 
     public static int[] parsePage(int pageNo, int pageSize) {

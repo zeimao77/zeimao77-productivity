@@ -42,7 +42,16 @@ tasks.withType(JavaCompile) {
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
-    implementation group: 'top.zeimao77',name:'zeimao77-productivity',version: '2.0.9'
+    implementation group: 'top.zeimao77',name:'zeimao77-productivity',version: '2.1.1'
+    implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.29'
+    implementation group: 'com.zaxxer', name:'HikariCP', version: '5.0.1'
+    implementation group: 'redis.clients', name:'jedis', version: '4.2.3'
+    implementation group: 'com.sun.mail', name: 'jakarta.mail', version: '2.0.1'
+    // implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.18.0'
+    // implementation group: 'org.apache.logging.log4j', name: 'log4j-slf4j18-impl', version: '2.18.0'
+    // implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.13.3'
+    // implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.13.3'
+    // implementation group: 'com.guicedee.services', name: 'commons-beanutils', version: '1.2.2.1'
 }
 
 application {

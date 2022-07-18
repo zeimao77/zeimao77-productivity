@@ -15,17 +15,17 @@ import java.util.function.Consumer;
 import static top.zeimao77.product.exception.ExceptionCodeDefinition.IOEXCEPTION;
 import static top.zeimao77.product.exception.ExceptionCodeDefinition.SQLEXCEPTION;
 
-public abstract class AbstractSqlClient implements Reposit,AutoCloseable {
+public class SimpleSqlClient implements Reposit,AutoCloseable {
 
-    private static Logger logger = LogManager.getLogger(AbstractSqlClient.class);
+    private static Logger logger = LogManager.getLogger(SimpleSqlClient.class);
 
     protected PreparedStatementSetter preparedStatementSetter;
     protected ResultSetResolve resultSetResolvel;
     protected int queryTimeout = 10;
 
-    protected ConnectFacotry connectFacotry;
+    protected TransactionFactory connectFacotry;
 
-    public AbstractSqlClient(ConnectFacotry connectFacotry, PreparedStatementSetter preparedStatementSetter, ResultSetResolve resultSetResolvel) {
+    public SimpleSqlClient(TransactionFactory connectFacotry, PreparedStatementSetter preparedStatementSetter, ResultSetResolve resultSetResolvel) {
         this.connectFacotry = connectFacotry;
         this.preparedStatementSetter = preparedStatementSetter;
         this.resultSetResolvel = resultSetResolvel;
@@ -101,7 +101,7 @@ public abstract class AbstractSqlClient implements Reposit,AutoCloseable {
         return update(sql,null);
     }
 
-    public <T> ArrayList<T> selectListObj(String sql,ResultSetResolve resolve, Class<T> clazz) {
+    public <T> ArrayList<T> select(String sql,ResultSetResolve resolve, Class<T> clazz) {
         return select(sql,null,resolve,clazz);
     }
 
@@ -239,6 +239,20 @@ public abstract class AbstractSqlClient implements Reposit,AutoCloseable {
     }
 
     @Override
+    public <T> ArrayList<T> selectListObj(String sqlt,Object param, Class<T> clazz) {
+        DefaultStatementParamResolver defaultStatementParamResolver = new DefaultStatementParamResolver(sqlt, param);
+        defaultStatementParamResolver.resolve();
+        ArrayList<StatementParameter> statementParams = defaultStatementParamResolver.getStatementParams();
+        Consumer<PreparedStatement> con = o -> {
+            for (StatementParameter statementParam : statementParams) {
+                setParam(o,statementParam.getIndex(),statementParam.getJavaType(),statementParam.getJdbcType()
+                        ,statementParam.getValue());
+            }
+        };
+        return select(defaultStatementParamResolver.getSql(),con,this.resultSetResolvel,clazz);
+    }
+
+    @Override
     public <T> ArrayList<T> selectListObj(String sql, Class<T> clazz) {
         return select(sql,null,this.resultSetResolvel,clazz);
     }
@@ -258,19 +272,9 @@ public abstract class AbstractSqlClient implements Reposit,AutoCloseable {
     }
 
     public <T> T selectFirstObj(String sqlt,Object param,Class<T> clazz) {
-        DefaultStatementParamResolver defaultStatementParamResolver = new DefaultStatementParamResolver(sqlt, param);
-        defaultStatementParamResolver.resolve();
-        ArrayList<StatementParameter> statementParams = defaultStatementParamResolver.getStatementParams();
-        Consumer<PreparedStatement> con = o -> {
-            for (StatementParameter statementParam : statementParams) {
-                setParam(o,statementParam.getIndex(),statementParam.getJavaType(),statementParam.getJdbcType()
-                        ,statementParam.getValue());
-            }
-        };
-        ArrayList<T> select = select(defaultStatementParamResolver.getSql(), con, this.resultSetResolvel, clazz);
+        ArrayList<T> select = selectListObj(sqlt,param,clazz);
         return select.isEmpty() ? null : select.get(0);
     }
-
 
     public <T> ArrayList<T> call(String sqlt, Map<String,Object> param, Class<T> clazz) {
         return call(sqlt,param,this.resultSetResolvel,clazz);
@@ -362,11 +366,11 @@ public abstract class AbstractSqlClient implements Reposit,AutoCloseable {
         this.queryTimeout = queryTimeout;
     }
 
-    public ConnectFacotry getConnectFacotry() {
+    public TransactionFactory getConnectFacotry() {
         return connectFacotry;
     }
 
-    public void setConnectFacotry(ConnectFacotry connectFacotry) {
+    public void setConnectFacotry(TransactionFactory connectFacotry) {
         this.connectFacotry = connectFacotry;
     }
 }

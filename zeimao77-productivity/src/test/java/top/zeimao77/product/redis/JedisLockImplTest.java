@@ -15,14 +15,13 @@ class JedisLockImplTest extends BaseMain{
         JedisLockImpl jedisLock = new JedisLockImpl(jedis);
         String generate = UuidGenerator.INSTANCE.generate();
         boolean lock = jedisLock.lock(generate,"1", 2, 100);
-        logger.info("LOCK(0):{}",lock);
-        for (int i = 1; i < 12; i++) {
-            delay_ms(1000);
-            lock = jedisLock.lock(generate,"1", 2, 100);
-            logger.info("LOCK({}):{}",i,lock);
-            boolean b = jedisLock.unLock(generate, "2");
-            logger.info("UNLOCK:{}",b);
-        }
-
+        logger.info("lock={}",lock);
+        lock = jedisLock.reLook(generate, "1", 2);
+        delay_ms(1000);
+        logger.info("relock={}",lock);
+        lock = jedisLock.unLock(generate, "1");
+        logger.info("unlock={}",lock);
+        lock = jedisLock.reLook(generate, "1", 2);
+        logger.info("relock={}",lock);
     }
 }
