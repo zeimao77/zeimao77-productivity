@@ -58,7 +58,7 @@ public class CollectionUtil {
      */
     public static <T> T getRandom(List<T> list) {
         ThreadLocalRandom random = ThreadLocalRandom.current();
-        int i = random.nextInt(list.size() - 1);
+        int i = random.nextInt(list.size());
         return list.get(i);
     }
 

@@ -99,8 +99,8 @@ public abstract class AbstractXmlBuiler<T> {
      * @param nodeList 节点列表
      * @return 结果MAP
      */
-    public static HashMap<String,String> parseMap(NodeList nodeList) {
-        HashMap<String,String> resultMap = new HashMap<>();
+    public static HashMap<String,Object> parseMap(NodeList nodeList) {
+        HashMap<String,Object> resultMap = new HashMap<>();
         for (int i = 0; i < nodeList.getLength(); i++) {
             Element item = (Element) nodeList.item(i);
             String key = item.getAttribute("key");

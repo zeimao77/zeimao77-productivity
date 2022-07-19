@@ -29,7 +29,7 @@ public class HttpClientUtil8 implements IHttpClient {
             URLConnection conn = realUrl.openConnection();
             conn.setReadTimeout(timeout * 1000);
             conn.setConnectTimeout(5000);
-            if(headers != null) {
+            if(headers != null && !headers.isEmpty()) {
                 headers.forEach((o1,o2) -> {
                     conn.setRequestProperty(o1,o2);
                 });
@@ -68,7 +68,7 @@ public class HttpClientUtil8 implements IHttpClient {
             URLConnection conn = realUrl.openConnection();
             conn.setReadTimeout(timeout * 1000);
             conn.setConnectTimeout(5000);
-            if(headers != null) {
+            if(headers != null && !headers.isEmpty()) {
                 headers.forEach((o1,o2) -> {
                     conn.setRequestProperty(o1,o2);
                 });

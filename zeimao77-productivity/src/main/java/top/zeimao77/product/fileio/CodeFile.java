@@ -1,7 +1,5 @@
 package top.zeimao77.product.fileio;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import top.zeimao77.product.exception.BaseServiceRunException;
 
 import java.io.File;

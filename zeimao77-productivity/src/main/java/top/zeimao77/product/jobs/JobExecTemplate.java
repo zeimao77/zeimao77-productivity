@@ -4,7 +4,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import top.zeimao77.product.exception.BaseServiceRunException;
 import top.zeimao77.product.exception.ExceptionCodeDefinition;
-import top.zeimao77.product.exception.NonRetryableRuntimeException;
 
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
