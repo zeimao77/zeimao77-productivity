@@ -11,19 +11,21 @@ import java.util.List;
 
 /**
  * 示例配置
- * <table tableName="table001" id="97628f46ba4143058ad73510af8e4fdb">
- *   <property name="select">select * from demo</property>
- *   <columnList>
- *       <column index="0" field="id" title="唯一序号" width="22" format="@" />
- *       <column index="1" field="name" title="姓名" width="14" format="@" />
- *       <column index="2" field="type" title="类型" width="8" format="@">
- *           <converter converterId="ef27135ea48240519da968b2ab89567e" defaultValue="OO">
- *               <rule key="1" value="Y1"/>
- *               <rule key="2" value="O2"/>
- *           </converter>
- *       </column>
- *   </columnList>
- * </table>
+ * <pre>
+ * &lt;table tableName="table001" id="97628f46ba4143058ad73510af8e4fdb"&gt;
+ *   &lt;property name="select"&gt;select * from demo&lt;/property&gt;
+ *   &lt;columnList&gt;
+ *       &lt;column index="0" field="id" title="唯一序号" width="22" format="@" /&gt;
+ *       &lt;column index="1" field="name" title="姓名" width="14" format="@" /&gt;
+ *       &lt;column index="2" field="type" title="类型" width="8" format="@"&gt;
+ *           &lt;converter converterId="ef27135ea48240519da968b2ab89567e" defaultValue="OO"&gt;
+ *               &lt;rule key="1" value="Y1"/&gt;
+ *               &lt;rule key="2" value="O2"/&gt;
+ *           &lt;/converter&gt;
+ *       &lt;/column&gt;
+ *   &lt;/columnList&gt;
+ * &lt;/table&gt;
+ * </pre>
  *
  */
 public class TableXMLConfigBuilder extends AbstractXmlBuiler<Table> {

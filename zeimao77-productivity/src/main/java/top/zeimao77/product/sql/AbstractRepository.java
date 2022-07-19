@@ -1,15 +1,11 @@
 package top.zeimao77.product.sql;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class AbstractRepository<T,W> implements Repository<T,W> {
 
-    private static Logger logger = LogManager.getLogger(AbstractRepository.class);
     protected Reposit repositoryImpl;
     protected String tableName;
 

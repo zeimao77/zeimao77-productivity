@@ -20,6 +20,10 @@ public class CridUtil {
         return cc == id.charAt(17);
     }
 
+    public static String getRegion(String id) {
+        return id.substring(0,6);
+    }
+
     public static LocalDate getBirthDay(String id) {
         String substring = id.substring(6, 14);
         return LocalDate.parse(substring, LocalDateTimeUtil.NUMBERDATEFORMATTER);

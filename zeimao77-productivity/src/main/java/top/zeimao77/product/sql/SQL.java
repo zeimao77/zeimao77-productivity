@@ -109,12 +109,15 @@ public class SQL implements StatementParamResolver, IWhere {
     }
 
     /**
+     * @param expression 如果为 false 将不处理该条件
      * @param bind 条件关系
      * @see SQL#BIND_AND
      * @see SQL#BIND_OR
      * @param columnName 列名
      * @param cond 运算符
      * @see SQL#COND_QNIN
+     * @param valSetPre 值的函数前缀
+     * @param valSetPost 值的函数后缀
      * @param value 值
      * @return this
      */

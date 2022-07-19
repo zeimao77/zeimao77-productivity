@@ -8,6 +8,7 @@ class CridUtilTest extends BaseMain {
     @Test
     void matchesCheckCode() {
         String id = "42052819920802251X";
+        logger.info("{}",CridUtil.getRegion(id));
         logger.info("{}",CridUtil.matchesCheckCode(id));
         logger.info("姓别:{}",CridUtil.getSex(id));
     }

@@ -25,12 +25,27 @@ public class SimpleSqlClient implements Reposit,AutoCloseable {
 
     protected TransactionFactory connectFacotry;
 
-    public SimpleSqlClient(TransactionFactory connectFacotry, PreparedStatementSetter preparedStatementSetter, ResultSetResolve resultSetResolvel) {
+    /**
+     *
+     * @param connectFacotry Connection持有
+     * @param preparedStatementSetter 参数设置器
+     * @param resultSetResolvel 结果集处理器
+     */
+    public SimpleSqlClient(TransactionFactory connectFacotry, PreparedStatementSetter preparedStatementSetter
+            , ResultSetResolve resultSetResolvel) {
         this.connectFacotry = connectFacotry;
         this.preparedStatementSetter = preparedStatementSetter;
         this.resultSetResolvel = resultSetResolvel;
     }
 
+    /**
+     * 通过Statement解析器执行一个
+     * @param sql SQL
+     * @param resolve 结果集处理器
+     * @param clazz 返回类对象
+     * @param <T> 返回泛型
+     * @return 查询结果列表
+     */
     public <T> ArrayList<T> selectByResolver(StatementParamResolver sql,ResultSetResolve resolve, Class<T> clazz) {
         ArrayList<StatementParameter> statementParams = sql.getStatementParams();
         Consumer<PreparedStatement> con = o -> {
@@ -42,6 +57,11 @@ public class SimpleSqlClient implements Reposit,AutoCloseable {
         return select(sql.getSql(),con,resolve,clazz);
     }
 
+    /**
+     * 执行一个更新语句
+     * @param sql SQL语句
+     * @return 影响行数
+     */
     @Override
     public int updateByResolver(StatementParamResolver sql) {
         ArrayList<StatementParameter> statementParams = sql.getStatementParams();
@@ -54,6 +74,13 @@ public class SimpleSqlClient implements Reposit,AutoCloseable {
         return update(sql.getSql(),con);
     }
 
+    /**
+     * 批量更新
+     * @param list 数据源
+     * @param con SQL构造器
+     * @param <Z> 数据源类型
+     * @return 影响行数
+     */
     @Override
     public <Z> int batchUpdate(List<Z> list, BiConsumer<SQL, Z> con) {
         long start = System.currentTimeMillis();
@@ -205,7 +232,8 @@ public class SimpleSqlClient implements Reposit,AutoCloseable {
         return s == null ? null : Long.valueOf(s);
     }
 
-    public ArrayList<Map<String,Object>> selectListMap(String sql, Consumer<PreparedStatement> statementParamSetter, ResultSetResolve resolve) {
+    public ArrayList<Map<String,Object>> selectListMap(String sql, Consumer<PreparedStatement> statementParamSetter
+            , ResultSetResolve resolve) {
         ArrayList<Map<String,Object>> list = new ArrayList<>();
         Connection contection = createContection();
         try{
@@ -238,6 +266,13 @@ public class SimpleSqlClient implements Reposit,AutoCloseable {
         return select(sql.getSql(),con,this.resultSetResolvel,clazz);
     }
 
+    /**
+     * @param sqlt SQL语句 使用#{*}点位符替换 如果参数是数组使用?占位
+     * @param param  参数 支持 Map、Bean、数组参数
+     * @param clazz 返回类型类定义
+     * @param <T> 返回泛型
+     * @return 查询结果列表
+     */
     @Override
     public <T> ArrayList<T> selectListObj(String sqlt,Object param, Class<T> clazz) {
         DefaultStatementParamResolver defaultStatementParamResolver = new DefaultStatementParamResolver(sqlt, param);
@@ -302,7 +337,8 @@ public class SimpleSqlClient implements Reposit,AutoCloseable {
             callableStatement.setQueryTimeout(queryTimeout);
             for (StatementParameter statementParam : statementParams) {
                 if(statementParam.getMode() == 1) {
-                    setParam(callableStatement,statementParam.getIndex(),statementParam.getJavaType(),statementParam.getJdbcType(),statementParam.getValue());
+                    setParam(callableStatement,statementParam.getIndex(),statementParam.getJavaType()
+                            ,statementParam.getJdbcType(),statementParam.getValue());
                 } else if(statementParam.getMode() == 2) {
                     callableStatement.registerOutParameter(statementParam.getIndex(),statementParam.getJdbcType());
                     outParams.add(statementParam);

@@ -32,6 +32,10 @@ public class ExcelXlsxDocumentBuilder {
     protected Consumer<ExcelXlsxDocumentBuilder> before;
     protected Consumer<ExcelXlsxDocumentBuilder> after;
 
+    /**
+     * @param table 表结构定义
+     * @param dataList 数据列表
+     */
     public ExcelXlsxDocumentBuilder(Table table, List<?> dataList) {
         this.table = table;
         this.dataList = dataList;
@@ -59,11 +63,19 @@ public class ExcelXlsxDocumentBuilder {
     }
 
 
+    /**
+     * 默认构造xlsx文件
+     * @return 07版本
+     */
     public Workbook build() {
         build(new SXSSFWorkbook());
         return this.workbook;
     }
 
+    /**
+     * 构建一个excel文件
+     * @param workbook 工作簿
+     */
     public void build(Workbook workbook) {
         this.workbook = workbook;
         this.sheet = workbook.createSheet(table.getTableName());

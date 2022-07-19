@@ -26,6 +26,12 @@ public class BaseMain {
         initLocalContext();
     }
 
+    /**
+     * 初始化LocalContext环境
+     * 支持通过环境变量或执行参数配置它
+     * local.context.file 指定一个配置文件路径
+     * 默认从classpath下查找 localcontext.properties;
+     */
     private static void initLocalContext(){
         String localContextFile = getPropertyOrEnv("local.context.file",null);
         String localContextActive = getPropertyOrEnv("local.context.active",null);
@@ -78,6 +84,14 @@ public class BaseMain {
         }
     }
 
+    /**
+     * 初始化log4j2默认的日志配置
+     * 支持通过环境变量或执行参数配置它
+     * log.level 用于配置日志级别
+     * log.file 日志路径将日志持久化到文件
+     * log.rolling true/false 开启滚动日志，默认保存10个文件
+     * log.rolloverStrategyMax  保存历史日志文件数量
+     */
     private static void initLoggerConfig(){
         PluginManager.addPackage("top.zeimao77.product.log4j2");
     }
