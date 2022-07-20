@@ -20,6 +20,8 @@ import java.security.spec.X509EncodedKeySpec;
 
 /**
  * 非对秤加密
+ * @author zeimao77
+ * @since 2.0.10
  */
 public class RsaUtil {
 

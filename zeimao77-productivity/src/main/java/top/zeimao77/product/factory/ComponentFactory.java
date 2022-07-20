@@ -16,8 +16,19 @@ import javax.sql.DataSource;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
+/**
+ * 辅助初始化部分组件
+ * @author zeimao77
+ * @since 2.1.1
+ */
 public class ComponentFactory {
 
+    /**
+     * 配置参考:
+     * @see ComponentFactory#createDataSource(String)
+     * @param prefx 前缀
+     * @return SQL客户端工厂对象
+     */
     public static SimpleSqlFacroty initSimpleSqlFacroty(String prefx) {
         DataSource dataSource = createDataSource(prefx);
         SimpleSqlFacroty simpleSqlFacroty = new SimpleSqlFacroty(dataSource);
@@ -25,12 +36,16 @@ public class ComponentFactory {
         return simpleSqlFacroty;
     }
 
-
     /**
-     * 配置方法
-     * ${prefx}_url=...
-     * ${prefx}_username=...
-     * ${prefx}_password=...
+     * 配置方法:
+     * <pre>
+     * ${prefx}_url=jdbc:mysql://${host}:${port}/order?serverTimezone=Asia/Shanghai
+     * ${prefx}_username=root
+     * ${prefx}_password=*****
+     * ${prefx}_maximumPoolSize = 3
+     * ${prefx}_maxLifetime= 1800000
+     * ${prefx}_keepaliveTime=30000
+     * </pre>
      * @param prefx 前缀
      * @return SimpleMysql实例
      */
@@ -81,10 +96,12 @@ public class ComponentFactory {
     }
 
     /**
-     * 配置方法
-     * ${prefx}_host[0]=192.168.0.100:6379
-     * ${prefx}_host[1]=192.168.0.101:6379
-     * ${prefx}_password=...
+     * 配置方法：
+     * <pre>
+     * ${prefx}_host[0]=${host0}:${port0}
+     * ${prefx}_host[1]=${host1}:${port1}
+     * ${prefx}_password=******
+     * </pre>
      * @param prefx 前缀
      * @return JedisCluster实例
      */
@@ -102,8 +119,10 @@ public class ComponentFactory {
 
     /**
      * 配置方法
-     * ${prefx}_host=192.168.0.101:6379
-     * ${prefx}_password=...
+     * <pre>
+     * ${prefx}_host=${host}:${port}
+     * ${prefx}_password=******
+     * </pre>
      * @param prefx 前缀
      * @return Jedis实例
      */
@@ -117,11 +136,13 @@ public class ComponentFactory {
     }
 
     /**
-     * 配置方法
+     * 配置方法:
+     * <pre>
      * ${prefx}_smtpHost=smtp.163.com
-     * ${prefx}_from=***
-     * ${prefx}_username=***
-     * ${prefx}_password=***
+     * ${prefx}_from=******@163.com
+     * ${prefx}_username=******@163.com
+     * ${prefx}_password=******
+     * </pre>
      * @param prefx 前缀
      * @return SimpleEmailSender实例
      */
@@ -135,6 +156,9 @@ public class ComponentFactory {
         return simpleEmailSender;
     }
 
+    /**
+     * 默认提供一个输出流路径配置的变量名
+     */
     public static final String APP_DEFAULT_PRINTWRITER_PATH = "app_default_printwriter_path";
 
     public static PrintWriter createPrintWriter(String key) {

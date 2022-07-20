@@ -90,6 +90,9 @@ public class PageSearch extends BaseSearch {
         return limit;
     }
 
+    /**
+     * 计算分页 在设置页码之后手工调用
+     */
     public void calcpage() {
         int[] cal = PageSearch.parsePage(pageNo,pageSize);
         _limit = cal[0];

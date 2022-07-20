@@ -90,7 +90,7 @@ public class SimpleRepository<T,W> extends AbstractRepository<T, W> {
      *
      * @param repositoryImpl SQL执行实现
      * @param tableName 表名
-     * @param primaryKeyFields 主键名 必需
+     * @param primaryKeyFields 主键名 支持联合主键 必需
      * @param ignoreFields 忽略的字段名
      * @param idParseFunc 联合主键解析函数 设置联合主键时需要;
      */
@@ -241,8 +241,8 @@ public class SimpleRepository<T,W> extends AbstractRepository<T, W> {
             if(total <= 0) {
                 return new ArrayList<>();
             }
-            sql = new SQL();
         }
+        sql = new SQL();
         if(selectCond.getQueryFields() == null || selectCond.getQueryFields().isEmpty()) {
             Field[] declaredFields = getTClass().getDeclaredFields();
             for (Field declaredField : declaredFields) {

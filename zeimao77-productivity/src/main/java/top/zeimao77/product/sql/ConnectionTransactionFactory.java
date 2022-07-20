@@ -9,6 +9,9 @@ import java.sql.SQLException;
 
 import static top.zeimao77.product.exception.ExceptionCodeDefinition.SQLEXCEPTION;
 
+/**
+ * 保存一个连接 直到它关闭
+ */
 public class ConnectionTransactionFactory implements TransactionFactory {
 
     private static Logger logger = LogManager.getLogger(ConnectionTransactionFactory.class);

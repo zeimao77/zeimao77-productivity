@@ -17,8 +17,9 @@ import java.util.List;
 import java.util.Properties;
 
 /**
- * @author zeimao77
  * Mail发送者
+ * @author zeimao77
+ * @since 2.0.10
  */
 public class SimpleEmailSender {
 

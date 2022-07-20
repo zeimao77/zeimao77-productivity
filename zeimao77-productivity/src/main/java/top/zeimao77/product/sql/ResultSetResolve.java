@@ -15,6 +15,11 @@ public interface ResultSetResolve {
      */
     <T> void populate(ResultSet rs , Class<T> clazz, List<T> list);
 
+    /**
+     * 将ResultSet对象转一个MAP对象
+     * @param rs 结果集
+     * @param list 转换后结果的存放容器
+     */
     void populateMap(ResultSet rs,List<Map<String,Object>> list);
 
     /**

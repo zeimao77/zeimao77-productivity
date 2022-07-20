@@ -5,7 +5,6 @@ plugins {
 }
 
 group 'top.zeimao77'
-archivesBaseName = "zeimao77-productivity"
 version '2.1.1'
 description '效率包'
 
@@ -82,12 +81,10 @@ dependencies {
     testImplementation group: 'redis.clients', name:'jedis', version: '4.2.3'
     compileOnly group: 'com.sun.mail', name: 'jakarta.mail', version: '2.0.1'
     testImplementation group: 'com.sun.mail', name: 'jakarta.mail', version: '2.0.1'
-
     compileOnly group: 'org.apache.poi',name: 'poi', version: '5.2.2'
     testImplementation group: 'org.apache.poi',name: 'poi', version: '5.2.2'
     compileOnly group: 'org.apache.poi',name: 'poi-ooxml', version: '5.2.2'
     testImplementation group: 'org.apache.poi',name: 'poi-ooxml', version: '5.2.2'
-
     compileOnly 'javax.servlet:javax.servlet-api:4.0.1'
     compileOnly 'org.springframework:spring-webmvc:5.3.20'
 
@@ -115,7 +112,7 @@ task sourcesJar(type:Jar){
 
 task javadocJar(type:Jar) {
     from javadoc
-    classifier = 'javadoc'
+    classifier 'javadoc'
 }
 
 java {

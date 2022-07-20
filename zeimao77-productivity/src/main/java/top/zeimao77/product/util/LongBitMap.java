@@ -2,6 +2,8 @@ package top.zeimao77.product.util;
 
 /**
  * 位图操作
+ * @author zeimao77
+ * @since 2.1.1
  */
 public interface LongBitMap {
 

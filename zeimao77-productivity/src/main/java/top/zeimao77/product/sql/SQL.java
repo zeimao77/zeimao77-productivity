@@ -8,6 +8,11 @@ import java.util.Collection;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
+/**
+ * 利用它可以简单直观的创建一个SQL
+ * @author zeimao77
+ * @since 2.1.1
+ */
 public class SQL implements StatementParamResolver, IWhere {
 
     private StringBuilder sqlBuilder = new StringBuilder(1024);

@@ -4,6 +4,7 @@ import java.util.function.Function;
 
 /**
  * @author zeimao77
+ * @since 2.0.10
  * 转换器接口
  */
 public interface IConverter<K> {

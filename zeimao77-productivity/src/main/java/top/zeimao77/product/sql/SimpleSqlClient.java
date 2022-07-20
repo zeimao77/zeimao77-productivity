@@ -15,6 +15,32 @@ import java.util.function.Consumer;
 import static top.zeimao77.product.exception.ExceptionCodeDefinition.IOEXCEPTION;
 import static top.zeimao77.product.exception.ExceptionCodeDefinition.SQLEXCEPTION;
 
+/**
+ * SQL客户端
+ * 我们区分为两种使用场景：<br>
+ * 1. 每次执行SQL都是一个单独事务
+ * 可以通过 DataSourceTransactionFactory 来实例化它
+ * 示例：
+ * <pre>
+ * DataSourceTransactionFactory f = new DataSourceTransactionFactory(dataSource);
+ * new SimpleSqlClient(f,DefaultPreparedStatementSetter.INSTANCE,DefaultResultSetResolve.INSTANCE);
+ * </pre>
+ *
+ * 2. 开启一个事务，直到关闭它
+ * <pre>
+ * ConnectionTransactionFactory f = new ConnectionTransactionFactory(connection);
+ * new SimpleSqlClient(f,DefaultPreparedStatementSetter.INSTANCE,DefaultResultSetResolve.INSTANCE);
+ * </pre>
+ *
+ * 简单的初始化方法:
+ * <pre>
+ * SimpleSqlFacroty simpleSqlFacroty= ComponentFactory.initSimpleSqlFacroty("mysql_top_zeimao77");
+ * SimpleSqlClient simpleMysql = simpleSqlFacroty.openSession();
+ * simpleMysql.close();
+ * </pre>
+ * @author zeimao77
+ * @since 2.1.1
+ */
 public class SimpleSqlClient implements Reposit,AutoCloseable {
 
     private static Logger logger = LogManager.getLogger(SimpleSqlClient.class);
@@ -123,6 +149,14 @@ public class SimpleSqlClient implements Reposit,AutoCloseable {
         return result;
     }
 
+    /**
+     * 执行一个更新SQL,示例：
+     * <pre>
+     * simpleMysql.update("truncate table demo");
+     * </pre>
+     * @param sql
+     * @return
+     */
     @Override
     public int update(String sql) {
         return update(sql,null);
@@ -163,6 +197,15 @@ public class SimpleSqlClient implements Reposit,AutoCloseable {
         }
     }
 
+    /**
+     * 执行一个查询SQL
+     * @param sql SQL 点位使用 ? 指定
+     * @param statementParamSetter 参数设置器
+     * @param resolve 结果集处理
+     * @param clazz 返回类对象
+     * @param <T> 返回泛型
+     * @return 查询结果集
+     */
     public <T> ArrayList<T> select(String sql, Consumer<PreparedStatement> statementParamSetter
             , ResultSetResolve resolve, Class<T> clazz){
         ArrayList<T> list = new ArrayList<>();
@@ -199,7 +242,6 @@ public class SimpleSqlClient implements Reposit,AutoCloseable {
         this.preparedStatementSetter.setParam(preparedStatement,index,javaType,jdbcType,value);
     }
 
-
     /**
      * 注意: 返回值需要使用 result 作为别名
      * @param sqlt SQL语句 使用#{*}点位符替换 如果参数是数组使用?占位
@@ -227,6 +269,15 @@ public class SimpleSqlClient implements Reposit,AutoCloseable {
         return strings.isEmpty() ? null : strings.get(0);
     }
 
+    /**
+     * 查询一个Long值，调用示例：
+     * <pre>
+     * simpleMysql.selectLong("SELECT COUNT(1) AS result FROM demo WHERE demo_id > ?", new Object[]{1});
+     * </pre>
+     * @param sqlt
+     * @param param
+     * @return
+     */
     public Long selectLong(String sqlt,Object param) {
         String s = selectString(sqlt, param);
         return s == null ? null : Long.valueOf(s);
@@ -292,6 +343,15 @@ public class SimpleSqlClient implements Reposit,AutoCloseable {
         return select(sql,null,this.resultSetResolvel,clazz);
     }
 
+    /**
+     * 查询一个MAP,示例：
+     * <pre>
+     * simpleMysql.selectListMap("SELECT a,b,e,g,o,q,s,u,w FROM abc LIMIT 0,10", null);
+     * </pre>
+     * @param sqlt SQL
+     * @param param 参数
+     * @return
+     */
     @Override
     public ArrayList<Map<String, Object>> selectListMap(String sqlt, Object param) {
         DefaultStatementParamResolver defaultStatementParamResolver = new DefaultStatementParamResolver(sqlt, param);
@@ -317,10 +377,16 @@ public class SimpleSqlClient implements Reposit,AutoCloseable {
 
     /**
      * 调用存储过程
-     * 示例：call("call clean_table_student(#{resultCode,javaType=Integer,jdbcType=INT,mode=OUT}
+     * 示例：
+     * <pre>
+     * call("call clean_table_student(#{resultCode,javaType=Integer,jdbcType=INT,mode=OUT}
      *          ,#{message,javaType=String,MODE=OUT,jdbcType=VARCHAR});",param);
+     * </pre>
      * @param sqlt
      * @param param
+     * @param resolve
+     * @param clazz
+     * @param <T>
      */
     public <T> ArrayList<T> call(String sqlt, Map<String,Object> param, ResultSetResolve resolve, Class<T> clazz) {
         AssertUtil.notNull(param,"参数 param 必需");

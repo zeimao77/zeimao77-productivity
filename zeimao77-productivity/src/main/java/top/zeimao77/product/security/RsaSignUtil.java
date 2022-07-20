@@ -11,6 +11,11 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
+/**
+ * 签名工具
+ * @author zeimao77
+ * @since 2.0.10
+ */
 public class RsaSignUtil {
 
     private byte[] publicKey;

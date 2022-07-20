@@ -11,6 +11,10 @@ import java.sql.SQLException;
 
 import static top.zeimao77.product.exception.ExceptionCodeDefinition.SQLEXCEPTION;
 
+/**
+ * 每次执行SQL都是一个单独事务,初始化示例:
+
+ */
 public class DataSourceTransactionFactory implements TransactionFactory {
 
     private static Logger logger = LogManager.getLogger(DataSourceTransactionFactory.class);

@@ -74,6 +74,17 @@ public class ExcelXlsxDocumentBuilder {
 
     /**
      * 构建一个excel文件
+     * 示例:
+     * <pre>
+     * File file = new File(path);
+     * FileOutputStream fos = new FileOutputStream(file);
+     * SXSSFWorkbook workbook = new SXSSFWorkbook();
+     * ExcelXlsxDocumentBuilder excelXlsxDocumentBuilder = new ExcelXlsxDocumentBuilder(table, dataList);
+     * excelXlsxDocumentBuilder.build(workbook);
+     * workbook.write(fos);
+     * workbook.close();
+     * fos.close();
+     * </pre>
      * @param workbook 工作簿
      */
     public void build(Workbook workbook) {

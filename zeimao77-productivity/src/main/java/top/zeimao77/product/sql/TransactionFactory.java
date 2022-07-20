@@ -2,6 +2,11 @@ package top.zeimao77.product.sql;
 
 import java.sql.Connection;
 
+/**
+ * sql连接工厂
+ * @author zeimao77
+ * @since 2.1.1
+ */
 public interface TransactionFactory extends AutoCloseable {
 
     /**
