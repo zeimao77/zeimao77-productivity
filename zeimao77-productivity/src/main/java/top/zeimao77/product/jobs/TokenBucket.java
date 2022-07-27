@@ -11,6 +11,8 @@ import java.util.concurrent.TimeUnit;
  *         .withRefillStrategy(100,1, TimeUnit.SECONDS)
  *         .withSleetStrategy(10,TimeUnit.MILLISECONDS)
  *         .build();
+ * @author zeimao77
+ * @since 2.0.9
  */
 public class TokenBucket {
 

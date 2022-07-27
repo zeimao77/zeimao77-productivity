@@ -18,6 +18,11 @@ import java.time.LocalTime;
 import java.util.Date;
 import java.util.function.Function;
 
+/**
+ * JSON字符串的简单解析
+ * @author zeimao77
+ * @since 2.0.9
+ */
 public class Ijson {
 
     private static Logger logger = LogManager.getLogger(Ijson.class);

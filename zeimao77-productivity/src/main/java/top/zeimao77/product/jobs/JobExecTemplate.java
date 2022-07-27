@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author zeimao77
- * @version 20220316.173400
+ * @version 2.0.9
  */
 public abstract class JobExecTemplate<T extends IJob> implements JobExec{
 

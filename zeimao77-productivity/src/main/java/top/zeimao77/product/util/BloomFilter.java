@@ -155,6 +155,7 @@ public class BloomFilter<E> implements Serializable {
 
     /**
      * 在给定的元素数量情况下，计算错误率
+     * @param numberOfElements 元素数量
      * @return 错误率
      */
     public double getFalsePositiveProbability(double numberOfElements) {

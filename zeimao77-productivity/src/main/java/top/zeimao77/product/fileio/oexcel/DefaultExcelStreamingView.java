@@ -13,15 +13,17 @@ public class DefaultExcelStreamingView extends AbstractXlsxStreamingView {
 
     protected List<?> dataList;
     protected Table table;
+    protected int rowNo;
 
-    public DefaultExcelStreamingView(Table table, List<?> dataList) {
+    public DefaultExcelStreamingView(Table table, List<?> dataList,int rowNo) {
         this.table = table;
         this.dataList = dataList;
+        this.rowNo = rowNo;
     }
 
     @Override
     protected void buildExcelDocument(Map<String, Object> model, Workbook workbook, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        ExcelXlsxDocumentBuilder excelXlsxDocumentBuilder = new ExcelXlsxDocumentBuilder(table, dataList);
+        ExcelXlsxDocumentBuilder excelXlsxDocumentBuilder = new ExcelXlsxDocumentBuilder(table, dataList,rowNo);
         excelXlsxDocumentBuilder.build(workbook);
         response.setHeader("Content-disposition","attachment;filename="+table.getTableName()+".xlsx");
     }

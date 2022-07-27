@@ -64,7 +64,7 @@ public class JedisClusterBuilder {
         poolConfig.setTestOnCreate(BaseObjectPoolConfig.DEFAULT_TEST_ON_CREATE);    // 创建连接时检查链接有效性
         poolConfig.setTimeBetweenEvictionRuns(Duration.ofSeconds(60));  // 空闲连接检测的周期
         poolConfig.setNumTestsPerEvictionRun(BaseObjectPoolConfig.DEFAULT_NUM_TESTS_PER_EVICTION_RUN); // 空闲连接检测每次运行时检测的空闲对象的数量
-        // 连接空闲时间大于minEvictableIdleTimeMillis是清理空闲
+        // 连接空闲时间大于minEvictableIdleTimeMillis时清理空闲
         // minEvictableIdleDuration 与 softMinEvictableIdleDuration 满足其一即行清理
         poolConfig.setMinEvictableIdleTime(Duration.ofSeconds(30));
         // 连接空闲时间大于softMinEvictableIdleTimeMillis并且当前连接池的空闲连接数大于最小空闲连接数minIdle是清理空闲

@@ -314,7 +314,7 @@ public class ExcelXlsxDocumentResolve<T> {
         this.sorted = true;
     }
 
-    public CellValue evaluate(Cell cell) {
+    public static CellValue evaluate(Cell cell) {
         XSSFFormulaEvaluator evaluator = new XSSFFormulaEvaluator((XSSFWorkbook) cell.getSheet().getWorkbook());
         CellValue evaluate = evaluator.evaluate(cell);
         return evaluate;
@@ -362,6 +362,45 @@ public class ExcelXlsxDocumentResolve<T> {
     public boolean addFieldTypeResover(CellFiledTypeResover cellFieldTypeResover) {
         this.sorted = false;
         return this.resovers.add(cellFieldTypeResover);
+    }
+
+    @FunctionalInterface
+    public interface CellConsumer {
+        /**
+         * @param rowNo 行号
+         * @param column 列
+         * @param cell 单元格
+         */
+        void accept(int rowNo,Table.Column column,Cell cell);
+    }
+
+    /**
+     *
+     * @param workbook 工作簿
+     * @param table 表描述
+     * @param cellConsumer 单元格处理函数
+     */
+    public void parse(SXSSFWorkbook workbook, Table table, CellConsumer cellConsumer) {
+        if(!sorted) {
+            synchronized (ExcelXlsxDocumentResolve.class) {
+                if(!sorted) {
+                    resovers.sort(Orderd::compareTo);
+                    sorted = true;
+                }
+            }
+        }
+        int rowNum = table.getStartRow();
+        List<Table.Column> columnList = table.getColumnList();
+        Sheet sheet = workbook.getXSSFWorkbook().getSheetAt(table.getSheetIndex());
+        Row row = null;
+        Cell cell = null;
+        while ((row = sheet.getRow(rowNum)) != null) {
+            for (Table.Column column : columnList) {
+                cell = row.getCell(column.getIndex());
+                cellConsumer.accept(rowNum,column,cell);
+            }
+            rowNum++;
+        }
     }
 
     public ArrayList<T> parse(SXSSFWorkbook workbook, Table table, Class<T> clazz, ArrayList<T> resultList) {

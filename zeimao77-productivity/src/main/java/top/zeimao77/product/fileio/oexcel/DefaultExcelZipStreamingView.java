@@ -16,18 +16,20 @@ public class DefaultExcelZipStreamingView extends AbstractView {
 
     protected List<?> dataList;
     protected Table table;
+    protected int rowNo;
     private static final String CONTENTTYPE = "application/zip;charset=UTF-8";
 
-    public DefaultExcelZipStreamingView(Table table, List<?> dataList) {
+    public DefaultExcelZipStreamingView(Table table, List<?> dataList,int rowNo) {
         setContentType(CONTENTTYPE);
         this.table = table;
         this.dataList = dataList;
+        this.rowNo = rowNo;
     }
 
     @Override
     protected void renderMergedOutputModel(Map<String, Object> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
         response.setHeader("content-disposition","attachment;filename="+table.getTableName()+".zip");
-        ExcelXlsxDocumentBuilder builder = new ExcelXlsxDocumentBuilder(table,dataList);
+        ExcelXlsxDocumentBuilder builder = new ExcelXlsxDocumentBuilder(table,dataList,rowNo);
         Workbook workbook = builder.build();
         renderZip(workbook,response);
     }

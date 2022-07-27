@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * 示例配置
+ * 示例配置:
  * <pre>
  * &lt;table tableName="table001" id="97628f46ba4143058ad73510af8e4fdb"&gt;
  *   &lt;property name="select"&gt;select * from demo&lt;/property&gt;

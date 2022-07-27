@@ -11,10 +11,21 @@ import java.util.List;
 import java.util.function.BiFunction;
 import static top.zeimao77.product.exception.ExceptionCodeDefinition.*;
 
+/**
+ * @param <T> MODEL
+ * @param <W> 主键类型 多主键可以通过记录类提供支持 并提供以对应的主键解析函数:
+ * @see SimpleRepository#idParseFunc
+ */
 public class SimpleRepository<T,W> extends AbstractRepository<T, W> {
 
     protected List<String> ignoreFieldList;
     protected List<String> primaryKeyFieldList;
+    /**
+     * 主键解析函数
+     * 第一个参数是主键
+     * 第二个参数是字段名
+     * 返回对应字段的查询条件参数对象
+     */
     protected BiFunction<W,String,Object> idParseFunc;
 
     /**

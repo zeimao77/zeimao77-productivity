@@ -1,6 +1,10 @@
 package top.zeimao77.product.factory;
 
 import com.zaxxer.hikari.HikariDataSource;
+import org.apache.commons.pool2.impl.BaseObjectPoolConfig;
+import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
+import org.springframework.cglib.core.Local;
+import redis.clients.jedis.Connection;
 import redis.clients.jedis.HostAndPort;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisCluster;
@@ -14,6 +18,7 @@ import top.zeimao77.product.util.StreamUtil;
 
 import javax.sql.DataSource;
 import java.io.PrintWriter;
+import java.time.Duration;
 import java.util.ArrayList;
 
 /**
@@ -108,12 +113,46 @@ public class ComponentFactory {
     public static JedisCluster createJedisCluster(String prefx) {
         ArrayList<String> hps = LocalContext.get(prefx+"_host[%d]",6);
         String passoword = LocalContext.getString(prefx+"_passoword");
+        String maxIdle = LocalContext.getString(prefx + "_maxIdle");
+        String minIdle = LocalContext.getString(prefx + "_minIdle");
+        String maxTotal = LocalContext.getString(prefx + "_maxTotal");
+        String maxWait = LocalContext.getString(prefx + "_maxWait");
+        Boolean testOnBorrow = LocalContext.getBoolean(prefx + "_testOnBorrow");
+        Boolean testOnReturn = LocalContext.getBoolean(prefx + "_testOnReturn");
+        Boolean testOnCreate = LocalContext.getBoolean(prefx + "_testOnCreate");
+        String timeBetweenEvictionRuns = LocalContext.getString(prefx + "_timeBetweenEvictionRuns");
+        String numTestsPerEvictionRun = LocalContext.getString(prefx + "_numTestsPerEvictionRun");
+        GenericObjectPoolConfig<Connection> poolConfig = new GenericObjectPoolConfig<>();
+        poolConfig.setMaxIdle(AssertUtil.isNotEmpty(maxIdle)?Integer.valueOf(maxIdle).intValue()
+                :GenericObjectPoolConfig.DEFAULT_MAX_IDLE);
+        poolConfig.setMinIdle(AssertUtil.isNotEmpty(minIdle)?Integer.valueOf(minIdle).intValue()
+                :GenericObjectPoolConfig.DEFAULT_MIN_IDLE);
+        poolConfig.setMaxTotal(AssertUtil.isNotEmpty(maxTotal)?Integer.valueOf(maxTotal).intValue()
+                :GenericObjectPoolConfig.DEFAULT_MAX_TOTAL);
+        poolConfig.setMaxWait(AssertUtil.isNotEmpty(maxWait)?Duration.ofMillis(Long.valueOf(maxWait))
+                :GenericObjectPoolConfig.DEFAULT_MAX_WAIT);
+        poolConfig.setTimeBetweenEvictionRuns(AssertUtil.isNotEmpty(timeBetweenEvictionRuns)
+                ?Duration.ofMillis(Long.valueOf(timeBetweenEvictionRuns))
+                :GenericObjectPoolConfig.DEFAULT_TIME_BETWEEN_EVICTION_RUNS);
+        poolConfig.setNumTestsPerEvictionRun(AssertUtil.isNotEmpty(numTestsPerEvictionRun)
+                ?Integer.valueOf(numTestsPerEvictionRun)
+                :GenericObjectPoolConfig.DEFAULT_NUM_TESTS_PER_EVICTION_RUN);
+        poolConfig.setTestOnBorrow(testOnBorrow != null ? testOnBorrow
+                :GenericObjectPoolConfig.DEFAULT_TEST_ON_BORROW);
+        poolConfig.setTestOnReturn(testOnReturn != null?testOnReturn
+                :GenericObjectPoolConfig.DEFAULT_TEST_ON_RETURN);
+        poolConfig.setTestOnCreate(testOnCreate != null?testOnCreate
+                :GenericObjectPoolConfig.DEFAULT_TEST_ON_CREATE);
+        poolConfig.setMinEvictableIdleTime(Duration.ofSeconds(30));
+        poolConfig.setSoftMinEvictableIdleTime(BaseObjectPoolConfig.DEFAULT_SOFT_MIN_EVICTABLE_IDLE_DURATION);
+        poolConfig.setEvictionPolicyClassName(BaseObjectPoolConfig.DEFAULT_EVICTION_POLICY_CLASS_NAME);
+
         JedisClusterBuilder jedisClusterBuilder = JedisClusterBuilder.create();
         for (String hp : hps) {
             jedisClusterBuilder.addNode(HostAndPort.from(hp));
         }
         jedisClusterBuilder.password(passoword);
-        JedisCluster build = jedisClusterBuilder.build();
+        JedisCluster build = jedisClusterBuilder.build(poolConfig);
         return build;
     }
 

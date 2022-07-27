@@ -4,6 +4,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 通过代码构建一个Table
+ * 示例：
+ * <pre>
+ * Table table = TableCodeConfigBuilder.create("97628f46ba4143058ad73510af8e4fdb", "order")
+ *     .column(0,"订单主键", "refid", 24,"@")
+ *     .column(1,"中台单号", "refNo", 24,"@")
+ *     .column(2,"发送时间", "createDate", 16,"yyyy-m-d hh:mm")
+ *     .column(4,"消息体", "body", 220)
+ *     .cellRangeValue(0,0,0,3,“@”,"总条数:"+dataList.size())
+ *     .build();
+ * </pre>
+ */
 public class TableCodeConfigBuilder{
 
     private Table table;
@@ -26,32 +39,13 @@ public class TableCodeConfigBuilder{
         return this;
     }
 
-    public TableCodeConfigBuilder column(int index,String field) {
+    public TableCodeConfigBuilder column(int index,String title,String field,int width) {
         Table.Column column = new Table.Column();
+        column.setTitle(title);
+        column.setField(field);
+        column.setWidth(width);
         column.setIndex(index);
-        column.setField(field);
-        this.columnList.add(column);
-        return this;
-    }
-
-    public TableCodeConfigBuilder column(String title,String field,int width) {
-        Table.Column column = new Table.Column();
-        column.setTitle(title);
-        column.setField(field);
         column.setFormat("@");
-        column.setWidth(width);
-        column.setIndex(columnList.size());
-        columnList.add(column);
-        return this;
-    }
-
-    public TableCodeConfigBuilder column(String title,String field,int width,String format) {
-        Table.Column column = new Table.Column();
-        column.setTitle(title);
-        column.setField(field);
-        column.setFormat(format);
-        column.setWidth(width);
-        column.setIndex(columnList.size());
         columnList.add(column);
         return this;
     }
@@ -60,9 +54,9 @@ public class TableCodeConfigBuilder{
         Table.Column column = new Table.Column();
         column.setTitle(title);
         column.setField(field);
-        column.setFormat(format);
         column.setWidth(width);
         column.setIndex(index);
+        column.setFormat(format);
         columnList.add(column);
         return this;
     }
@@ -80,8 +74,8 @@ public class TableCodeConfigBuilder{
         return this;
     }
 
-    public TableCodeConfigBuilder cellRangeValue(int startRow, int startColumn, int endRow, int endColumn, Object value) {
-        this.cellRangeValueList.add(new CellRangeValue(startRow,startColumn,endRow,endColumn,value));
+    public TableCodeConfigBuilder cellRangeValue(int startRow, int startColumn, int endRow, int endColumn,String format, Object value) {
+        this.cellRangeValueList.add(new CellRangeValue(startRow,startColumn,endRow,endColumn,format,value));
         return this;
     }
 

@@ -24,12 +24,18 @@ public class ExcelXlsxDocumentBuilder {
     protected int rowNum = 0;
     protected List<?> dataList;
 
-    CellStyleFactory cellStyleFactory = null;
+    protected CellStyleFactory cellStyleFactory = null;
 
     private Map<Table.Column, IConverter<String>> converterMap;
 
     protected Table table;
+    /**
+     * 构建前的前置处理函数 通常用于设置新的rowNum来空行
+     */
     protected Consumer<ExcelXlsxDocumentBuilder> before;
+    /**
+     * 构建后的后置处理函数
+     */
     protected Consumer<ExcelXlsxDocumentBuilder> after;
 
     /**
@@ -39,6 +45,18 @@ public class ExcelXlsxDocumentBuilder {
     public ExcelXlsxDocumentBuilder(Table table, List<?> dataList) {
         this.table = table;
         this.dataList = dataList;
+    }
+
+
+    /**
+     * @param table 表结构定义
+     * @param dataList 数据列表
+     * @param rowNum 表格起始行 通常用于给合并单元格让位
+     */
+    public ExcelXlsxDocumentBuilder(Table table, List<?> dataList,int rowNum) {
+        this.table = table;
+        this.dataList = dataList;
+        this.rowNum = rowNum;
     }
 
     protected IConverter<String> converter(Table.Column column) {
@@ -112,7 +130,7 @@ public class ExcelXlsxDocumentBuilder {
                         v = converter.getName(v.toString());
                     }
                     Cell cell = row.createCell(column.getIndex());
-                    setCellValue(cell,column.getFormat(),v);
+                    setCellValue(cell,column.getIndex(),column.getFormat(),v);
                 }
             }
         }
@@ -124,12 +142,12 @@ public class ExcelXlsxDocumentBuilder {
                 Row row = sheet.getRow(cellRangeValue.getStartRow());
                 row = row == null ? sheet.createRow(cellRangeValue.getStartRow()) : row;
                 Cell cell = row.createCell(cellRangeValue.getStartColumn());
-                setCellValue(cell,cellRangeValue.getFormat(),cellRangeValue.getValue());
+                setCellValue(cell,-1,cellRangeValue.getFormat(),cellRangeValue.getValue());
             }
         }
     }
 
-    private void setCellValue(Cell cell,String format,Object value) {
+    protected void setCellValue(Cell cell,int index,String format,Object value) {
         if(AssertUtil.isNotEmpty(format)) {
             cell.setCellStyle(cellStyleFactory.create(format));
         }

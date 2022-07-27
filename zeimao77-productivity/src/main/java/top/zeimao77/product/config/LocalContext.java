@@ -33,6 +33,25 @@ public class LocalContext {
         return o != null ? o.toString() : null;
     }
 
+    public static Boolean getBoolean(String key) {
+        Object o = get(key);
+        if(o != null) {
+            if("TRUE".equalsIgnoreCase(o.toString())
+                    || "Y".equalsIgnoreCase(o.toString())
+                    || "YES".equals(o.toString())
+                    || "1".equals(o.toString())) {
+                return true;
+            }
+            if("FALSE".equalsIgnoreCase(o.toString())
+                    || "N".equalsIgnoreCase(o.toString())
+                    || "NO".equalsIgnoreCase(o.toString())
+                    || "0".equalsIgnoreCase(o.toString())) {
+                return false;
+            }
+        }
+        return null;
+    }
+
     public static Object remove(String key) {
         return context.remove(key);
     }

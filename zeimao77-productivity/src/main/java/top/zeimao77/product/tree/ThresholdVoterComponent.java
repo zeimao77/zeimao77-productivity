@@ -7,6 +7,13 @@ import java.util.List;
 
 public class ThresholdVoterComponent<T> implements Voter<T> {
 
+    /**
+     * 表决器阈值
+     * 阈值用于控制表决行为
+     * 1D：一票否决
+     * 0D：一票通过
+     * 0D &gt; threshold &gt; 1D : 如果 投票通过的票数/投票器列表数量 >= threshold 将会被表决通过;
+     */
     private Double threshold;
 
     // 投票器列表
@@ -14,10 +21,6 @@ public class ThresholdVoterComponent<T> implements Voter<T> {
 
     /**
      * 构造一个表决器
-     * 阈值用于控制表决行为
-     * 1D：一票否决
-     * 0D：一票通过
-     * 0D &gt; threshold &gt; 1D : 如果 投票通过的票数/投票器列表数量 >= threshold 将会被表决通过;
      * @param voters  投票器列表
      * @param threshold 阈值
      */
@@ -45,6 +48,10 @@ public class ThresholdVoterComponent<T> implements Voter<T> {
             } else if(threshold.compareTo(1D) == 0 && gc == voters.size()) {
                 return ACCESS_GRANTED;
             } else if(threshold.compareTo(0D) > 0 && threshold.compareTo(1D) < 0) {
+                /**
+                 * 并不会将所有投票器执行完毕进行唱票
+                 * 只要通过的票数超过了阈值 或者 否决的票数超过了 1 - 阈值 则直接产出结果;
+                 */
                 if((Double.valueOf(gc)/voters.size()) >= threshold) {
                     return ACCESS_GRANTED;
                 }

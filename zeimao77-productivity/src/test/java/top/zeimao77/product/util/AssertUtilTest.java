@@ -5,13 +5,18 @@ import top.zeimao77.product.fileio.oexcel.Table;
 import top.zeimao77.product.fileio.oexcel.TableXMLConfigBuilder;
 import top.zeimao77.product.main.BaseMain;
 
+import java.util.Collection;
+import java.util.List;
+
 public class AssertUtilTest extends BaseMain {
 
     @Test
     public void match() {
-        TableXMLConfigBuilder builder = new TableXMLConfigBuilder("C:\\Users\\zeimao77\\Desktop\\excel_table.xml");
-        Table build = builder.build();
-        logger.info(build);
+        List<String> list = List.of("1","2","3");
+        for (int i = 0; i < 30; i++) {
+
+            logger.info("{}",CollectionUtil.getRandom(list));
+        }
     }
 
 }

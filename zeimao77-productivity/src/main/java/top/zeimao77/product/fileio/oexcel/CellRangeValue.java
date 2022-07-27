@@ -16,11 +16,12 @@ public class CellRangeValue {
         this.endColumn = startColumn;
     }
 
-    public CellRangeValue(int startRow, int startColumn, int endRow, int endColumn, Object value) {
+    public CellRangeValue(int startRow, int startColumn, int endRow, int endColumn,String format, Object value) {
         this.startRow = startRow;
         this.startColumn = startColumn;
         this.endRow = endRow;
         this.endColumn = endColumn;
+        this.format = format;
         this.value = value;
     }
 

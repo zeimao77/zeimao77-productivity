@@ -5,6 +5,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * @author zeimao77
+ * @since 2.0.9
  * 集合工具
  */
 public class CollectionUtil {
