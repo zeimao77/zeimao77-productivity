@@ -133,7 +133,7 @@ public class SimpleRepository<T,W> extends AbstractRepository<T, W> {
             String valSetPre = info == null ? null : info.valSetPre();
             String valSetPost = info == null ? null : info.valSetPost();
             if(!isIgnoreField(name) && mode == 1) {
-                sql.addValues(true,codeNameToDbName(name),valSetPre,valSetPost,property);
+                sql.addValues(info == null || property != null,codeNameToDbName(name),valSetPre,valSetPost,property);
             }
         }
         sql.endValues();
@@ -166,7 +166,7 @@ public class SimpleRepository<T,W> extends AbstractRepository<T, W> {
                 ignoreOrPrimary = true;
             }
             if(!ignoreOrPrimary) {
-                sql.set(true,codeNameToDbName(name),valSetPre,valSetPost,property);
+                sql.set(info == null || property != null,codeNameToDbName(name),valSetPre,valSetPost,property);
             }
         }
         for (Field declaredMethod : whereField) {

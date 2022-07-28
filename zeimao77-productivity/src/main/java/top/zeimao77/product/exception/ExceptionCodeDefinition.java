@@ -18,7 +18,7 @@ public interface ExceptionCodeDefinition extends LongBitMap {
     Integer CUSTOM = 0x001001;   // 自定义的异常;
     Integer WRONG_ACTION = 0x001002;  // 错误的操作;
     Integer NO_PERMISSION = 0x001003;  // 没有权限;
-    Integer TRY_AGAIN_LATER = 0x001004; // 稍后再试;
+    Integer TRY_AGAIN_LATER = 0x001004; // 临时资源受限,建议稍后再试;
     Integer WRONG_SOURCE = 0x001005 | NON_RETRYABLE;   // 错误的参数或源;
     Integer NOT_SUPPORTED = 0x001006 | NON_RETRYABLE;   // 不支持的操作;
 
