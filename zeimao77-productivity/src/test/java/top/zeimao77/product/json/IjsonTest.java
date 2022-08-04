@@ -16,12 +16,18 @@ class IjsonTest extends BaseMain {
                             "id":121212,
                             "name":"John",
                             "phone":"66667777"
+                        }, {
+                            "name":"tony"
                         }
                     ]
                 }
                 """;
         Ijson parse = Ijson.parse(json);
-        String string = parse.getJsonArray("employee").getJsonObject(0).getString("name");
-        logger.info(string);
+        Ijson employee = parse.getJsonArray("employee");
+        logger.info("size:{}",employee.size());
+        for (int i = 0; i < employee.size(); i++) {
+            Ijson jsonObject = employee.getJsonObject(i);
+            logger.info(jsonObject.getString("name"));
+        }
     }
 }

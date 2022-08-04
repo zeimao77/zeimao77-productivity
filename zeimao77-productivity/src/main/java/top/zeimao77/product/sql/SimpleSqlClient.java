@@ -423,7 +423,7 @@ public class SimpleSqlClient implements Reposit,AutoCloseable {
                 param.put(outParam.getName(),out);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new BaseServiceRunException(IOEXCEPTION,"SQL错误",e);
         }finally {
             close(contection);
         }

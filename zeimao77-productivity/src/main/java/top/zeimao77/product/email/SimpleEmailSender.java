@@ -7,8 +7,6 @@ import jakarta.mail.internet.MimeBodyPart;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.internet.MimeMultipart;
 import jakarta.mail.util.ByteArrayDataSource;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import top.zeimao77.product.exception.BaseServiceRunException;
 import top.zeimao77.product.model.ImmutablePair;
 
@@ -22,8 +20,6 @@ import java.util.Properties;
  * @since 2.0.10
  */
 public class SimpleEmailSender {
-
-    private Logger logger = LogManager.getLogger(SimpleEmailSender.class);
 
     protected String smtpHost;
     protected String from;
@@ -139,7 +135,7 @@ public class SimpleEmailSender {
                     mimeBodyPart.setDataHandler(new DataHandler(byteArrayDataSource));
                     multipart.addBodyPart(mimeBodyPart);
                 } catch (MessagingException e) {
-                    e.printStackTrace();
+                    throw new BaseServiceRunException("发送邮件错误",e);
                 }
             }
         }

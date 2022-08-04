@@ -3,7 +3,6 @@ package top.zeimao77.product.factory;
 import com.zaxxer.hikari.HikariDataSource;
 import org.apache.commons.pool2.impl.BaseObjectPoolConfig;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
-import org.springframework.cglib.core.Local;
 import redis.clients.jedis.Connection;
 import redis.clients.jedis.HostAndPort;
 import redis.clients.jedis.Jedis;

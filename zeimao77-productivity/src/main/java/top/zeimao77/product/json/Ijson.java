@@ -94,6 +94,20 @@ public class Ijson {
         throw new BaseServiceRunException(String.format("json字段类型错误:%s不可以转换对Arr",this.jsonNode.getNodeType().name()));
     }
 
+    public long size(String fieldName) {
+        if(this.jsonNode.get(fieldName).getNodeType()== JsonNodeType.ARRAY) {
+            return this.jsonNode.get(fieldName).size();
+        }
+        return -1;
+    }
+
+    public long size() {
+        if(this.jsonNode.getNodeType() == JsonNodeType.ARRAY) {
+            return this.jsonNode.size();
+        }
+        return -1;
+    }
+
     /**
      * @param fieldName 字段名
      * @return 长整形值
