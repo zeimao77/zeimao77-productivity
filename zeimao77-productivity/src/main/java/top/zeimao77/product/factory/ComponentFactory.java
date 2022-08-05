@@ -11,7 +11,7 @@ import top.zeimao77.product.config.LocalContext;
 import top.zeimao77.product.email.SimpleEmailSender;
 import top.zeimao77.product.redis.JedisBuilder;
 import top.zeimao77.product.redis.JedisClusterBuilder;
-import top.zeimao77.product.sql.SimpleSqlFacroty;
+import top.zeimao77.product.sql.*;
 import top.zeimao77.product.util.AssertUtil;
 import top.zeimao77.product.util.StreamUtil;
 
@@ -38,6 +38,21 @@ public class ComponentFactory {
         SimpleSqlFacroty simpleSqlFacroty = new SimpleSqlFacroty(dataSource);
         BeanFactory.DEFAULT.registerSingleton(prefx,simpleSqlFacroty);
         return simpleSqlFacroty;
+    }
+
+    /**
+     * 配置参考:
+     * @see ComponentFactory#createDataSource(String)
+     * @param prefx 前缀
+     * @return SQL客户端
+     */
+    public static SimpleSqlClient initSimpleSqlClient(String prefx) {
+        DataSource dataSource = createDataSource(prefx);
+        DataSourceTransactionFactory dataSourceTransactionFactory = new DataSourceTransactionFactory(dataSource);
+        SimpleSqlClient simpleSqlClient = new SimpleSqlClient(dataSourceTransactionFactory
+                , DefaultPreparedStatementSetter.INSTANCE, DefaultResultSetResolve.INSTANCE);
+        BeanFactory.DEFAULT.registerSingleton(prefx,simpleSqlClient);
+        return simpleSqlClient;
     }
 
     /**
