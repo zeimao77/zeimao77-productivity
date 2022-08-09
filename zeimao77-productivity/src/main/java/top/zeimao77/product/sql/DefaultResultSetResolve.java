@@ -53,16 +53,20 @@ public class DefaultResultSetResolve implements ResultSetResolve {
             public Long resove(Object obj) {
                 if(obj == null)
                     return null;
-                if(obj instanceof Integer o) {
+                if(obj instanceof Integer) {
+                    Integer o = ((Integer) obj);
                     return o.longValue();
                 }
-                if(obj instanceof Long o) {
+                if(obj instanceof Long) {
+                    Long o = ((Long) obj);
                     return o;
                 }
-                if(obj instanceof Timestamp o) {
+                if(obj instanceof Timestamp) {
+                    Timestamp o = ((Timestamp) obj);
                     return o.getTime();
                 }
-                if(obj instanceof LocalDateTime o) {
+                if(obj instanceof LocalDateTime) {
+                    LocalDateTime o = ((LocalDateTime) obj);
                     return o.toEpochSecond(ZoneId.systemDefault().getRules().getOffset(Instant.now()));
                 }
                 return Long.valueOf(obj.toString());
@@ -78,10 +82,12 @@ public class DefaultResultSetResolve implements ResultSetResolve {
             public Integer resove(Object obj) {
                 if(obj == null)
                     return null;
-                if(obj instanceof Integer o) {
+                if(obj instanceof Integer) {
+                    Integer o = ((Integer) obj);
                     return o;
                 }
-                if(obj instanceof Long o) {
+                if(obj instanceof Long) {
+                    Long o = ((Long) obj);
                     return o.intValue();
                 }
                 return Integer.valueOf(obj.toString());
@@ -98,8 +104,10 @@ public class DefaultResultSetResolve implements ResultSetResolve {
             public Double resove(Object obj) {
                 if(obj == null)
                     return null;
-                if(obj instanceof Number o)
+                if(obj instanceof Number) {
+                    Number o = ((Number) obj);
                     return o.doubleValue();
+                }
                 return Double.valueOf(obj.toString());
             }
 
@@ -113,10 +121,13 @@ public class DefaultResultSetResolve implements ResultSetResolve {
             public BigDecimal resove(Object obj) {
                 if( obj == null )
                     return null;
-                if(obj instanceof BigDecimal o)
-                    return o;
-                if(obj instanceof Number o)
+                if(obj instanceof BigDecimal) {
+                    return ((BigDecimal) obj);
+                }
+                if(obj instanceof Number) {
+                    Number o = (Number) obj;
                     return BigDecimal.valueOf(o.doubleValue());
+                }
                 return new BigDecimal(obj.toString());
             }
 
@@ -131,12 +142,16 @@ public class DefaultResultSetResolve implements ResultSetResolve {
             public Boolean resove(Object obj) {
                 if( obj == null )
                     return null;
-                if(obj instanceof Boolean o)
-                    return o;
-                if(obj instanceof Number o)
+                if(obj instanceof Boolean)
+                    return (Boolean) obj;
+                if(obj instanceof Number) {
+                    Number o = ((Number) obj);
                     return o.intValue() == 0 ? false : true;
-                if(obj instanceof String o)
+                }
+                if(obj instanceof String){
+                    String o = ((String) obj);
                     return Boolean.valueOf(o);
+                }
                 logger.error("无法解析的布尔值：{}",obj);
                 return null;
             }
@@ -151,19 +166,30 @@ public class DefaultResultSetResolve implements ResultSetResolve {
             public java.util.Date resove(Object obj) {
                 if(obj == null)
                     return null;
-                if(obj instanceof LocalDateTime o)
+                if(obj instanceof LocalDateTime) {
+                    LocalDateTime o = ((LocalDateTime) obj);
                     return CalendarDateUtil.fromLocalDateTime(o);
-                if(obj instanceof Time o)
+                }
+                if(obj instanceof Time) {
+                    Time o = ((Time) obj);
                     return new Date(o.getTime());
-                if(obj instanceof Date o)
+                }
+                if(obj instanceof Date) {
+                    Date o = ((Date)obj);
                     return new Date(o.getTime());
-                if(obj instanceof Timestamp o)
+                }
+                if(obj instanceof Timestamp) {
+                    Timestamp o = ((Timestamp) obj);
                     return new Date(o.getTime());
-                if(obj instanceof Long o) {
+                }
+                if(obj instanceof Long) {
+                    Long o = ((Long) obj);
                     return Date.from(Instant.ofEpochMilli(o));
                 }
-                if(obj instanceof String o)
+                if(obj instanceof String) {
+                    String o = ((String) obj);
                     return CalendarDateUtil.parseDateTime(o);
+                }
                 logger.error("无法解析的日期时间：{}",obj);
                 return null;
             }
@@ -177,18 +203,24 @@ public class DefaultResultSetResolve implements ResultSetResolve {
             @Override
             public LocalDateTime resove(Object obj) {
                 if(obj == null) return null;
-                if(obj instanceof LocalDateTime o)
-                    return o;
-                if(obj instanceof LocalDate o) {
+                if(obj instanceof LocalDateTime)
+                    return (LocalDateTime) obj;
+                if(obj instanceof LocalDate) {
+                    LocalDate o = (LocalDate) obj;
                     return LocalDateTime.of(o,LocalTime.MIN);
                 }
-                if(obj instanceof Timestamp o)
+                if(obj instanceof Timestamp) {
+                    Timestamp o = ((Timestamp) obj);
                     return LocalDateTime.ofInstant(Instant.ofEpochMilli(o.getTime()), ZoneId.systemDefault());
-                if(obj instanceof Long o) {
+                }
+                if(obj instanceof Long) {
+                    Long o = ((Long) obj);
                     return LocalDateTime.ofInstant(Instant.ofEpochMilli(o),ZoneId.systemDefault());
                 }
-                if(obj instanceof String o)
+                if(obj instanceof String) {
+                    String o = ((String) obj);
                     return LocalDateTime.parse(o,LocalDateTimeUtil.STANDARDDATETIMEFORMATTER);
+                }
                 logger.error("无法解析的日期时间：{}",obj);
                 return null;
             }
@@ -201,12 +233,16 @@ public class DefaultResultSetResolve implements ResultSetResolve {
             @Override
             public LocalTime resove(Object obj) {
                 if(obj == null) return null;
-                if(obj instanceof LocalTime o)
-                    return o;
-                if(obj instanceof Time o)
+                if(obj instanceof LocalTime)
+                    return ((LocalTime) obj);
+                if(obj instanceof Time) {
+                    Time o = ((Time) obj);
                     return o.toLocalTime();
-                if(obj instanceof String o)
+                }
+                if(obj instanceof String) {
+                    String o = ((String) obj);
                     return LocalTime.parse(o,LocalDateTimeUtil.STANDARDTIMEFORMATTER);
+                }
                 logger.error("无法解析的时间：{}",obj);
                 return null;
             }
@@ -220,12 +256,16 @@ public class DefaultResultSetResolve implements ResultSetResolve {
             @Override
             public LocalDate resove(Object obj) {
                 if(obj == null) return  null;
-                if(obj instanceof LocalDate o)
-                    return o;
-                if(obj instanceof Date o)
+                if(obj instanceof LocalDate)
+                    return (LocalDate) obj;
+                if(obj instanceof Date) {
+                    Date o = ((Date) obj);
                     return o.toLocalDate();
-                if(obj instanceof String o)
+                }
+                if(obj instanceof String) {
+                    String o = ((String) obj);
                     return LocalDate.parse(o,LocalDateTimeUtil.STANDARDDATEFORMATTER);
+                }
                 logger.error("无法解析的日期：{}",obj);
                 return null;
             }
@@ -240,10 +280,14 @@ public class DefaultResultSetResolve implements ResultSetResolve {
             public Float resove(Object obj) {
                 if(obj == null)
                     return null;
-                if(obj instanceof Float o)
+                if(obj instanceof Float) {
+                    Float o = ((Float) obj);
                     return o;
-                if(obj instanceof Number o)
+                }
+                if(obj instanceof Number) {
+                    Number o = (Number) obj;
                     return o.floatValue();
+                }
                 return Float.valueOf(obj.toString());
             }
 
@@ -257,10 +301,13 @@ public class DefaultResultSetResolve implements ResultSetResolve {
             public Short resove(Object obj) {
                 if(obj == null)
                     return null;
-                if(obj instanceof Short o)
+                if(obj instanceof Short) {
+                    Short o = ((Short) obj);
                     return o;
-                if(obj instanceof Number o)
-                    return o.shortValue();
+                }
+                if(obj instanceof Number) {
+                    return ((Number)obj).shortValue();
+                }
                 return Short.valueOf(obj.toString());
             }
 
@@ -284,10 +331,12 @@ public class DefaultResultSetResolve implements ResultSetResolve {
 
             @Override
             public BigInteger resove(Object obj) {
-                if(obj instanceof BigInteger o)
+                if(obj instanceof BigInteger) {
+                    BigInteger o = ((BigInteger) obj);
                     return o;
-                if(obj instanceof Number o) {
-                    return BigInteger.valueOf(o.longValue());
+                }
+                if(obj instanceof Number) {
+                    return BigInteger.valueOf(((Number)obj).longValue());
                 }
                 return obj == null ? null : new BigInteger(obj.toString());
             }
@@ -439,11 +488,20 @@ public class DefaultResultSetResolve implements ResultSetResolve {
                     } else {
                         int columnType = rsmd.getColumnType(i);
                         switch (columnType) {
-                            case Types.TIMESTAMP -> fieldValue = resolve(value,LocalDateTime.class);
-                            case Types.DATE -> fieldValue = resolve(value,LocalDate.class);
-                            case Types.TIME -> fieldValue = resolve(value,LocalTime.class);
-                            case Types.BINARY,Types.VARBINARY,Types.LONGVARBINARY -> fieldValue = resolve(value,ByteBuffer.class);
-                            default -> fieldValue = rs.getObject(i);
+                            case Types.TIMESTAMP:
+                                fieldValue = resolve(value,LocalDateTime.class);
+                                break;
+                            case Types.DATE:
+                                fieldValue = resolve(value,LocalDate.class);
+                                break;
+                            case Types.TIME:
+                                fieldValue = resolve(value,LocalTime.class);
+                                break;
+                            case Types.BINARY,Types.VARBINARY,Types.LONGVARBINARY:
+                                fieldValue = resolve(value,ByteBuffer.class);
+                                break;
+                            default :
+                                fieldValue = rs.getObject(i);
                         }
                     }
                     t.put(columnLabel,fieldValue);

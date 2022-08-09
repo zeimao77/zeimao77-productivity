@@ -154,23 +154,30 @@ public class ExcelXlsxDocumentBuilder {
         if(value == null)
             return;
         Object v = value;
-        if(v instanceof Long p && "@".equals(format)) {
+        if(v instanceof Long && "@".equals(format)) {
+            Long p = (Long)v;
             cell.setCellValue(String.valueOf(p));
-        } else if(v instanceof Number p) {
+        } else if(v instanceof Number) {
+            Number p = (Number) v;
             if("@".equals(format)) {
                 cell.setCellValue(NumberToTextConverter.toText(p.doubleValue()));
             } else {
                 cell.setCellValue(p.doubleValue());
             }
-        } else if(v instanceof LocalDateTime p) {
+        } else if(v instanceof LocalDateTime) {
+            LocalDateTime p = (LocalDateTime)v;
             cell.setCellValue(p);
-        } else if(v instanceof LocalDate p) {
+        } else if(v instanceof LocalDate) {
+            LocalDate p = ((LocalDate) v);
             cell.setCellValue(p);
-        } else if(v instanceof Calendar p) {
+        } else if(v instanceof Calendar) {
+            Calendar p = ((Calendar) v);
             cell.setCellValue(p);
-        } else if (v instanceof Boolean p) {
+        } else if (v instanceof Boolean) {
+            Boolean p = ((Boolean) v);
             cell.setCellValue(p);
-        } else if(v instanceof Date p) {
+        } else if(v instanceof Date) {
+            Date p = (Date) v;
             cell.setCellValue(p);
         }else {
             cell.setCellValue(String.valueOf(v));

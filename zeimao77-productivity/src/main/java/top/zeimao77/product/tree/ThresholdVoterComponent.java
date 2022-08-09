@@ -36,8 +36,12 @@ public class ThresholdVoterComponent<T> implements Voter<T> {
         for (Voter voter : voters) {
             int vote = voter.vote(obj);
             switch (vote) {
-                case ACCESS_GRANTED -> gc++;
-                case ACCESS_DENIED -> dc++;
+                case ACCESS_GRANTED:
+                    gc++;
+                    break;
+                case ACCESS_DENIED :
+                    dc++;
+                    break;
             }
             if(threshold.compareTo(0D) == 0 && gc > 0) {
                 return ACCESS_GRANTED;

@@ -146,7 +146,7 @@ public class SQL implements StatementParamResolver, IWhere {
             statementParams.add(objectJdbcParam);
         };
         switch (cond) {
-            case COND_QIS -> {
+            case COND_QIS:
                 sqlBuilder.append(" = ");
                 if(!AssertUtil.isEmpty(valSetPre))
                     sqlBuilder.append(valSetPre);
@@ -154,8 +154,8 @@ public class SQL implements StatementParamResolver, IWhere {
                 if(!AssertUtil.isEmpty(valSetPost))
                     sqlBuilder.append(valSetPost);
                 con.accept(value);
-            }
-            case COND_QGT -> {
+                break;
+            case COND_QGT:
                 sqlBuilder.append(" > ");
                 if(!AssertUtil.isEmpty(valSetPre))
                     sqlBuilder.append(valSetPre);
@@ -163,8 +163,8 @@ public class SQL implements StatementParamResolver, IWhere {
                 if(!AssertUtil.isEmpty(valSetPost))
                     sqlBuilder.append(valSetPost);
                 con.accept(value);
-            }
-            case COND_QGTE -> {
+                break;
+            case COND_QGTE:
                 sqlBuilder.append(" >= ");
                 if(!AssertUtil.isEmpty(valSetPre))
                     sqlBuilder.append(valSetPre);
@@ -172,8 +172,8 @@ public class SQL implements StatementParamResolver, IWhere {
                 if(!AssertUtil.isEmpty(valSetPost))
                     sqlBuilder.append(valSetPost);
                 con.accept(value);
-            }
-            case COND_QLT -> {
+                break;
+            case COND_QLT:
                 sqlBuilder.append(" < ");
                 if(!AssertUtil.isEmpty(valSetPre))
                     sqlBuilder.append(valSetPre);
@@ -181,8 +181,8 @@ public class SQL implements StatementParamResolver, IWhere {
                 if(!AssertUtil.isEmpty(valSetPost))
                     sqlBuilder.append(valSetPost);
                 con.accept(value);
-            }
-            case COND_QLTE -> {
+                break;
+            case COND_QLTE:
                 sqlBuilder.append(" <= ");
                 if(!AssertUtil.isEmpty(valSetPre))
                     sqlBuilder.append(valSetPre);
@@ -190,8 +190,8 @@ public class SQL implements StatementParamResolver, IWhere {
                 if(!AssertUtil.isEmpty(valSetPost))
                     sqlBuilder.append(valSetPost);
                 con.accept(value);
-            }
-            case COND_QLIKE -> {
+                break;
+            case COND_QLIKE:
                 sqlBuilder.append(" LIKE CONCAT('%',");
                 if(!AssertUtil.isEmpty(valSetPre))
                     sqlBuilder.append(valSetPre);
@@ -200,8 +200,8 @@ public class SQL implements StatementParamResolver, IWhere {
                     sqlBuilder.append(valSetPost);
                 sqlBuilder.append(",'%')");
                 con.accept(value);
-            }
-            case COND_QLLIKE -> {
+                break;
+            case COND_QLLIKE:
                 sqlBuilder.append(" LIKE CONCAT('%',");
                 if(!AssertUtil.isEmpty(valSetPre))
                     sqlBuilder.append(valSetPre);
@@ -210,8 +210,8 @@ public class SQL implements StatementParamResolver, IWhere {
                     sqlBuilder.append(valSetPost);
                 sqlBuilder.append(")");
                 con.accept(value);
-            }
-            case COND_QRLIKE -> {
+                break;
+            case COND_QRLIKE:
                 sqlBuilder.append(" LIKE CONCAT(");
                 if(!AssertUtil.isEmpty(valSetPre))
                     sqlBuilder.append(valSetPre);
@@ -220,8 +220,8 @@ public class SQL implements StatementParamResolver, IWhere {
                     sqlBuilder.append(valSetPost);
                 sqlBuilder.append(",'%')");
                 con.accept(value);
-            }
-            case COND_QREGEXP -> {
+                break;
+            case COND_QREGEXP:
                 sqlBuilder.append(" REGEXP ");
                 if(!AssertUtil.isEmpty(valSetPre))
                     sqlBuilder.append(valSetPre);
@@ -229,8 +229,8 @@ public class SQL implements StatementParamResolver, IWhere {
                 if(!AssertUtil.isEmpty(valSetPost))
                     sqlBuilder.append(valSetPost);
                 con.accept(value);
-            }
-            case COND_QNE -> {
+                break;
+            case COND_QNE:
                 sqlBuilder.append(" <> ");
                 if(!AssertUtil.isEmpty(valSetPre))
                     sqlBuilder.append(valSetPre);
@@ -238,8 +238,8 @@ public class SQL implements StatementParamResolver, IWhere {
                 if(!AssertUtil.isEmpty(valSetPost))
                     sqlBuilder.append(valSetPost);
                 con.accept(value);
-            }
-            case COND_QIN -> {
+                break;
+            case COND_QIN:
                 sqlBuilder.append(" IN (");
                 if(value.getClass().isArray() || value instanceof Collection) {
                     Object[] values = null;
@@ -260,8 +260,8 @@ public class SQL implements StatementParamResolver, IWhere {
                     }
                 }
                 sqlBuilder.append(")");
-            }
-            case COND_QNIN -> {
+                break;
+            case COND_QNIN:
                 sqlBuilder.append(" NOT IN (");
                 if(value.getClass().isArray() || value instanceof Collection) {
                     Object[] values = null;
@@ -282,8 +282,9 @@ public class SQL implements StatementParamResolver, IWhere {
                     }
                 }
                 sqlBuilder.append(")");
-            }
-            default -> throw new BaseServiceRunException("不支持的查询运算符");
+                break;
+            default:
+                throw new BaseServiceRunException("不支持的查询运算符");
         }
         return this;
     }

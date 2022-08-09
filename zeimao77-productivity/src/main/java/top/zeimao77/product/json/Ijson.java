@@ -126,14 +126,18 @@ public class Ijson {
             return null;
         }
         JsonNodeType nodeType = this.jsonNode.get(fieldName).getNodeType();
-        return switch (nodeType) {
-            case NULL -> null;
-            case NUMBER -> {
+        Long result = null;
+        switch (nodeType) {
+            case NULL:
+                return null;
+            case NUMBER :
                 JsonNode jsonNode = this.jsonNode.get(fieldName);
-                yield jsonNode.asLong();
-            }
-            default -> throw new BaseServiceRunException(String.format("json字段类型错误:%s不可以转换对Lon",this.jsonNode.getNodeType().name()));
+                result = jsonNode.asLong();
+                break;
+            default :
+                throw new BaseServiceRunException(String.format("json字段类型错误:%s不可以转换对Lon",this.jsonNode.getNodeType().name()));
         };
+        return result;
     }
 
     /**
@@ -145,13 +149,24 @@ public class Ijson {
             return null;
         }
         JsonNode jsonNode1 = this.jsonNode.get(fieldName);
-        return switch (jsonNode1.getNodeType()) {
-            case NULL -> null;
-            case STRING -> jsonNode1.asText();
-            case NUMBER -> String.valueOf(jsonNode1.asLong());
-            case BOOLEAN -> String.valueOf(jsonNode1.asBoolean());
-            default -> throw new BaseServiceRunException(String.format("json字段类型错误:%s不可以转换对Str",jsonNode1.getNodeType().name()));
+        String result = null;
+        switch (jsonNode1.getNodeType()) {
+            case NULL :
+                result = null;
+                break;
+            case STRING :
+                result = jsonNode1.asText();
+                break;
+            case NUMBER :
+                result = String.valueOf(jsonNode1.asLong());
+                break;
+            case BOOLEAN :
+                result = String.valueOf(jsonNode1.asBoolean());
+                break;
+            default :
+                throw new BaseServiceRunException(String.format("json字段类型错误:%s不可以转换对Str",jsonNode1.getNodeType().name()));
         };
+        return result;
     }
 
     /**
@@ -168,14 +183,19 @@ public class Ijson {
             return null;
         }
         JsonNodeType nodeType = this.jsonNode.get(fieldName).getNodeType();
-        return switch (nodeType) {
-            case NULL -> null;
-            case NUMBER -> {
+        Integer result = null;
+        switch (nodeType) {
+            case NULL:
+                result = null;
+                break;
+            case NUMBER :
                 JsonNode jsonNode = this.jsonNode.get(fieldName);
-                yield jsonNode.asInt();
-            }
-            default -> throw new BaseServiceRunException(String.format("json字段类型错误:%s不可以转换对Int",this.jsonNode.getNodeType().name()));
+                result = jsonNode.asInt();
+                break;
+            default :
+                throw new BaseServiceRunException(String.format("json字段类型错误:%s不可以转换对Int",this.jsonNode.getNodeType().name()));
         };
+        return result;
     }
 
     public Double getDouble(String fieldName) {
@@ -183,14 +203,19 @@ public class Ijson {
             return null;
         }
         JsonNodeType nodeType = this.jsonNode.get(fieldName).getNodeType();
-        return switch (nodeType) {
-            case NULL -> null;
-            case NUMBER -> {
+        Double result = null;
+        switch (nodeType) {
+            case NULL :
+                 result = null;
+                 break;
+            case NUMBER :
                 JsonNode jsonNode = this.jsonNode.get(fieldName);
-                yield jsonNode.asDouble();
-            }
-            default -> throw new BaseServiceRunException(String.format("json字段类型错误:%s不可以转换对Dou",this.jsonNode.getNodeType().name()));
+                result = jsonNode.asDouble();
+                break;
+            default:
+                throw new BaseServiceRunException(String.format("json字段类型错误:%s不可以转换对Dou",this.jsonNode.getNodeType().name()));
         };
+        return result;
     }
 
     /**
@@ -229,14 +254,19 @@ public class Ijson {
             return null;
         }
         JsonNodeType nodeType = this.jsonNode.get(fieldName).getNodeType();
-        return switch (nodeType) {
-            case NULL -> null;
-            case BOOLEAN -> {
+        Boolean result = null;
+        switch (nodeType) {
+            case NULL:
+                result = null;
+                break;
+            case BOOLEAN:
                 JsonNode jsonNode = this.jsonNode.get(fieldName);
-                yield jsonNode.asBoolean();
-            }
-            default -> throw new BaseServiceRunException(String.format("json字段类型错误:%s不可以转换对Bool",this.jsonNode.getNodeType().name()));
+                result = jsonNode.asBoolean();
+                break;
+            default:
+                throw new BaseServiceRunException(String.format("json字段类型错误:%s不可以转换对Bool",this.jsonNode.getNodeType().name()));
         };
+        return result;
     }
 
     public double getDoubleValue(String fieldName) {

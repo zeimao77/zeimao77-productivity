@@ -22,12 +22,14 @@ public class ParamValidateUtil {
         while(ite.hasNext()) {
             String key = (String)ite.next();
             Object obj = map.get(key);
-            if (obj instanceof Map o) {
+            if (obj instanceof Map) {
+                Map o = ((Map) obj);
                 mapRemoveEmpty(o);
                 if (AssertUtil.isEmpty(o)) {
                     ite.remove();
                 }
-            } else if(obj instanceof Collection o) {
+            } else if(obj instanceof Collection) {
+                Collection o = ((Collection) obj);
                 for (Iterator iterator = o.iterator();iterator.hasNext();) {
                     Object n = iterator.next();
                     if(n instanceof Map m) {
@@ -65,9 +67,11 @@ public class ParamValidateUtil {
             String c2 = matcher.group(2);
             Object o = map.get(c1);
             AssertUtil.assertTure(!AssertUtil.isEmpty(o),String.format("参数 %s 空或是无效参数,该参数必需",c1));
-            if(o instanceof Map m){
+            if(o instanceof Map){
+                Map m = ((Map) o);
                 mapCheck(m,c2);
-            } else if(o instanceof Collection o1) {
+            } else if(o instanceof Collection ) {
+                Collection o1 = ((Collection) o);
                 for (Object o2 : o1) {
                     if(o2 instanceof Map){
                         mapCheck(((Map) o2),c2);

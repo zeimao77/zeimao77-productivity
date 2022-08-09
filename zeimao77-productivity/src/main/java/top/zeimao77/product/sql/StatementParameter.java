@@ -217,22 +217,54 @@ public class StatementParameter<T> {
 
         public Builder jdbcType(String jdbcType) {
             switch (jdbcType) {
-                case "VARCHAR" -> this.jdbcType = Types.VARCHAR;
-                case "TINYINT" -> this.jdbcType = Types.TINYINT;
-                case "BIT" -> this.jdbcType = Types.BIT;
-                case "SMALLINT" -> this.jdbcType = Types.SMALLINT;
-                case "INTEGER","INT" -> this.jdbcType = Types.INTEGER;
-                case "BIGINT" -> this.jdbcType = Types.BIGINT;
-                case "FLOAT" -> this.jdbcType = Types.FLOAT;
-                case "DOUBLE" -> this.jdbcType = Types.DOUBLE;
-                case "DECIMAL" -> this.jdbcType = Types.DECIMAL;
-                case "CHAR" -> this.jdbcType = Types.CHAR;
-                case "LONGVARCHAR" -> this.jdbcType = Types.LONGVARCHAR;
-                case "DATE" -> this.jdbcType = Types.DATE;
-                case "TIME" -> this.jdbcType = Types.TIME;
-                case "TIMESTAMP" -> this.jdbcType = Types.TIMESTAMP;
-                case "NULL" -> this.jdbcType = Types.NULL;
-                default -> this.jdbcType = DEFAULT_JDBCTYPE;
+                case "VARCHAR":
+                    this.jdbcType = Types.VARCHAR;
+                    break;
+                case "TINYINT" :
+                    this.jdbcType = Types.TINYINT;
+                    break;
+                case "BIT" :
+                    this.jdbcType = Types.BIT;
+                    break;
+                case "SMALLINT" :
+                    this.jdbcType = Types.SMALLINT;
+                    break;
+                case "INTEGER","INT" :
+                    this.jdbcType = Types.INTEGER;
+                    break;
+                case "BIGINT" :
+                    this.jdbcType = Types.BIGINT;
+                    break;
+                case "FLOAT" :
+                    this.jdbcType = Types.FLOAT;
+                    break;
+                case "DOUBLE" :
+                    this.jdbcType = Types.DOUBLE;
+                    break;
+                case "DECIMAL" :
+                    this.jdbcType = Types.DECIMAL;
+                    break;
+                case "CHAR" :
+                    this.jdbcType = Types.CHAR;
+                    break;
+                case "LONGVARCHAR" :
+                    this.jdbcType = Types.LONGVARCHAR;
+                    break;
+                case "DATE" :
+                    this.jdbcType = Types.DATE;
+                    break;
+                case "TIME" :
+                    this.jdbcType = Types.TIME;
+                    break;
+                case "TIMESTAMP" :
+                    this.jdbcType = Types.TIMESTAMP;
+                    break;
+                case "NULL" :
+                    this.jdbcType = Types.NULL;
+                    break;
+                default :
+                    this.jdbcType = DEFAULT_JDBCTYPE;
+                    break;
             }
             return this;
         }

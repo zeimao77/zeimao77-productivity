@@ -14,7 +14,8 @@ public class DefaultStatementParamResolver implements StatementParamResolver {
     public DefaultStatementParamResolver(String sqlt, Object params) {
         if(params == null) {
             this.resolver = new NullStatementParamResolver(sqlt,null);
-        } else if(params instanceof Map o) {
+        } else if(params instanceof Map) {
+            Map o = ((Map) params);
             this.resolver = new MapStatementParamResolver(sqlt,o);
         } else if(params.getClass().isArray()) {
             this.resolver = new ObjectsStatementParamResolver(sqlt,(Object[])params);
