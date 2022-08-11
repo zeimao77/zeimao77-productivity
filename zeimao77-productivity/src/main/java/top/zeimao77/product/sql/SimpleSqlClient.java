@@ -109,6 +109,8 @@ public class SimpleSqlClient implements Reposit,AutoCloseable {
      */
     @Override
     public <Z> int batchUpdate(List<Z> list, BiConsumer<SQL, Z> con) {
+        if(list == null || list.isEmpty())
+            return 0;
         long start = System.currentTimeMillis();
         PreparedStatement preparedStatement = null;
         String lastSql = null;
