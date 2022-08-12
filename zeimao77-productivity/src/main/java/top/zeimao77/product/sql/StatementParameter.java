@@ -229,7 +229,8 @@ public class StatementParameter<T> {
                 case "SMALLINT" :
                     this.jdbcType = Types.SMALLINT;
                     break;
-                case "INTEGER","INT" :
+                case "INTEGER":
+                case "INT" :
                     this.jdbcType = Types.INTEGER;
                     break;
                 case "BIGINT" :

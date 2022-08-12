@@ -1,6 +1,7 @@
 package top.zeimao77.product.sql;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class SelectCond extends PageSearch {
@@ -30,7 +31,7 @@ public class SelectCond extends PageSearch {
     }
 
     public SelectCond orderBy(String... orderBy) {
-        setOrderBys(List.of(orderBy));
+        setOrderBys(Arrays.asList(orderBy));
         return this;
     }
 

@@ -497,7 +497,9 @@ public class DefaultResultSetResolve implements ResultSetResolve {
                             case Types.TIME:
                                 fieldValue = resolve(value,LocalTime.class);
                                 break;
-                            case Types.BINARY,Types.VARBINARY,Types.LONGVARBINARY:
+                            case Types.BINARY:
+                            case Types.VARBINARY:
+                            case Types.LONGVARBINARY:
                                 fieldValue = resolve(value,ByteBuffer.class);
                                 break;
                             default :

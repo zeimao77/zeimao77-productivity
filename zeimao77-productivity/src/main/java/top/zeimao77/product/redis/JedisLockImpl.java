@@ -3,6 +3,7 @@ package top.zeimao77.product.redis;
 import redis.clients.jedis.commands.ScriptingKeyCommands;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -22,16 +23,14 @@ public class JedisLockImpl {
      * @return 是否加锁成功
      */
     public boolean tryLock(String lockId,String value,int expire) {
-        String script = """
-                if redis.call('EXISTS',KEYS[1]) == 0 then
-                    redis.call('SET',KEYS[1],ARGV[1]);
-                    redis.call('EXPIRE',KEYS[1],ARGV[2]);
-                    return 1;
-                else 
-                    return 0;
-                end
-                """;
-        Object obj = this.commands.eval(script, List.of(lockId),List.of(value,String.valueOf(expire)));
+        String script = "if redis.call('EXISTS',KEYS[1]) == 0 then \n"
+                + "  redis.call('SET',KEYS[1],ARGV[1]);\n"
+                + "  redis.call('EXPIRE',KEYS[1],ARGV[2]);\n"
+                + "  return 1;\n"
+                + "else\n"
+                + "  return 0;\n"
+                + "end";
+        Object obj = this.commands.eval(script, Arrays.asList(lockId),Arrays.asList(value,String.valueOf(expire)));
         return "1".equals(obj.toString());
     }
 
@@ -74,15 +73,13 @@ public class JedisLockImpl {
      * @return
      */
     public boolean reLook(String lockId,String value,int expire) {
-        String script = """
-                if redis.call('GET',KEYS[1]) == ARGV[1] then
-                  redis.call('EXPIRE',KEYS[1],ARGV[2]);
-                  return 1;
-                else 
-                  return 0;
-                end
-                """;
-        Object eval = this.commands.eval(script, List.of(lockId), List.of(value,String.valueOf(expire)));
+        String script = "if redis.call('GET',KEYS[1]) == ARGV[1] then\n"
+                + "  redis.call('EXPIRE',KEYS[1],ARGV[2]);\n"
+                + "  return 1;\n"
+                + "else\n"
+                + "  return 0;\n"
+                + "end";
+        Object eval = this.commands.eval(script, Arrays.asList(lockId), Arrays.asList(value,String.valueOf(expire)));
         return "1".equals(eval.toString());
     }
 
@@ -93,7 +90,7 @@ public class JedisLockImpl {
      */
     public boolean unLock(String lockId) {
         String unscript = "redis.call('DEL',KEYS[1]);";
-        Object eval = this.commands.eval(unscript, List.of(lockId), new ArrayList<>(0));
+        Object eval = this.commands.eval(unscript, Arrays.asList(lockId), new ArrayList<>(0));
         return true;
     }
 
@@ -104,17 +101,15 @@ public class JedisLockImpl {
      * @return 如果锁不存在或者解锁成功返回true
      */
     public boolean unLock(String lockId,String value) {
-        String script = """
-                if redis.call('GET',KEYS[1]) == ARGV[1] then
-                  redis.call('DEL',KEYS[1]);
-                  return 1;
-                elseif redis.call('EXISTS',KEYS[1]) == 0 then
-                  return 1;
-                else
-                  return 0;
-                end
-                """;
-        Object obj = this.commands.eval(script, List.of(lockId),List.of(value));
+        String script = "if redis.call('GET',KEYS[1]) == ARGV[1] then"
+                + "  redis.call('DEL',KEYS[1]);\n"
+                + "  return 1;\n"
+                + "elseif redis.call('EXISTS',KEYS[1]) == 0 then\n"
+                + "  return 1\n"
+                + "else\n"
+                + "  return 0\n"
+                + "end";
+        Object obj = this.commands.eval(script, Arrays.asList(lockId),Arrays.asList(value));
         return "1".equals(obj.toString());
     }
 

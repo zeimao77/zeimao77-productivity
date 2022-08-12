@@ -32,7 +32,8 @@ public class ParamValidateUtil {
                 Collection o = ((Collection) obj);
                 for (Iterator iterator = o.iterator();iterator.hasNext();) {
                     Object n = iterator.next();
-                    if(n instanceof Map m) {
+                    if(n instanceof Map) {
+                        Map m = ((Map)n);
                         mapRemoveEmpty(m);
                     } else if(AssertUtil.isEmpty(obj)) {
                         iterator.remove();

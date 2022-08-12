@@ -2,6 +2,7 @@ package top.zeimao77.product.sql;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public abstract class AbstractRepository<T,W> implements Repository<T,W> {
@@ -57,7 +58,7 @@ public abstract class AbstractRepository<T,W> implements Repository<T,W> {
      * @return 影响行数
      */
     public int batchDelete(W... ids) {
-        return repositoryImpl.batchUpdate(List.of(ids),(o1,o2)->this.delete(o1,o2));
+        return repositoryImpl.batchUpdate(Arrays.asList(ids),(o1, o2)->this.delete(o1,o2));
     }
 
     public int batchDelete(List<W> ids) {
