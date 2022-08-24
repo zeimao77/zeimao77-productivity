@@ -5,6 +5,7 @@ import top.zeimao77.product.util.AssertUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -16,7 +17,7 @@ import java.util.function.Predicate;
 public class SQL implements StatementParamResolver, IWhere {
 
     private StringBuilder sqlBuilder = new StringBuilder(1024);
-    ArrayList<StatementParameter> statementParams = new ArrayList<>();
+    private ArrayList<StatementParameter> statementParams = new ArrayList<>();
     private static final int FLAG_SELECT = 0x01;
     private static final int FLAG_SET = 0x02;
     private static final int FLAG_VALUES = 0x04;
@@ -399,16 +400,71 @@ public class SQL implements StatementParamResolver, IWhere {
         return this;
     }
 
+    /**
+     * MYSQL upsert操作
+     * @return
+     */
     public SQL onDuplicateKeyUpdate() {
+        sqlBuilder.append(" ON DUPLICATE KEY UPDATE ");
         return onDuplicateKeyUpdate(o -> true);
     }
+
+    /**
+     * postgreSQL 啥事也不做
+     * @return
+     */
+    public SQL onConflictDoNothing(String keyName) {
+        sqlBuilder.append(" ON CONFLICT ON CONSTRAINT ");
+        sqlBuilder.append(keyName);
+        sqlBuilder.append(" DO NOTHING");
+        return this;
+    }
+
+
+    /**
+     * postgreSQL upsert
+     * @param columnName
+     * @return
+     */
+    public SQL onConflict(String columnName) {
+        sqlBuilder.append(" ON CONFLICT (");
+        sqlBuilder.append(columnName);
+        sqlBuilder.append(") DO UPDATE SET ");
+        return onDuplicateKeyUpdate(o -> {
+            if (o.getName().equals(columnName)) {
+                return false;
+            }
+            return true;
+        });
+    }
+
+    public SQL onConflict(String keyName, List<String> columnNameList) {
+        sqlBuilder.append(" ON CONFLICT ON CONSTRAINT ");
+        sqlBuilder.append(keyName);
+        sqlBuilder.append(" DO UPDATE SET ");
+        return onDuplicateKeyUpdate(o -> {
+            if(columnNameList == null || columnNameList.size() == 0)
+                return true;
+            for (String column : columnNameList) {
+                if(o.getName().equals(column)){
+                    return false;
+                }
+            }
+            return true;
+        });
+    }
+
+    public SQL onConflict(String keyName,String... columnNames) {
+        return onConflict(keyName,List.of(columnNames));
+    }
+
 
     /**
      * @param predicate UPDATE语句字段过滤 如果返回false该字段将被忽略
      * @return this
      */
     public SQL onDuplicateKeyUpdate(Predicate<StatementParameter> predicate) {
-        sqlBuilder.append(" ON DUPLICATE KEY UPDATE ");
+
         int l = statementParams.size();
         boolean firstUpdate = true;
         for (int i = 0; i < l; i++){

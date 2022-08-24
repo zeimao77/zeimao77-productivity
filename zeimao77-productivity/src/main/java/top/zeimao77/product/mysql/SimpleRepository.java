@@ -143,6 +143,7 @@ public class SimpleRepository<T,W> extends AbstractRepository<T, W> {
     @Override
     protected void upsert(SQL sql, T t) {
         insert(sql,t);
+        sql.appent(" ON DUPLICATE KEY ");
         sql.onDuplicateKeyUpdate(o -> !isPrimaryKey(o.getName()));
     }
 
