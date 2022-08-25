@@ -1,15 +1,12 @@
-package top.zeimao77.product.mysql;
+package top.zeimao77.product.postgresql;
 
-import top.zeimao77.product.sql.*;
+import top.zeimao77.product.sql.AbstractSimpleRepository;
+import top.zeimao77.product.sql.Reposit;
+import top.zeimao77.product.sql.SQL;
 import top.zeimao77.product.util.BeanUtil;
 
 import java.util.function.BiFunction;
 
-/**
- * @param <T> MODEL
- * @param <W> 主键类型 多主键可以通过记录类提供支持 并提供以对应的主键解析函数:
- * @see SimpleRepository#idParseFunc
- */
 public class SimpleRepository<T,W> extends AbstractSimpleRepository<T, W> {
 
     public SimpleRepository(Reposit repositoryImpl, String tableName, String... primaryKeyFields) {
@@ -27,12 +24,20 @@ public class SimpleRepository<T,W> extends AbstractSimpleRepository<T, W> {
     @Override
     protected void upsert(SQL sql, T t) {
         insert(sql,t);
-        sql.appent(" ON DUPLICATE KEY ");
+        sql.appent(" ON CONFLICT (");
+        for (int i = 0; i < primaryKeyFieldList.size(); i++) {
+            if(i > 0) {
+                sql.appent(",");
+            }
+            sql.appent(codeNameToDbName(primaryKeyFieldList.get(i)));
+        }
+        sql.appent(") DO UPDATE SET ");
         sql.onDuplicateKeyUpdate(o -> !isPrimaryKey(o.getName()));
     }
 
     public Object idParse(W id,String name) {
         return BeanUtil.getProperty(id,name);
     }
+
 
 }

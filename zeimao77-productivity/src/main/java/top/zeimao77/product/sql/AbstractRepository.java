@@ -37,10 +37,7 @@ public abstract class AbstractRepository<T,W> implements Repository<T,W> {
      * @param sql SQL对象
      * @param t 对象
      */
-    protected void upsert(SQL sql,T t) {
-        insert(sql,t);
-        sql.onDuplicateKeyUpdate();
-    }
+    protected abstract void upsert(SQL sql,T t);
     protected abstract void update(SQL sql,T t);
     protected abstract void delete(SQL sql,W id);
 
