@@ -7,6 +7,9 @@ import top.zeimao77.product.tree.RandomVoter;
 import top.zeimao77.product.tree.Voter;
 import top.zeimao77.product.util.UuidGenerator;
 
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+
 class JobExecTemplateTest extends BaseMain {
 
     public static class Job implements IJob {
@@ -25,8 +28,6 @@ class JobExecTemplateTest extends BaseMain {
 
     public static class JobTest extends JobExecTemplate {
 
-        RandomVoter randomVoter = new RandomVoter(0.97);
-
         public JobTest(int nMaxJobs) {
             super(nMaxJobs);
         }
@@ -42,26 +43,33 @@ class JobExecTemplateTest extends BaseMain {
             for (int i = 0; i < 10; i++) {
                 addJob(new Job());
             }
-            if(page == 10) {
+            if(page == 13) {
                 over();
             }
         }
 
-        @Override
-        public Result handle(IJob job) {
-            if(randomVoter.vote(null) == Voter.ACCESS_GRANTED) {
-                return Result.SUCCESS;
-            }
-            throw new BaseServiceRunException("处理失败");
-        }
     }
 
     @Test
     public void test() {
         JobTest jobTest = new JobTest(16);
+        AtomicInteger a = new AtomicInteger(0);
+        jobTest.setJobExecHandler(new JobExecHandler<IJob>() {
+            @Override
+            public boolean support(IJob job, Map<String, Object> param) {
+                return true;
+            }
+
+            @Override
+            protected Result doHandle(IJob job, Map<String, Object> param) {
+                logger.info("job正在处理:{}",job.jobId());
+                a.addAndGet(1);
+                return Result.SUCCESS;
+            }
+        });
         jobTest.prepare();
         jobTest.start(3);
-        logger.info("over");
+        logger.info("over:{}",a.get());
     }
 
 }
