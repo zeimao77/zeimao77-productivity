@@ -308,7 +308,7 @@ public class SQL implements StatementParamResolver, IWhere {
     }
 
     public SQL limit(int limit,int offset) {
-        sqlBuilder.append(String.format(" LIMIT %d,%d",limit,offset));
+        sqlBuilder.append(String.format(" LIMIT %d OFFSET %d",offset,limit));
         return this;
     }
 
