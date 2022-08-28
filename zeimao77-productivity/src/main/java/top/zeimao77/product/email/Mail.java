@@ -124,7 +124,7 @@ public class Mail {
      */
     public boolean addAttachment(String fileName,byte[] bs) {
         if(attachments == null) {
-            synchronized (Mail.class) {
+            synchronized (this) {
                 if(attachments == null) {
                     attachments = new ArrayList<>();
                 }

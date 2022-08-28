@@ -349,7 +349,7 @@ public class DefaultResultSetResolve implements ResultSetResolve {
             String columnLabel = rsmd.getColumnLabel(i);
             Object fieldValue = null;
             if(!sorted) {
-                synchronized (DefaultResultSetResolve.class) {
+                synchronized (this) {
                     if(!sorted) {
                         resovers.sort(Orderd::compareTo);
                         sorted = true;
@@ -426,7 +426,7 @@ public class DefaultResultSetResolve implements ResultSetResolve {
                     String columnLabel = rsmd.getColumnLabel(i);
                     Object fieldValue = null;
                     if(!sorted) {
-                        synchronized (DefaultResultSetResolve.class) {
+                        synchronized (this) {
                             if(!sorted) {
                                 resovers.sort(Orderd::compareTo);
                                 sorted = true;

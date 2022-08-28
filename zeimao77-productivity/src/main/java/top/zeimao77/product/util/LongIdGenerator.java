@@ -44,7 +44,7 @@ public class LongIdGenerator implements IdGenerator<Long>{
      */
     public int getind() {
         if(ind.get() > 0xFFFF) {
-            synchronized (LongIdGenerator.class) {
+            synchronized (this) {
                 if(ind.get() > 0xFFFF) {
                     ind.set(0);
                 }
