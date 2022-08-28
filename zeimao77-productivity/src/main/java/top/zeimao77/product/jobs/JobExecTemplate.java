@@ -86,7 +86,7 @@ public abstract class JobExecTemplate<T extends IJob> implements JobExec{
                 while (status != 5) {
                     T job =jobs.poll();
                     if(job == null) {
-                        synchronized (JobExecTemplate.class) {
+                        synchronized (this) {
                             if(jobs.isEmpty() && 2 == status) {
                                 moreJob(page.getAndAdd(1));
                             }

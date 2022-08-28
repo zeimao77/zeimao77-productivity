@@ -76,7 +76,7 @@ public abstract class JobExecTemplateBatch<T extends IJob> implements JobExec{
             executorService.execute(()->{
                 ArrayList<T> jobList = new ArrayList<>(pageSize);
                 while (status != 5) {
-                    synchronized (JobExecTemplateBatch.class) {
+                    synchronized (this) {
                         int q = pageSize < jobs.size() ? pageSize : jobs.size();
                         for (int j = 0; j < q; j++) {
                             T job =jobs.poll();
