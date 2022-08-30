@@ -12,11 +12,11 @@ public class AssertUtilTest extends BaseMain {
 
     @Test
     public void match() {
-        List<String> list = List.of("1","2","3");
-        for (int i = 0; i < 30; i++) {
+        Integer code0 = 0x10000101;
+        Integer code1 = 0x01000201;
+        Integer i = (code0 & 0x00FFFFFF) ^ (code1 & 0x00FFFFFF);
+        logger.info(i);
 
-            logger.info("{}",CollectionUtil.getRandom(list));
-        }
     }
 
 }

@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.node.JsonNodeType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import top.zeimao77.product.exception.BaseServiceRunException;
+import static top.zeimao77.product.exception.ExceptionCodeDefinition.APPERR;
 import top.zeimao77.product.util.CalendarDateUtil;
 import top.zeimao77.product.util.JsonBeanUtil;
 import top.zeimao77.product.util.LocalDateTimeUtil;
@@ -53,7 +54,7 @@ public class Ijson {
             JsonNode jsonNode = objectMapper.readTree(json);
             instance = new Ijson(jsonNode);
         } catch (JsonProcessingException e) {
-            logger.error("JSON解析出错",e);
+            throw new BaseServiceRunException(APPERR,"JSON解析错误",e);
         }
         return instance;
     }
@@ -67,7 +68,7 @@ public class Ijson {
             JsonNode jsonNode = this.jsonNode.get(fieldName);
             return new Ijson(jsonNode);
         }
-        throw new BaseServiceRunException(String.format("json字段类型错误:%s不可以转换对Obj",this.jsonNode.getNodeType().name()));
+        throw new BaseServiceRunException(APPERR,String.format("json字段类型错误:%s不可以转换对Obj",this.jsonNode.getNodeType().name()));
     }
 
     /**
@@ -79,7 +80,7 @@ public class Ijson {
             JsonNode jsonNode = this.jsonNode.get(index);
             return new Ijson(jsonNode);
         }
-        throw new BaseServiceRunException(String.format("json字段类型错误:%s不可以转换对Obj",this.jsonNode.getNodeType().name()));
+        throw new BaseServiceRunException(APPERR,String.format("json字段类型错误:%s不可以转换对Obj",this.jsonNode.getNodeType().name()));
     }
 
     /**
@@ -91,7 +92,7 @@ public class Ijson {
             JsonNode jsonNode = this.jsonNode.get(fieldName);
             return new Ijson(jsonNode);
         }
-        throw new BaseServiceRunException(String.format("json字段类型错误:%s不可以转换对Arr",this.jsonNode.getNodeType().name()));
+        throw new BaseServiceRunException(APPERR,String.format("json字段类型错误:%s不可以转换对Arr",this.jsonNode.getNodeType().name()));
     }
 
     public long size(String fieldName) {
@@ -132,7 +133,7 @@ public class Ijson {
                 JsonNode jsonNode = this.jsonNode.get(fieldName);
                 yield jsonNode.asLong();
             }
-            default -> throw new BaseServiceRunException(String.format("json字段类型错误:%s不可以转换对Lon",this.jsonNode.getNodeType().name()));
+            default -> throw new BaseServiceRunException(APPERR,String.format("json字段类型错误:%s不可以转换对Lon",this.jsonNode.getNodeType().name()));
         };
     }
 
@@ -150,7 +151,7 @@ public class Ijson {
             case STRING -> jsonNode1.asText();
             case NUMBER -> String.valueOf(jsonNode1.asLong());
             case BOOLEAN -> String.valueOf(jsonNode1.asBoolean());
-            default -> throw new BaseServiceRunException(String.format("json字段类型错误:%s不可以转换对Str",jsonNode1.getNodeType().name()));
+            default -> throw new BaseServiceRunException(APPERR,String.format("json字段类型错误:%s不可以转换对Str",jsonNode1.getNodeType().name()));
         };
     }
 
@@ -174,7 +175,7 @@ public class Ijson {
                 JsonNode jsonNode = this.jsonNode.get(fieldName);
                 yield jsonNode.asInt();
             }
-            default -> throw new BaseServiceRunException(String.format("json字段类型错误:%s不可以转换对Int",this.jsonNode.getNodeType().name()));
+            default -> throw new BaseServiceRunException(APPERR,String.format("json字段类型错误:%s不可以转换对Int",this.jsonNode.getNodeType().name()));
         };
     }
 
@@ -189,7 +190,7 @@ public class Ijson {
                 JsonNode jsonNode = this.jsonNode.get(fieldName);
                 yield jsonNode.asDouble();
             }
-            default -> throw new BaseServiceRunException(String.format("json字段类型错误:%s不可以转换对Dou",this.jsonNode.getNodeType().name()));
+            default -> throw new BaseServiceRunException(APPERR,String.format("json字段类型错误:%s不可以转换对Dou",this.jsonNode.getNodeType().name()));
         };
     }
 
@@ -235,7 +236,7 @@ public class Ijson {
                 JsonNode jsonNode = this.jsonNode.get(fieldName);
                 yield jsonNode.asBoolean();
             }
-            default -> throw new BaseServiceRunException(String.format("json字段类型错误:%s不可以转换对Bool",this.jsonNode.getNodeType().name()));
+            default -> throw new BaseServiceRunException(APPERR,String.format("json字段类型错误:%s不可以转换对Bool",this.jsonNode.getNodeType().name()));
         };
     }
 

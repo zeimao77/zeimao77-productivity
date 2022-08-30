@@ -8,8 +8,10 @@ import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.internet.MimeMultipart;
 import jakarta.mail.util.ByteArrayDataSource;
 import top.zeimao77.product.exception.BaseServiceRunException;
-import top.zeimao77.product.model.ImmutablePair;
 
+import static top.zeimao77.product.exception.ExceptionCodeDefinition.APPERR;
+import static top.zeimao77.product.exception.ExceptionCodeDefinition.CUSTOM;
+import top.zeimao77.product.model.ImmutablePair;
 
 import java.util.List;
 import java.util.Properties;
@@ -61,7 +63,7 @@ public class SimpleEmailSender {
      */
     public void send(Mail mail) {
         if(session == null) {
-            throw new BaseServiceRunException("需要先调用authenticator(username,password)认证");
+            throw new BaseServiceRunException(APPERR,"需要先调用authenticator(username,password)认证");
         }
         final MimeMessage message = new MimeMessage(session);
         try {
@@ -85,7 +87,7 @@ public class SimpleEmailSender {
             message.setContent(multipart);
             Transport.send(message);
         } catch (MessagingException e) {
-            throw new BaseServiceRunException("发送邮件错误",e);
+            throw new BaseServiceRunException(CUSTOM,"发送邮件错误",e);
         }
     }
 
@@ -135,7 +137,7 @@ public class SimpleEmailSender {
                     mimeBodyPart.setDataHandler(new DataHandler(byteArrayDataSource));
                     multipart.addBodyPart(mimeBodyPart);
                 } catch (MessagingException e) {
-                    throw new BaseServiceRunException("发送邮件错误",e);
+                    throw new BaseServiceRunException(CUSTOM,"发送邮件错误",e);
                 }
             }
         }

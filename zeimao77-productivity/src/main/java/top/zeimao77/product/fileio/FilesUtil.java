@@ -1,6 +1,7 @@
 package top.zeimao77.product.fileio;
 
 import top.zeimao77.product.exception.BaseServiceRunException;
+
 import top.zeimao77.product.util.ByteArrayCoDesUtil;
 
 import java.io.File;
@@ -14,6 +15,8 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.function.Consumer;
+
+import static top.zeimao77.product.exception.ExceptionCodeDefinition.*;
 
 /**
  * 文件目录处理工具
@@ -36,7 +39,7 @@ public class FilesUtil {
                 }
             });
         } catch (IOException e) {
-            throw new BaseServiceRunException("IO异常",e);
+            throw new BaseServiceRunException(IOEXCEPTION,"IO异常",e);
         }
     }
 
@@ -71,11 +74,11 @@ public class FilesUtil {
             md5.update(byteBuffer);
             return md5.digest();
         }catch (FileNotFoundException e) {
-            throw new BaseServiceRunException("文件未找到错误",e);
+            throw new BaseServiceRunException(WRONG_SOURCE,"文件未找到错误",e);
         } catch (IOException e) {
-            throw new BaseServiceRunException("IO错误",e);
+            throw new BaseServiceRunException(IOEXCEPTION,"IO错误",e);
         } catch (NoSuchAlgorithmException e) {
-            throw new BaseServiceRunException("algorithm算法错误",e);
+            throw new BaseServiceRunException(CUSTOM,"algorithm算法错误",e);
         }
     }
 

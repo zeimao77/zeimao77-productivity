@@ -52,7 +52,7 @@ public abstract class AbstractXmlBuiler<T> {
         } catch (IOException e) {
             throw new BaseServiceRunException(IOEXCEPTION,"IO错误",e);
         } catch (SAXException e) {
-            throw new BaseServiceRunException("XML文件解析错误",e);
+            throw new BaseServiceRunException(APPERR,"XML文件解析错误",e);
         }
     }
 
@@ -71,7 +71,7 @@ public abstract class AbstractXmlBuiler<T> {
         } catch (IOException e) {
             throw new BaseServiceRunException(IOEXCEPTION,"IO错误",e);
         } catch (SAXException e) {
-            throw new BaseServiceRunException("XML文件解析错误",e);
+            throw new BaseServiceRunException(APPERR,"XML文件解析错误",e);
         }
     }
 
@@ -90,7 +90,7 @@ public abstract class AbstractXmlBuiler<T> {
         } catch (IOException e) {
             throw new BaseServiceRunException(IOEXCEPTION,"IO错误",e);
         } catch (SAXException e) {
-            throw new BaseServiceRunException("XML文件解析错误",e);
+            throw new BaseServiceRunException(APPERR,"XML文件解析错误",e);
         }
     }
 

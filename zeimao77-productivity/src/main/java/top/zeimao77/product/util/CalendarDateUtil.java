@@ -1,8 +1,8 @@
 package top.zeimao77.product.util;
 
 import top.zeimao77.product.exception.BaseServiceRunException;
-import static top.zeimao77.product.exception.ExceptionCodeDefinition.WRONG_SOURCE;
 
+import static top.zeimao77.product.exception.ExceptionCodeDefinition.APPERR;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -26,7 +26,7 @@ public class CalendarDateUtil {
         try {
             return STANDARDDATETIMEFORMATTER.parse(text);
         } catch (ParseException e) {
-            throw new BaseServiceRunException(WRONG_SOURCE,"日期时间格式化错误",e);
+            throw new BaseServiceRunException(APPERR,"日期时间格式化错误",e);
         }
     }
 
@@ -38,7 +38,7 @@ public class CalendarDateUtil {
         try {
             return STANDARDDATEFORMATTER.parse(text);
         } catch (ParseException e) {
-            throw new BaseServiceRunException(WRONG_SOURCE,"日期格式化错误",e);
+            throw new BaseServiceRunException(APPERR,"日期格式化错误",e);
         }
     }
 
@@ -50,7 +50,7 @@ public class CalendarDateUtil {
         try {
             return STANDARDTIMEFORMATTER.parse(text);
         } catch (ParseException e) {
-            throw new BaseServiceRunException(WRONG_SOURCE,"时间格式化错误",e);
+            throw new BaseServiceRunException(APPERR,"时间格式化错误",e);
         }
     }
 

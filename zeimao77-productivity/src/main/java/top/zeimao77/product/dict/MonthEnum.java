@@ -1,6 +1,7 @@
 package top.zeimao77.product.dict;
 
 import top.zeimao77.product.exception.BaseServiceRunException;
+import static top.zeimao77.product.exception.ExceptionCodeDefinition.APPERR;
 
 public enum MonthEnum implements DictEnum {
 
@@ -56,7 +57,7 @@ public enum MonthEnum implements DictEnum {
                 return value;
             }
         }
-        throw new BaseServiceRunException("错误的月份");
+        throw new BaseServiceRunException(APPERR,"错误的月份");
     }
 
 }

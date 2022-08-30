@@ -1,6 +1,7 @@
 package top.zeimao77.product.security;
 
 import top.zeimao77.product.exception.BaseServiceRunException;
+import static top.zeimao77.product.exception.ExceptionCodeDefinition.CUSTOM;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -20,7 +21,7 @@ public class DigestUtil {
         try {
             md = MessageDigest.getInstance("MD5");
         } catch (NoSuchAlgorithmException e) {
-            throw new BaseServiceRunException("摘要错误",e);
+            throw new BaseServiceRunException(CUSTOM,"摘要错误",e);
         }
         byte[] md5Bytes = md.digest(bs);
         return md5Bytes;
@@ -36,7 +37,7 @@ public class DigestUtil {
         try {
             sha = MessageDigest.getInstance("SHA");
         } catch (NoSuchAlgorithmException e) {
-            throw new BaseServiceRunException("摘要错误",e);
+            throw new BaseServiceRunException(CUSTOM,"摘要错误",e);
         }
         sha.update(bs);
         return sha.digest();

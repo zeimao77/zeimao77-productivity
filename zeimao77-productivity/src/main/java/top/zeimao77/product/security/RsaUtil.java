@@ -3,6 +3,9 @@ package top.zeimao77.product.security;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import top.zeimao77.product.exception.BaseServiceRunException;
+
+import static top.zeimao77.product.exception.ExceptionCodeDefinition.APPERR;
+import static top.zeimao77.product.exception.ExceptionCodeDefinition.CUSTOM;
 import top.zeimao77.product.model.MutablePair;
 import top.zeimao77.product.model.Pair;
 import top.zeimao77.product.util.AssertUtil;
@@ -24,8 +27,6 @@ import java.security.spec.X509EncodedKeySpec;
  * @since 2.0.10
  */
 public class RsaUtil {
-
-    private static Logger logger = LogManager.getLogger(RsaUtil.class);
     private byte[] publicKey;
     private byte[] privateKey;
 
@@ -52,7 +53,7 @@ public class RsaUtil {
         try {
             keyPairGenerator = KeyPairGenerator.getInstance("RSA");
         } catch (NoSuchAlgorithmException e) {
-            throw new BaseServiceRunException("RSA密钥生成错误",e);
+            throw new BaseServiceRunException(CUSTOM,"RSA密钥生成错误",e);
         }
         keyPairGenerator.initialize(keySize);
         KeyPair keyPair = keyPairGenerator.generateKeyPair();
@@ -80,17 +81,17 @@ public class RsaUtil {
             byte[] result = __encode1_cipher.doFinal(source);
             return result;
         } catch (NoSuchAlgorithmException e) {
-            throw new BaseServiceRunException("加密出错",e);
+            throw new BaseServiceRunException(CUSTOM,"加密出错",e);
         } catch (InvalidKeyException e) {
-            throw new BaseServiceRunException("加密出错",e);
+            throw new BaseServiceRunException(CUSTOM,"加密出错",e);
         } catch (NoSuchPaddingException e) {
-            throw new BaseServiceRunException("加密出错",e);
+            throw new BaseServiceRunException(CUSTOM,"加密出错",e);
         } catch (BadPaddingException e) {
-            throw new BaseServiceRunException("加密出错",e);
+            throw new BaseServiceRunException(CUSTOM,"加密出错",e);
         } catch (IllegalBlockSizeException e) {
-            throw new BaseServiceRunException("加密出错",e);
+            throw new BaseServiceRunException(APPERR,"非法密文",e);
         } catch (InvalidKeySpecException e) {
-            throw new BaseServiceRunException("加密出错",e);
+            throw new BaseServiceRunException(CUSTOM,"加密出错",e);
         }
     }
 
@@ -113,17 +114,17 @@ public class RsaUtil {
             byte[] result = __decode1_cipher.doFinal(source);
             return result;
         } catch (NoSuchAlgorithmException e) {
-            throw new BaseServiceRunException("解密出错",e);
+            throw new BaseServiceRunException(CUSTOM,"解密出错",e);
         } catch (InvalidKeyException e) {
-            throw new BaseServiceRunException("解密出错",e);
+            throw new BaseServiceRunException(CUSTOM,"解密出错",e);
         } catch (NoSuchPaddingException e) {
-            throw new BaseServiceRunException("解密出错",e);
+            throw new BaseServiceRunException(CUSTOM,"解密出错",e);
         } catch (BadPaddingException e) {
-            throw new BaseServiceRunException("解密出错",e);
+            throw new BaseServiceRunException(CUSTOM,"解密出错",e);
         } catch (IllegalBlockSizeException e) {
-            throw new BaseServiceRunException("解密出错",e);
+            throw new BaseServiceRunException(APPERR,"非法密文",e);
         } catch (InvalidKeySpecException e) {
-            throw new BaseServiceRunException("解密出错",e);
+            throw new BaseServiceRunException(CUSTOM,"解密出错",e);
         }
     }
 
@@ -146,17 +147,17 @@ public class RsaUtil {
             byte[] result = __encode0_cipher.doFinal(source);
             return result;
         } catch (NoSuchAlgorithmException e) {
-            throw new BaseServiceRunException("加密出错",e);
+            throw new BaseServiceRunException(CUSTOM,"加密出错",e);
         } catch (InvalidKeyException e) {
-            throw new BaseServiceRunException("加密出错",e);
+            throw new BaseServiceRunException(CUSTOM,"加密出错",e);
         } catch (NoSuchPaddingException e) {
-            throw new BaseServiceRunException("加密出错",e);
+            throw new BaseServiceRunException(CUSTOM,"加密出错",e);
         } catch (InvalidKeySpecException e) {
-            throw new BaseServiceRunException("加密出错",e);
+            throw new BaseServiceRunException(CUSTOM,"加密出错",e);
         } catch (BadPaddingException e) {
-            throw new BaseServiceRunException("加密出错",e);
+            throw new BaseServiceRunException(CUSTOM,"加密出错",e);
         } catch (IllegalBlockSizeException e) {
-            throw new BaseServiceRunException("加密出错",e);
+            throw new BaseServiceRunException(APPERR,"非法密文",e);
         }
     }
 
@@ -179,17 +180,17 @@ public class RsaUtil {
             byte[] result = __decode0_cipher.doFinal(source);
             return result;
         } catch (NoSuchAlgorithmException e) {
-            throw new BaseServiceRunException("解密出错",e);
+            throw new BaseServiceRunException(CUSTOM,"解密出错",e);
         } catch (InvalidKeyException e) {
-            throw new BaseServiceRunException("解密出错",e);
+            throw new BaseServiceRunException(CUSTOM,"解密出错",e);
         } catch (NoSuchPaddingException e) {
-            throw new BaseServiceRunException("解密出错",e);
+            throw new BaseServiceRunException(CUSTOM,"解密出错",e);
         } catch (InvalidKeySpecException e) {
-            throw new BaseServiceRunException("解密出错",e);
+            throw new BaseServiceRunException(CUSTOM,"解密出错",e);
         } catch (BadPaddingException e) {
-            throw new BaseServiceRunException("解密出错",e);
+            throw new BaseServiceRunException(CUSTOM,"解密出错",e);
         } catch (IllegalBlockSizeException e) {
-            throw new BaseServiceRunException("解密出错",e);
+            throw new BaseServiceRunException(APPERR,"非法密文",e);
         }
     }
 

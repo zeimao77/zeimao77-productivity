@@ -3,6 +3,7 @@ package top.zeimao77.product.config;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import top.zeimao77.product.exception.BaseServiceRunException;
+import top.zeimao77.product.exception.ExceptionCodeDefinition;
 import top.zeimao77.product.util.AssertUtil;
 
 import java.io.*;
@@ -86,7 +87,7 @@ public class LocalContext {
         try {
             properties.load(is);
         } catch (IOException e) {
-            throw new BaseServiceRunException("IO错误");
+            throw new BaseServiceRunException(ExceptionCodeDefinition.IOEXCEPTION,"IO错误");
         }
         for (Object o : properties.keySet()) {
             String k = o.toString();

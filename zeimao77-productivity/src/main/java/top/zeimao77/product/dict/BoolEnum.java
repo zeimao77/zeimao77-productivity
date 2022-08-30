@@ -1,6 +1,7 @@
 package top.zeimao77.product.dict;
 
 import top.zeimao77.product.exception.BaseServiceRunException;
+import static top.zeimao77.product.exception.ExceptionCodeDefinition.APPERR;
 
 public enum BoolEnum implements DictEnum {
 
@@ -60,7 +61,7 @@ public enum BoolEnum implements DictEnum {
                 return value;
             }
         }
-        throw new BaseServiceRunException("错误的布尔值");
+        throw new BaseServiceRunException(APPERR,"错误的布尔值");
     }
 
 }
