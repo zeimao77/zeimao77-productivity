@@ -18,6 +18,9 @@ public abstract class JobExecTemplate<T extends IJob> implements JobExec{
     protected ArrayBlockingQueue<T> jobs;
     protected ExecutorService executorService;
     protected JobExecHandler<T> jobExecHandler;
+    /**
+     * 任务处理的扩展参数
+     */
     protected Map<String,Object> jobParam;
     // 状态
     // 1:已准备好
@@ -27,6 +30,11 @@ public abstract class JobExecTemplate<T extends IJob> implements JobExec{
     // 5:请求立即停止任务,我们会在处理完当前任务之后立即停止
     protected int status = 0;
 
+    /**
+     *
+     * @param executorService
+     * @param nMaxJobs 单次调用添加任务的最大任务数
+     */
     public JobExecTemplate(ExecutorService executorService,int nMaxJobs) {
         this.jobs = new ArrayBlockingQueue<>(nMaxJobs);
         this.executorService = executorService;
@@ -58,10 +66,18 @@ public abstract class JobExecTemplate<T extends IJob> implements JobExec{
      */
     protected abstract void moreJob(int page);
 
+    /**
+     * 处理任务的实现
+     * @param job 任务
+     */
     public void handle(T job) {
         jobExecHandler.handle(job,jobParam);
     }
 
+    /**
+     * 开始任务 默认10天超时时间
+     * @param nThread 线程数
+     */
     public void start(int nThread) {
         start(nThread,240,TimeUnit.HOURS);
     }

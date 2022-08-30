@@ -95,6 +95,9 @@ public abstract class AbstractCustomRefreshConverter<K> implements IConverter<K>
      */
     protected abstract void refresh();
 
+    /**
+     * @return 过期时间
+     */
     public LocalDateTime getExpiryTime() {
         return expiryTime;
     }
