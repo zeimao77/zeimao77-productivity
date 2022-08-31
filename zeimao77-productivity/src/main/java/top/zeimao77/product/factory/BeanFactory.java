@@ -70,7 +70,7 @@ public class BeanFactory {
         Supplier<?> supplier = prototypesFactory.get(beanName);
         if(supplier != null)
             return (T)supplier.get();
-        throw new BaseServiceRunException(ExceptionCodeDefinition.WRONG_ACTION,"没有这样的BEAN实例");
+        throw new BaseServiceRunException(ExceptionCodeDefinition.WRONG_ACTION,"没有这样的BEAN实例:"+beanName);
     }
 
     /**
@@ -85,7 +85,7 @@ public class BeanFactory {
                 return (T)value;
             }
         }
-        throw new BaseServiceRunException(ExceptionCodeDefinition.WRONG_ACTION,"没有这样的单例BEAN实例");
+        throw new BaseServiceRunException(ExceptionCodeDefinition.WRONG_ACTION,"没有这样的单例BEAN实例:"+requiredType.getName());
     }
 
     /**

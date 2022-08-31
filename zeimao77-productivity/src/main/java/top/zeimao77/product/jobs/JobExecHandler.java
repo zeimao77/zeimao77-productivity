@@ -49,6 +49,7 @@ public abstract class JobExecHandler<T extends IJob> implements JobExec{
                 failed(job,param,result);
             }
         } catch (BaseServiceRunException e) {
+            logger.error(String.format("[%s]%s",e.getCode(),e.getMessage()),e);
             Result fail = Result.fail(e.getCode(), e.getMessage(), e);
             failed(job,param,fail);
         } catch (RuntimeException e) {
