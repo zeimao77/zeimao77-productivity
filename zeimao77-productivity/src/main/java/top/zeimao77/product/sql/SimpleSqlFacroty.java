@@ -54,6 +54,12 @@ public class SimpleSqlFacroty {
         return new SimpleSqlClient(threadExclusiveConnectionFactory,DefaultPreparedStatementSetter.INSTANCE,DefaultResultSetResolve.INSTANCE);
     }
 
+    public SimpleSqlClient createClient() {
+        DataSourceTransactionFactory factory = new DataSourceTransactionFactory(this.dataSource);
+        SimpleSqlClient simpleSqlClient = new SimpleSqlClient(factory,DefaultPreparedStatementSetter.INSTANCE,DefaultResultSetResolve.INSTANCE);
+        return simpleSqlClient;
+    }
+
     public SimpleSqlClient openSession() {
         return openSession(Connection.TRANSACTION_READ_COMMITTED,true);
     }

@@ -73,7 +73,6 @@ signing {
 dependencies {
     testImplementation(platform('org.junit:junit-bom:5.8.2'))
     testImplementation('org.junit.jupiter:junit-jupiter')
-    compileOnly group: 'mysql', name: 'mysql-connector-java', version: '8.0.29'
     testImplementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.29'
     compileOnly group: 'com.zaxxer', name:'HikariCP', version: '5.0.1'
     testImplementation group: 'com.zaxxer', name:'HikariCP', version: '5.0.1'
@@ -85,10 +84,7 @@ dependencies {
     testImplementation group: 'org.apache.poi',name: 'poi', version: '5.2.2'
     compileOnly group: 'org.apache.poi',name: 'poi-ooxml', version: '5.2.2'
     testImplementation group: 'org.apache.poi',name: 'poi-ooxml', version: '5.2.2'
-    compileOnly 'org.postgresql:postgresql:42.4.2'
     testImplementation 'org.postgresql:postgresql:42.4.2'
-    compileOnly 'javax.servlet:javax.servlet-api:4.0.1'
-    compileOnly 'org.springframework:spring-webmvc:5.3.20'
 
     implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.18.0'
     implementation group: 'org.apache.logging.log4j', name: 'log4j-slf4j18-impl', version: '2.18.0'

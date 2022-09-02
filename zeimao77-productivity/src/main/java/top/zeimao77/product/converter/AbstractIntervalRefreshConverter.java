@@ -8,6 +8,9 @@ import java.time.LocalDateTime;
  */
 public abstract class AbstractIntervalRefreshConverter<K> extends AbstractCustomRefreshConverter<K>{
 
+    /**
+     * 时间间隔 刷新后会将过期时间设置为当前时间加上该时间 单位：秒
+     */
     protected long cacheTime;
 
     /**

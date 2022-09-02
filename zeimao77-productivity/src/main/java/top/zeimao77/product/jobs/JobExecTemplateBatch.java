@@ -51,8 +51,18 @@ public abstract class JobExecTemplateBatch<T extends IJob> implements JobExec{
      */
     protected abstract void moreJob(int page);
 
+    /**
+     * 处理任务
+     * 需要注意的是不要让处理方法抛出异常;
+     * @param jobs 任务
+     */
     public abstract void handle(List<T> jobs);
 
+    /**
+     * @see JobExecTemplateBatch#start(int, long, TimeUnit, int)
+     * @param nThread 线程数
+     * @param pageSize 页长
+     */
     public void start(int nThread,int pageSize) {
         start(nThread,240,TimeUnit.HOURS,pageSize);
     }
@@ -64,6 +74,7 @@ public abstract class JobExecTemplateBatch<T extends IJob> implements JobExec{
      * @param nThreads 线程数
      * @param timeout 任务执行超时时间
      * @param unit 时间单位
+     * @param pageSize 页长
      */
     public void start(int nThreads,long timeout, TimeUnit unit,int pageSize) {
         if(executorService == null) {

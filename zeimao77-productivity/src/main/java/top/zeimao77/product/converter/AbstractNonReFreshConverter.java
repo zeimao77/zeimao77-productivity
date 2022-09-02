@@ -50,6 +50,10 @@ public abstract class AbstractNonReFreshConverter<K> implements IConverter<K> {
         return result;
     }
 
+    /**
+     * 刷新规则
+     * 该函数用锁控制了刷新函数只能串行执行
+     */
     @Override
     public void refreshRule() {
         if (this.convRuleMap.isEmpty()) {
@@ -61,6 +65,12 @@ public abstract class AbstractNonReFreshConverter<K> implements IConverter<K> {
         }
     }
 
+    /**
+     * 刷新规则的具体实现;
+     * 在该函数中调用
+     * @see AbstractNonReFreshConverter#addConvRule(Object, Object)
+     * 来添加规则
+     */
     protected abstract void refresh();
 
 }

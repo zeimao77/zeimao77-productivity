@@ -382,7 +382,7 @@ public class ExcelXlsxDocumentResolve<T> {
      */
     public void parse(SXSSFWorkbook workbook, Table table, CellConsumer cellConsumer) {
         if(!sorted) {
-            synchronized (ExcelXlsxDocumentResolve.class) {
+            synchronized (this) {
                 if(!sorted) {
                     resovers.sort(Orderd::compareTo);
                     sorted = true;
@@ -405,7 +405,7 @@ public class ExcelXlsxDocumentResolve<T> {
 
     public ArrayList<T> parse(SXSSFWorkbook workbook, Table table, Class<T> clazz, ArrayList<T> resultList) {
         if(!sorted) {
-            synchronized (ExcelXlsxDocumentResolve.class) {
+            synchronized (this) {
                 if(!sorted) {
                     resovers.sort(Orderd::compareTo);
                     sorted = true;

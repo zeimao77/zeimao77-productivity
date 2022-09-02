@@ -3,7 +3,6 @@ package top.zeimao77.product.util;
 import top.zeimao77.product.exception.BaseServiceRunException;
 
 import static top.zeimao77.product.exception.ExceptionCodeDefinition.APPERR;
-import static top.zeimao77.product.exception.ExceptionCodeDefinition.CUSTOM;
 
 import java.util.regex.Pattern;
 
