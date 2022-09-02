@@ -1,7 +1,5 @@
 package top.zeimao77.product.security;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import top.zeimao77.product.exception.BaseServiceRunException;
 
 import static top.zeimao77.product.exception.ExceptionCodeDefinition.APPERR;

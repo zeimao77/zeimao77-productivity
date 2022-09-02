@@ -26,8 +26,6 @@ import java.util.function.Function;
  */
 public class Ijson {
 
-    private static Logger logger = LogManager.getLogger(Ijson.class);
-
     private JsonNode jsonNode;
 
     private Ijson(JsonNode jsonNode) {
