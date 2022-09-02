@@ -8,6 +8,7 @@ import top.zeimao77.product.factory.ComponentFactory;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.function.Function;
 
 import static top.zeimao77.product.exception.ExceptionCodeDefinition.SQLEXCEPTION;
 
@@ -53,6 +54,21 @@ public class SimpleSqlFacroty {
         ConnectionTransactionFactory threadExclusiveConnectionFactory = new ConnectionTransactionFactory(connection);
         return new SimpleSqlClient(threadExclusiveConnectionFactory,DefaultPreparedStatementSetter.INSTANCE,DefaultResultSetResolve.INSTANCE);
     }
+
+
+    public Object execute(Function<SimpleSqlClient,Object> fun) {
+        SimpleSqlClient simpleSqlClient = openSession(Connection.TRANSACTION_READ_COMMITTED,false);
+        Object apply = null;
+        try {
+            apply = fun.apply(simpleSqlClient);
+            simpleSqlClient.commit();
+        }catch (RuntimeException e) {
+            simpleSqlClient.rollback();
+        }
+        simpleSqlClient.close();
+        return apply;
+    }
+
 
     public SimpleSqlClient createClient() {
         DataSourceTransactionFactory factory = new DataSourceTransactionFactory(this.dataSource);
