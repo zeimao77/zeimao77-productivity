@@ -38,6 +38,7 @@ public class ConnectionTransactionFactory implements TransactionFactory {
     public void commit() {
         if(connection != null) {
             try {
+                logger.debug("连接[{}]将要提交事务",connection);
                 connection.commit();
             } catch (SQLException e) {
                 throw new BaseServiceRunException(SQLEXCEPTION, "SQL错误", e);
@@ -48,6 +49,7 @@ public class ConnectionTransactionFactory implements TransactionFactory {
     @Override
     public void rollback() {
         if(connection != null) {
+            logger.debug("连接[{}]将要回滚事务",connection);
             try {
                 connection.rollback();
             } catch (SQLException e) {

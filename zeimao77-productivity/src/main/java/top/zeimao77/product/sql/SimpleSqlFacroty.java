@@ -55,17 +55,26 @@ public class SimpleSqlFacroty {
         return new SimpleSqlClient(threadExclusiveConnectionFactory,DefaultPreparedStatementSetter.INSTANCE,DefaultResultSetResolve.INSTANCE);
     }
 
-
+    /**
+     * 快速开启一个事务
+     * @param fun 事务方法 如果该方法抛出RuntimeException将会回滚事务
+     * @return
+     */
     public Object execute(Function<SimpleSqlClient,Object> fun) {
         SimpleSqlClient simpleSqlClient = openSession(Connection.TRANSACTION_READ_COMMITTED,false);
         Object apply = null;
         try {
             apply = fun.apply(simpleSqlClient);
             simpleSqlClient.commit();
-        }catch (RuntimeException e) {
+        } catch (BaseServiceRunException e) {
+            logger.error(String.format("[%s]%s",e.getCode(),e.getMessage()),e);
             simpleSqlClient.rollback();
+        } catch (RuntimeException e) {
+            logger.error("错误",e);
+            simpleSqlClient.rollback();
+        } finally {
+            simpleSqlClient.close();
         }
-        simpleSqlClient.close();
         return apply;
     }
 

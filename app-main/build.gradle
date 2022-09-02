@@ -12,7 +12,7 @@ repositories {
     }
     maven {
         name 'aliyun'
-        credentials {
+t         credentials {sh
             username publishing_maven_aliyun_username
             password publishing_maven_aliyun_password
         }
