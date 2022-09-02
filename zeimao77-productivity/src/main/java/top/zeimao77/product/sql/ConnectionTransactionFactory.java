@@ -34,7 +34,8 @@ public class ConnectionTransactionFactory implements TransactionFactory {
         }
     }
 
-    public synchronized void commit() {
+    @Override
+    public void commit() {
         if(connection != null) {
             try {
                 connection.commit();
@@ -44,7 +45,8 @@ public class ConnectionTransactionFactory implements TransactionFactory {
         }
     }
 
-    public synchronized void rollback() {
+    @Override
+    public void rollback() {
         if(connection != null) {
             try {
                 connection.rollback();

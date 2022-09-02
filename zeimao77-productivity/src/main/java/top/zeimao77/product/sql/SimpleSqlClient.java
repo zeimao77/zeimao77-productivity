@@ -432,7 +432,6 @@ public class SimpleSqlClient implements Reposit,AutoCloseable {
         return resultList;
     }
 
-
     public Connection createContection() {
         return this.connectFacotry.createContection();
     }
@@ -444,6 +443,14 @@ public class SimpleSqlClient implements Reposit,AutoCloseable {
     @Override
     public void close() throws Exception {
         this.connectFacotry.close();
+    }
+
+    public void commit() {
+        this.connectFacotry.commit();
+    }
+
+    public void rollback() {
+        this.connectFacotry.rollback();
     }
 
     public PreparedStatementSetter getPreparedStatementSetter() {

@@ -29,6 +29,7 @@ public class DataSourceTransactionFactory implements TransactionFactory {
     public Connection createContection() {
         try {
             Connection connection = dataSource.getConnection();
+            connection.setAutoCommit(true);
             logger.debug("获取一个新的连接:{}",connection);
             return connection;
         } catch (SQLException e) {
@@ -49,7 +50,11 @@ public class DataSourceTransactionFactory implements TransactionFactory {
     }
 
     @Override
-    public void close() {
+    public void commit() {}
 
-    }
+    @Override
+    public void rollback() {}
+
+    @Override
+    public void close() {}
 }

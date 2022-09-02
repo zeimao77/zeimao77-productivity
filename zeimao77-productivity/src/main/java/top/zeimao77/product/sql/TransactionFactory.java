@@ -20,4 +20,7 @@ public interface TransactionFactory extends AutoCloseable {
      */
     void close(Connection connection);
 
+    void commit();
+    void rollback();
+
 }

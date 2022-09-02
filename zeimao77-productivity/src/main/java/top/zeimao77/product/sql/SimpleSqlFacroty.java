@@ -61,7 +61,7 @@ public class SimpleSqlFacroty {
     }
 
     public SimpleSqlClient openSession() {
-        return openSession(Connection.TRANSACTION_READ_COMMITTED,true);
+        return openSession(Connection.TRANSACTION_READ_COMMITTED,false);
     }
 
 
