@@ -3,8 +3,6 @@ package top.zeimao77.product.sql;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import top.zeimao77.product.exception.BaseServiceRunException;
-import top.zeimao77.product.exception.ExceptionCodeDefinition;
-
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -33,7 +31,7 @@ public class DataSourceTransactionFactory implements TransactionFactory {
             logger.debug("获取一个新的连接:{}",connection);
             return connection;
         } catch (SQLException e) {
-            throw new BaseServiceRunException(ExceptionCodeDefinition.SQLEXCEPTION,"SQL异常",e);
+            throw new BaseServiceRunException(SQLEXCEPTION,"SQL异常",e);
         }
     }
 

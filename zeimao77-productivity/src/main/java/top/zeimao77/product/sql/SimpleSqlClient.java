@@ -441,8 +441,12 @@ public class SimpleSqlClient implements Reposit,AutoCloseable {
     }
 
     @Override
-    public void close() throws Exception {
-        this.connectFacotry.close();
+    public void close() {
+        try {
+            this.connectFacotry.close();
+        } catch (Exception e) {
+            logger.error("close错误",e);
+        }
     }
 
     public void commit() {

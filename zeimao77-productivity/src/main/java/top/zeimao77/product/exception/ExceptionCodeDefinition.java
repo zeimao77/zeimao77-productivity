@@ -16,17 +16,17 @@ public interface ExceptionCodeDefinition extends LongBitMap {
     Integer RETAION4 = 0x02000000;  // 保留标志4
     Integer RETAION5 = 0x01000000;  // 保留标志5
 
-    Integer UNKNOWN = 0x001000;   // 未知的异常;
-    Integer CUSTOM = 0x001001;   // 自定义的异常;
-    Integer APPERR = 0x060000;   // APP错误;
-    Integer WRONG_ACTION = 0x001002;  // 错误的操作;
-    Integer NO_PERMISSION = 0x001003;  // 没有权限;
-    Integer TRY_AGAIN_LATER = 0x001004; // 临时资源受限,建议稍后再试;
-    Integer WRONG_SOURCE = 0x001005 | NON_RETRYABLE;   // 错误的参数或源;
-    Integer NOT_SUPPORTED = 0x001006 | NON_RETRYABLE;   // 不支持的操作;
+    Integer UNKNOWN = 0x001000;   // 未知的异常(4096);
+    Integer CUSTOM = 0x001001;   // 自定义的异常(4097);
+    Integer APPERR = 0x060000;   // APP错误(393216);
+    Integer WRONG_ACTION = 0x001002;  // 错误的操作(4098);
+    Integer NO_PERMISSION = 0x001003;  // 没有权限(4099);
+    Integer TRY_AGAIN_LATER = 0x001004; // 临时资源受限,建议稍后再试(4100);
+    Integer WRONG_SOURCE = 0x001005 | NON_RETRYABLE;   // 错误的参数或源(4101);
+    Integer NOT_SUPPORTED = 0x001006 | NON_RETRYABLE;   // 不支持的操作(4102);
 
-    Integer IOEXCEPTION = 0x002001 | CONVERTIBLE;  // IO错误异常;
-    Integer SQLEXCEPTION = 0x002002 | CONVERTIBLE;  // SQL错误异常;
+    Integer IOEXCEPTION = 0x002001;  // IO错误异常(8193);
+    Integer SQLEXCEPTION = 0x002002 | CONVERTIBLE;  // SQL错误异常(8194);
 
     Integer getCode();
 
