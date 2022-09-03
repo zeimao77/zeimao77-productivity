@@ -14,7 +14,7 @@ public interface LongBitMap {
      * @return 是否匹配
      */
     static boolean matches(long bitmap,long flag) {
-        return (bitmap & flag) != 0;
+        return (bitmap & flag) == flag;
     }
 
     /**
@@ -39,10 +39,18 @@ public interface LongBitMap {
 
     /**
      * @param bitmap 位图
-     * @return 将位图以字符串方式输出
+     * @return 将位图以字符串方式返回
      */
     static String toBinaryString(long bitmap) {
         return Long.toBinaryString(bitmap);
+    }
+
+    /**
+     * @param bitmap 位图
+     * @return 将位置以十六进制方式返回
+     */
+    static String toHexString(long bitmap) {
+        return Long.toHexString(bitmap);
     }
 
 

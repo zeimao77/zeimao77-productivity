@@ -1,8 +1,9 @@
 package top.zeimao77.product.redis;
 
 import redis.clients.jedis.commands.ScriptingKeyCommands;
+import top.zeimao77.product.factory.BeanFactory;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -93,7 +94,7 @@ public class JedisLockImpl {
      */
     public boolean unLock(String lockId) {
         String unscript = "redis.call('DEL',KEYS[1]);";
-        Object eval = this.commands.eval(unscript, List.of(lockId), new ArrayList<>(0));
+        Object eval = this.commands.eval(unscript, List.of(lockId), Collections.emptyList());
         return true;
     }
 

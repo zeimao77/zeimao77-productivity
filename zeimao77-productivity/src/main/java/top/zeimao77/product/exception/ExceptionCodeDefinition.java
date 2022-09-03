@@ -37,7 +37,6 @@ public interface ExceptionCodeDefinition extends LongBitMap {
         Integer i = (getCode() & 0x00FFFFFF) ^ errorCode;
         return i.equals(0);
     }
-
     default Integer originError() {
         return getCode() & 0x00FFFFFF;
     }

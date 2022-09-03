@@ -1,11 +1,12 @@
 package top.zeimao77.product.jobs;
 import top.zeimao77.product.util.LongBitMap;
 
+import static top.zeimao77.product.exception.ExceptionCodeDefinition.APPERR;
 import static top.zeimao77.product.exception.ExceptionCodeDefinition.NON_RETRYABLE;
 
 public interface JobExec {
 
-    int SUCCESSED = 1,FAILED = 2;
+    int SUCCESSED = 1,FAILED = APPERR;
 
     class Result {
 

@@ -3,8 +3,6 @@ package top.zeimao77.product.jobs;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import top.zeimao77.product.exception.BaseServiceRunException;
-import static top.zeimao77.product.exception.ExceptionCodeDefinition.UNKNOWN;
-
 import java.util.Map;
 
 public abstract class JobExecHandler<T extends IJob> implements JobExec{
@@ -54,7 +52,7 @@ public abstract class JobExecHandler<T extends IJob> implements JobExec{
             failed(job,param,fail);
         } catch (RuntimeException e) {
             logger.error("JOB处理出错",e);
-            Result fail = Result.fail(UNKNOWN, "未知的错误", e);
+            Result fail = Result.fail(FAILED, "未知的错误", e);
             failed(job,param,fail);
         }
     }

@@ -9,7 +9,7 @@ public class BaseServiceRunException extends RuntimeException implements Excepti
 
     public BaseServiceRunException(Integer code, String message, Throwable cause) {
         super(message, cause);
-        this.code = code;
+        this.code = code | CONVERTIBLE;
     }
 
     public BaseServiceRunException(Integer code, String message) {
@@ -19,12 +19,12 @@ public class BaseServiceRunException extends RuntimeException implements Excepti
 
     public BaseServiceRunException(String message, Throwable cause) {
         super(message,cause);
-        this.code = CUSTOM;
+        this.code = APPERR | CONVERTIBLE;
     }
 
     public BaseServiceRunException(String message) {
         super(message);
-        this.code = CUSTOM;
+        this.code = APPERR;
     }
 
     public Integer getCode() {

@@ -5,7 +5,7 @@ plugins {
 }
 
 group 'top.zeimao77'
-version '2.1.1'
+version '2.1.2'
 description '效率包'
 
 repositories {
@@ -92,6 +92,13 @@ dependencies {
     implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.13.3'
     implementation group: 'com.guicedee.services', name: 'commons-beanutils', version: '1.2.2.1'
 
+}
+
+jar {
+    manifest {
+        attributes("Created-By":"Gradle("+this.gradle.gradleVersion+")")
+        attributes("Build-Jdk-Spec": "17")
+    }
 }
 
 tasks.withType(JavaCompile) {

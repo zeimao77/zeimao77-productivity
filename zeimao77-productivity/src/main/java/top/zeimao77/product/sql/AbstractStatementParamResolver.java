@@ -3,6 +3,7 @@ package top.zeimao77.product.sql;
 import top.zeimao77.product.util.AssertUtil;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -20,7 +21,7 @@ public abstract class AbstractStatementParamResolver implements StatementParamRe
     /**
      * 存储JDBC参数列表
      */
-    protected ArrayList<StatementParameter> statementParams;
+    protected List<StatementParameter> statementParams;
     private static final Pattern PATTERN = Pattern.compile("[$|#]\\{([,=\\w]+)\\}");
 
     /**
@@ -62,7 +63,7 @@ public abstract class AbstractStatementParamResolver implements StatementParamRe
     }
 
     @Override
-    public ArrayList<StatementParameter> getStatementParams() {
+    public List<StatementParameter> getStatementParams() {
         return statementParams;
     }
 
