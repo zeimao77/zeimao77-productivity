@@ -20,13 +20,13 @@ import static top.zeimao77.product.exception.ExceptionCodeDefinition.SQLEXCEPTIO
  * @author zeimao77
  * @since 2.1.1
  */
-public class SimpleSqlFacroty {
+public class SimpleSqlTemplate {
 
-    private static Logger logger = LogManager.getLogger(SimpleSqlFacroty.class);
+    private static Logger logger = LogManager.getLogger(SimpleSqlTemplate.class);
 
     DataSource dataSource;
 
-    public SimpleSqlFacroty(DataSource dataSource) {
+    public SimpleSqlTemplate(DataSource dataSource) {
         this.dataSource = dataSource;
     }
 

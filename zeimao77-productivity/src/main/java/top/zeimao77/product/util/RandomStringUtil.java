@@ -1,6 +1,7 @@
 package top.zeimao77.product.util;
 
 import java.util.concurrent.ThreadLocalRandom;
+import static top.zeimao77.product.exception.ExceptionCodeDefinition.APPERR;
 
 public class RandomStringUtil {
 
@@ -11,7 +12,7 @@ public class RandomStringUtil {
     private char[] range;
 
     public RandomStringUtil(int bmap) {
-        AssertUtil.assertTure(bmap >= 0x01 && bmap <= 0x0F,"取值范围:[0x01 ~ 0x0F]");
+        AssertUtil.assertTrue(bmap >= 0x01 && bmap <= 0x0F,APPERR,"取值范围:[0x01 ~ 0x0F]");
         this.range = range(bmap);
     }
 

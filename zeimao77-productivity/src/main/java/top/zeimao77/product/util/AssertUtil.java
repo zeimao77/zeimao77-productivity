@@ -18,7 +18,7 @@ public class AssertUtil {
      * @param expression 断言表达式
      * @param message 异常返回的信息
      */
-    public static void assertTure(boolean expression,String message) {
+    public static void assertTrue(boolean expression,String message) {
        assertTrue(expression,APPERR,message);
     }
 

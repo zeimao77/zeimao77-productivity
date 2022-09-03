@@ -8,7 +8,7 @@ class SimpleSqlFacrotyTest extends BaseMain {
 
     @Test
     void execute() {
-        SimpleSqlFacroty postgre_local_zeimao77 = ComponentFactory.initSimpleSqlFacroty("postgre_local_zeimao77");
+        SimpleSqlTemplate postgre_local_zeimao77 = ComponentFactory.initSimpleSqlFacroty("postgre_local_zeimao77");
         postgre_local_zeimao77.execute(client -> {
                 client.update("update test set title = 'hello111' where id = '51789089363460097';");
                 return null;

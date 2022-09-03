@@ -34,7 +34,7 @@ public class SQL implements StatementParamResolver, IWhere {
         return this;
     }
 
-    public SQL appent(String text) {
+    public SQL append(String text) {
         sqlBuilder.append(text);
         return this;
     }

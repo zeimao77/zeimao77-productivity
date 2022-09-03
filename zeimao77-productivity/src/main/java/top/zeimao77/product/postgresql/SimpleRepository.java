@@ -24,14 +24,14 @@ public class SimpleRepository<T,W> extends AbstractSimpleRepository<T, W> {
     @Override
     protected void upsert(SQL sql, T t) {
         insert(sql,t);
-        sql.appent(" ON CONFLICT (");
+        sql.append(" ON CONFLICT (");
         for (int i = 0; i < primaryKeyFieldList.size(); i++) {
             if(i > 0) {
-                sql.appent(",");
+                sql.append(",");
             }
-            sql.appent(codeNameToDbName(primaryKeyFieldList.get(i)));
+            sql.append(codeNameToDbName(primaryKeyFieldList.get(i)));
         }
-        sql.appent(") DO UPDATE SET ");
+        sql.append(") DO UPDATE SET ");
         sql.onDuplicateKeyUpdate(o -> !isPrimaryKey(o.getName()));
     }
 

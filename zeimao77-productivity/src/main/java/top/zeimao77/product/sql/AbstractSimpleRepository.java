@@ -104,7 +104,7 @@ public abstract class AbstractSimpleRepository<T,W> extends AbstractRepository<T
      */
     public AbstractSimpleRepository(Reposit repositoryImpl, String tableName, String[] primaryKeyFields, String[] ignoreFields,BiFunction<W,String,Object> idParseFunc) {
         super(repositoryImpl, tableName);
-        AssertUtil.assertTure(primaryKeyFields != null && primaryKeyFields.length > 0,"主键描述必需");
+        AssertUtil.assertTrue(primaryKeyFields != null && primaryKeyFields.length > 0,"主键描述必需");
         this.primaryKeyFieldList = new ArrayList<>();
         for (String primaryKeyField : primaryKeyFields) {
             this.primaryKeyFieldList.add(primaryKeyField);

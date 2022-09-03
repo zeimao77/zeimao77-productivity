@@ -5,7 +5,7 @@ import top.zeimao77.product.factory.ComponentFactory;
 import top.zeimao77.product.main.BaseMain;
 import top.zeimao77.product.sql.SQL;
 import top.zeimao77.product.sql.SimpleSqlClient;
-import top.zeimao77.product.sql.SimpleSqlFacroty;
+import top.zeimao77.product.sql.SimpleSqlTemplate;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,7 +29,7 @@ class SimpleMysqlTest extends BaseMain {
     static SimpleSqlClient simpleMysql;
 
     static {
-        SimpleSqlFacroty simpleSqlFacroty= ComponentFactory.initSimpleSqlFacroty("mysql_top_zeimao77");
+        SimpleSqlTemplate simpleSqlFacroty= ComponentFactory.initSimpleSqlFacroty("mysql_top_zeimao77");
         simpleMysql = simpleSqlFacroty.openSession();
     }
 

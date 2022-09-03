@@ -33,9 +33,9 @@ public class ComponentFactory {
      * @param prefx 前缀
      * @return SQL客户端工厂对象
      */
-    public static SimpleSqlFacroty initSimpleSqlFacroty(String prefx) {
+    public static SimpleSqlTemplate initSimpleSqlFacroty(String prefx) {
         DataSource dataSource = createDataSource(prefx);
-        SimpleSqlFacroty simpleSqlFacroty = new SimpleSqlFacroty(dataSource);
+        SimpleSqlTemplate simpleSqlFacroty = new SimpleSqlTemplate(dataSource);
         BeanFactory.DEFAULT.registerSingleton(prefx,simpleSqlFacroty);
         return simpleSqlFacroty;
     }

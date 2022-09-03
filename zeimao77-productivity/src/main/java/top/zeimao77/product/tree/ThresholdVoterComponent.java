@@ -25,7 +25,7 @@ public class ThresholdVoterComponent<T> implements Voter<T> {
      * @param threshold 阈值
      */
     public ThresholdVoterComponent(List<Voter> voters, Double threshold) {
-        AssertUtil.assertTure(threshold >= 0D && threshold <= 1D,"错误的阈值");
+        AssertUtil.assertTrue(threshold >= 0D && threshold <= 1D,"错误的阈值");
         this.voters = voters;
         this.threshold = threshold;
     }
