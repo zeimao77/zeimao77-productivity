@@ -8,7 +8,6 @@ import top.zeimao77.product.factory.ComponentFactory;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.function.Function;
 
 import static top.zeimao77.product.exception.ExceptionCodeDefinition.SQLEXCEPTION;
 
@@ -57,14 +56,14 @@ public class SimpleSqlFacroty {
 
     /**
      * 快速开启一个事务
-     * @param fun 事务方法 如果该方法抛出RuntimeException将会回滚事务
+     * @param transaction 事务方法 如果该方法抛出RuntimeException将会回滚事务
      * @return
      */
-    public Object execute(Function<SimpleSqlClient,Object> fun) {
+    public <T> T execute(Transaction<T> transaction) {
         SimpleSqlClient simpleSqlClient = openSession(Connection.TRANSACTION_READ_COMMITTED,false);
-        Object apply = null;
+        T apply = null;
         try {
-            apply = fun.apply(simpleSqlClient);
+            apply = transaction.doInTransaction(simpleSqlClient);
             simpleSqlClient.commit();
         } catch (BaseServiceRunException e) {
             logger.error(String.format("[%s]%s",e.getCode(),e.getMessage()),e);
@@ -89,5 +88,11 @@ public class SimpleSqlFacroty {
         return openSession(Connection.TRANSACTION_READ_COMMITTED,false);
     }
 
+    @FunctionalInterface
+    public interface Transaction<T> {
+
+        T doInTransaction(SimpleSqlClient client);
+
+    }
 
 }
