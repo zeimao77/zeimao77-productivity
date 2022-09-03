@@ -9,8 +9,6 @@ import java.nio.charset.StandardCharsets;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class RsaUtilTest extends BaseMain {
 
     RsaUtil get() {

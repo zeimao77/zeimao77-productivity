@@ -6,8 +6,6 @@ import top.zeimao77.product.util.ByteArrayCoDesUtil;
 
 import java.nio.charset.StandardCharsets;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class DigestUtilTest extends BaseMain {
 
     @Test

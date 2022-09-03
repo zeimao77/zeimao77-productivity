@@ -4,8 +4,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import top.zeimao77.product.main.BaseMain;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class LongIdGeneratorTest extends BaseMain {
 
     @Test

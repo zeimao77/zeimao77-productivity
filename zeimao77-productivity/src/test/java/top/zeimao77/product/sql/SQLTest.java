@@ -16,3 +16,4 @@ class SQLTest extends BaseMain {
         logger.info(sql.getExecSql());
     }
 }
+
