@@ -44,14 +44,16 @@ public class LocalContext {
         if(o != null) {
             if("TRUE".equalsIgnoreCase(o.toString())
                     || "Y".equalsIgnoreCase(o.toString())
-                    || "YES".equals(o.toString())
-                    || "1".equals(o.toString())) {
+                    || "YES".equalsIgnoreCase(o.toString())
+                    || "1".equals(o.toString())
+                    || "ON".equalsIgnoreCase(o.toString())) {
                 return true;
             }
             if("FALSE".equalsIgnoreCase(o.toString())
                     || "N".equalsIgnoreCase(o.toString())
                     || "NO".equalsIgnoreCase(o.toString())
-                    || "0".equalsIgnoreCase(o.toString())) {
+                    || "0".equals(o.toString())
+                    || "OFF".equalsIgnoreCase(o.toString())) {
                 return false;
             }
         }
