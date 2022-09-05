@@ -64,7 +64,7 @@ public class ExcelXlsxDocumentBuilder {
         if(converter == null)
             return null;
         if(converterMap == null)
-            converterMap = new HashMap<>();
+            converterMap = Collections.EMPTY_MAP;
         IConverter<String> stringIConverter = converterMap.get(column);
         if(stringIConverter == null) {
             stringIConverter = new AbstractNonReFreshConverter<String>(converter.getRule()) {

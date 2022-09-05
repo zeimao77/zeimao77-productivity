@@ -65,7 +65,7 @@ public abstract class JobExecHandler<T extends IJob> implements JobExec{
      * 如果以异常的方式返回 Result#data 将是异常;
      */
     public void failed(T job,Map<String,Object> param,Result result) {
-        logger.info("JOB处理失败,原因:[{}]{}",job.jobId(),result.getResultCode(),result.getResultMsg());
+        logger.info("JOB({})处理失败,原因:[{}]{}",job.jobId(),result.getResultCode(),result.getResultMsg());
     }
 
     /**
@@ -75,7 +75,7 @@ public abstract class JobExecHandler<T extends IJob> implements JobExec{
      * @param result 调用结果
      */
     public void successed(T job,Map<String,Object> param,Result result) {
-        logger.info("JOB处理成功:{}",job.jobId());
+        logger.info("JOB({})处理成功:[{}]{}",job.jobId(),result.getResultCode(),result.getResultMsg());
     }
 
 
