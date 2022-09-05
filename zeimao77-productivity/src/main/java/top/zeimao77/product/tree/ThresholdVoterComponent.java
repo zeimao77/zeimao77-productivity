@@ -1,6 +1,7 @@
 package top.zeimao77.product.tree;
 
 import top.zeimao77.product.exception.BaseServiceRunException;
+import static top.zeimao77.product.exception.ExceptionCodeDefinition.CUSTOM;
 import top.zeimao77.product.util.AssertUtil;
 
 import java.util.List;
@@ -60,6 +61,6 @@ public class ThresholdVoterComponent<T> implements Voter<T> {
                 }
             }
         }
-        throw new BaseServiceRunException("表决错误");
+        throw new BaseServiceRunException(CUSTOM,"表决错误");
     }
 }

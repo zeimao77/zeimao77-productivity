@@ -22,16 +22,16 @@ public interface ExceptionCodeDefinition extends LongBitMap {
     Integer WRONG_ACTION = 0x001002;  // 错误的操作(4098);
     Integer NO_PERMISSION = 0x001003;  // 没有权限(4099);
     Integer TRY_AGAIN_LATER = 0x001004; // 临时资源受限,建议稍后再试(4100);
-    Integer WRONG_SOURCE = 0x001005 | NON_RETRYABLE;   // 错误的参数或源(4101);
-    Integer NOT_SUPPORTED = 0x001006 | NON_RETRYABLE;   // 不支持的操作(4102);
+    Integer WRONG_SOURCE = 0x001005;   // 错误的参数或源(4101);
+    Integer NOT_SUPPORTED = 0x001006;   // 不支持的操作(4102);
 
     Integer IOEXCEPTION = 0x002001;  // IO错误异常(8193);
-    Integer SQLEXCEPTION = 0x002002 | CONVERTIBLE;  // SQL错误异常(8194);
+    Integer SQLEXCEPTION = 0x002002;  // SQL错误异常(8194);
 
     Integer getCode();
 
     default boolean matcheFlag(Integer flag) {
-        return (flag & getCode()) > 0;
+        return (getCode() & flag) == flag;
     }
     default boolean matcheOriginError(Integer errorCode) {
         Integer i = (getCode() & 0x00FFFFFF) ^ errorCode;
