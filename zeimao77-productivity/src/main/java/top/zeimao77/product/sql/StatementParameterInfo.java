@@ -9,6 +9,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 public @interface StatementParameterInfo {
 
+    int dbtype() default 0x7FFFFFFF;
     int mode() default 1;
     int jdbcType() default StatementParameter.DEFAULT_JDBCTYPE;
     String valSetPre();

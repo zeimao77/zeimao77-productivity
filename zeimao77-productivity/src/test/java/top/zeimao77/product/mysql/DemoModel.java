@@ -1,5 +1,6 @@
 package top.zeimao77.product.mysql;
 
+import top.zeimao77.product.sql.Dbtype;
 import top.zeimao77.product.sql.StatementParameterInfo;
 import top.zeimao77.product.util.LongIdGenerator;
 import top.zeimao77.product.util.RandomStringUtil;
@@ -12,7 +13,7 @@ public class DemoModel {
 
     private Long demoId;
     private String demoName;
-    @StatementParameterInfo(mode = 1,valSetPre = "to_date(",valSetPost = ",'YYYY-MM-DD')")
+    @StatementParameterInfo(dbtype = 0x00000002,mode = 1,valSetPre = "to_date(",valSetPost = ",'YYYY-MM-DD')")
     private LocalDateTime createdTime;
     private Integer ch;
     private Boolean bo;

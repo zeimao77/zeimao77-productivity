@@ -27,6 +27,16 @@ public class SQL implements StatementParamResolver, IWhere {
     private int sqlType = 0; // 1 = SELECT ;2 = DELETE ;3 = UPDATE ;4 INSERT
     private int paramIndex = 0;
 
+    private int dbtype;
+
+    public SQL() {
+        this(Dbtype.ALL);
+    }
+
+    public SQL(int dbtype) {
+        this.dbtype = dbtype;
+    }
+
     public SQL select() {
         sqlBuilder.append("SELECT *");
         whereOrSetFlag |= FLAG_SELECT;
@@ -537,5 +547,13 @@ public class SQL implements StatementParamResolver, IWhere {
 
     public int getSqlType() {
         return sqlType;
+    }
+
+    public int getDbtype() {
+        return dbtype;
+    }
+
+    public void setDbtype(int dbtype) {
+        this.dbtype = dbtype;
     }
 }

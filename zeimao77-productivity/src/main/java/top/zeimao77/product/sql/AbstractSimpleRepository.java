@@ -3,6 +3,7 @@ package top.zeimao77.product.sql;
 import top.zeimao77.product.exception.BaseServiceRunException;
 import top.zeimao77.product.util.AssertUtil;
 import top.zeimao77.product.util.BeanUtil;
+import top.zeimao77.product.util.LongBitMap;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -13,7 +14,6 @@ import static top.zeimao77.product.exception.ExceptionCodeDefinition.CUSTOM;
 import static top.zeimao77.product.exception.ExceptionCodeDefinition.NON_RETRYABLE;
 
 public abstract class AbstractSimpleRepository<T,W> extends AbstractRepository<T, W> {
-
 
     protected List<String> ignoreFieldList;
     protected List<String> primaryKeyFieldList;
@@ -118,14 +118,26 @@ public abstract class AbstractSimpleRepository<T,W> extends AbstractRepository<T
         this.idParseFunc = idParseFunc;
     }
 
+    protected StatementParameterInfo matchesParameterInfo(Field field) {
+        StatementParameterInfo[] annotationsByType = field.getAnnotationsByType(StatementParameterInfo.class);
+        StatementParameterInfo result = null;
+        for (StatementParameterInfo statementParameterInfo : annotationsByType) {
+            if(statementParameterInfo != null && LongBitMap.matches(statementParameterInfo.dbtype(),dbType)) {
+                result = statementParameterInfo;
+                break;
+            }
+        }
+        return result;
+    }
+
     @Override
     protected W insert(SQL sql, T t) {
         Field[] declaredFields = t.getClass().getDeclaredFields();
         sql.insert(tableName);
-        for (Field declaredMethod : declaredFields) {
-            String name = declaredMethod.getName();
+        for (Field declaredField : declaredFields) {
+            String name = declaredField.getName();
             Object property = BeanUtil.getProperty(t, name);
-            StatementParameterInfo info = declaredMethod.getAnnotation(StatementParameterInfo.class);
+            StatementParameterInfo info = matchesParameterInfo(declaredField);
             int mode = info == null ? 1 : info.mode();
             String valSetPre = info == null ? null : info.valSetPre();
             String valSetPost = info == null ? null : info.valSetPost();
@@ -142,17 +154,17 @@ public abstract class AbstractSimpleRepository<T,W> extends AbstractRepository<T
         Field[] declaredFields = t.getClass().getDeclaredFields();
         sql.update(tableName);
         List<Field> whereField = new ArrayList<>();
-        for (Field declaredMethod : declaredFields) {
-            String name = declaredMethod.getName();
+        for (Field declareField : declaredFields) {
+            String name = declareField.getName();
             Object property = BeanUtil.getProperty(t, name);
-            StatementParameterInfo info = declaredMethod.getAnnotation(StatementParameterInfo.class);
+            StatementParameterInfo info = matchesParameterInfo(declareField);
             int mode = info == null ? 1 : info.mode();
             String valSetPre = info == null ? null : info.valSetPre();
             String valSetPost = info == null ? null : info.valSetPost();
             boolean ignoreOrPrimary = false;
             if(isPrimaryKeyField(name)) {
                 ignoreOrPrimary = true;
-                whereField.add(declaredMethod);
+                whereField.add(declareField);
             } else if(isIgnoreField(name) && mode == 1) {
                 ignoreOrPrimary = true;
             }
@@ -160,11 +172,11 @@ public abstract class AbstractSimpleRepository<T,W> extends AbstractRepository<T
                 sql.set(info == null || property != null,codeNameToDbName(name),valSetPre,valSetPost,property);
             }
         }
-        for (Field declaredMethod : whereField) {
-            StatementParameterInfo info = declaredMethod.getAnnotation(StatementParameterInfo.class);
+        for (Field declareField : whereField) {
+            StatementParameterInfo info = matchesParameterInfo(declareField);
             String valSetPre = info == null ? null : info.valSetPre();
             String valSetPost = info == null ? null : info.valSetPost();
-            String name = declaredMethod.getName();
+            String name = declareField.getName();
             Object property = BeanUtil.getProperty(t, name);
             sql.where(true,SQL.BIND_AND,codeNameToDbName(name),SQL.COND_QIS,valSetPre,valSetPost,property);
         }
