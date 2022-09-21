@@ -19,7 +19,7 @@ public class StringUtil {
         len = len >= str.length() ? str.length() : len - suffix.length();
         String s = str.substring(0,len);
         if(len < str.length()) {
-            s = s.concat("...");
+            s = s.concat(suffix);
         }
         return s;
     }

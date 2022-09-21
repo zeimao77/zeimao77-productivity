@@ -3,6 +3,7 @@ package top.zeimao77.product.sql;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import top.zeimao77.product.exception.BaseServiceRunException;
+import top.zeimao77.product.factory.BeanFactory;
 import top.zeimao77.product.factory.ComponentFactory;
 
 import javax.sql.DataSource;
@@ -14,7 +15,7 @@ import static top.zeimao77.product.exception.ExceptionCodeDefinition.SQLEXCEPTIO
 /**
  * SQL客户端的构建工厂
  * 可以通过
- * @see ComponentFactory#initSimpleSqlFacroty(String)
+ * @see ComponentFactory#initSimpleSqlTemplate(String, BeanFactory)
  * 来创建它
  * 每次调用 openSession 将开启一个新的会话
  * @author zeimao77
@@ -25,6 +26,9 @@ public class SimpleSqlTemplate {
     private static Logger logger = LogManager.getLogger(SimpleSqlTemplate.class);
 
     DataSource dataSource;
+
+    protected PreparedStatementSetter preparedStatementSetter = DefaultPreparedStatementSetter.INSTANCE;
+    protected ResultSetResolve resultSetResolvel = DefaultResultSetResolve.INSTANCE;
 
     public SimpleSqlTemplate(DataSource dataSource) {
         this.dataSource = dataSource;
@@ -40,18 +44,19 @@ public class SimpleSqlTemplate {
      * @param autoCommit 是否自动提交
      * @return 连接
      */
-    public SimpleSqlClient openSession(int level, boolean autoCommit) {
+    public SimpleSqlClient openSession(int level, boolean autoCommit,boolean readOnly) {
         Connection connection = null;
         try {
             connection = dataSource.getConnection();
             connection.setAutoCommit(autoCommit);
             connection.setTransactionIsolation(level);
+            connection.setReadOnly(readOnly);
             logger.debug("获取一个新的连接:{}",connection);
         } catch (SQLException e) {
             throw new BaseServiceRunException(SQLEXCEPTION,"SQL错误",e);
         }
         ConnectionTransactionFactory threadExclusiveConnectionFactory = new ConnectionTransactionFactory(connection);
-        return new SimpleSqlClient(threadExclusiveConnectionFactory,DefaultPreparedStatementSetter.INSTANCE,DefaultResultSetResolve.INSTANCE);
+        return new SimpleSqlClient(threadExclusiveConnectionFactory,preparedStatementSetter,resultSetResolvel);
     }
 
     /**
@@ -60,7 +65,7 @@ public class SimpleSqlTemplate {
      * @return
      */
     public <T> T execute(Transaction<T> transaction) {
-        SimpleSqlClient simpleSqlClient = openSession(Connection.TRANSACTION_READ_COMMITTED,false);
+        SimpleSqlClient simpleSqlClient = openSession(Connection.TRANSACTION_READ_COMMITTED,false,false);
         T apply = null;
         try {
             apply = transaction.doInTransaction(simpleSqlClient);
@@ -80,12 +85,12 @@ public class SimpleSqlTemplate {
 
     public SimpleSqlClient createClient() {
         DataSourceTransactionFactory factory = new DataSourceTransactionFactory(this.dataSource);
-        SimpleSqlClient simpleSqlClient = new SimpleSqlClient(factory,DefaultPreparedStatementSetter.INSTANCE,DefaultResultSetResolve.INSTANCE);
+        SimpleSqlClient simpleSqlClient = new SimpleSqlClient(factory,preparedStatementSetter,resultSetResolvel);
         return simpleSqlClient;
     }
 
     public SimpleSqlClient openSession() {
-        return openSession(Connection.TRANSACTION_READ_COMMITTED,false);
+        return openSession(Connection.TRANSACTION_READ_COMMITTED,false,false);
     }
 
     @FunctionalInterface
@@ -95,4 +100,19 @@ public class SimpleSqlTemplate {
 
     }
 
+    public PreparedStatementSetter getPreparedStatementSetter() {
+        return preparedStatementSetter;
+    }
+
+    public void setPreparedStatementSetter(PreparedStatementSetter preparedStatementSetter) {
+        this.preparedStatementSetter = preparedStatementSetter;
+    }
+
+    public ResultSetResolve getResultSetResolvel() {
+        return resultSetResolvel;
+    }
+
+    public void setResultSetResolvel(ResultSetResolve resultSetResolvel) {
+        this.resultSetResolvel = resultSetResolvel;
+    }
 }

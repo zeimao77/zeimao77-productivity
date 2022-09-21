@@ -33,7 +33,7 @@ public class ComponentFactory {
      * @param prefx 前缀
      * @return SQL客户端工厂对象
      */
-    public static SimpleSqlTemplate initSimpleSqlFacroty(String prefx,BeanFactory beanFactory) {
+    public static SimpleSqlTemplate initSimpleSqlTemplate(String prefx,BeanFactory beanFactory) {
         DataSource dataSource = createDataSource(prefx);
         SimpleSqlTemplate simpleSqlFacroty = new SimpleSqlTemplate(dataSource);
         if(beanFactory != null)

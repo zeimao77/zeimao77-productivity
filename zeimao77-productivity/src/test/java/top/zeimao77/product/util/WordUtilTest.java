@@ -8,7 +8,6 @@ class WordUtilTest extends BaseMain {
     @Test
     void initialCase() {
         logger.info("首字母转大写:{}",WordUtil.initialCase("hello world"));
-
     }
 
     @Test

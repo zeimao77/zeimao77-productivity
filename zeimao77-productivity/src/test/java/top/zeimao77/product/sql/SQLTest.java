@@ -1,6 +1,7 @@
 package top.zeimao77.product.sql;
 
 import org.junit.jupiter.api.Test;
+import top.zeimao77.product.factory.ComponentFactory;
 import top.zeimao77.product.main.BaseMain;
 
 import java.time.LocalDateTime;

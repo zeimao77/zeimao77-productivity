@@ -29,7 +29,7 @@ class SimpleMysqlTest extends BaseMain {
     static SimpleSqlClient simpleMysql;
 
     static {
-        SimpleSqlTemplate simpleSqlFacroty= ComponentFactory.initSimpleSqlFacroty("mysql_top_zeimao77");
+        SimpleSqlTemplate simpleSqlFacroty= ComponentFactory.initSimpleSqlTemplate("mysql_top_zeimao77",null);
         simpleMysql = simpleSqlFacroty.openSession();
     }
 

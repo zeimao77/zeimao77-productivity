@@ -51,6 +51,10 @@ public class SimpleSqlClient implements Reposit,AutoCloseable {
 
     protected TransactionFactory connectFacotry;
 
+    public static SimpleSqlClient create(TransactionFactory connectFacotry) {
+        return new SimpleSqlClient(connectFacotry,DefaultPreparedStatementSetter.INSTANCE,DefaultResultSetResolve.INSTANCE);
+    }
+
     /**
      *
      * @param connectFacotry Connection持有

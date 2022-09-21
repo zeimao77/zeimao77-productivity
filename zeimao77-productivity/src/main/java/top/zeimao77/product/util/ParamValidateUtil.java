@@ -65,7 +65,7 @@ public class ParamValidateUtil {
             String c1 = matcher.group(1);
             String c2 = matcher.group(2);
             Object o = map.get(c1);
-            AssertUtil.assertTrue(!AssertUtil.isEmpty(o),APPERR,String.format("参数 %s 空或是无效参数,该参数必需",c1));
+            AssertUtil.assertTrue(!AssertUtil.isEmpty(o),APPERR,"参数 %s 空或是无效参数,该参数必需",c1);
             if(o instanceof Map m){
                 mapCheck(m,c2);
             } else if(o instanceof Collection o1) {
@@ -77,7 +77,7 @@ public class ParamValidateUtil {
             }
         } else {
             Object o = map.get(check);
-            AssertUtil.assertTrue(!AssertUtil.isEmpty(o),APPERR,String.format("参数 %s 空或是无效参数,该参数必需",check));
+            AssertUtil.assertTrue(!AssertUtil.isEmpty(o),APPERR,"参数 %s 空或是无效参数,该参数必需",check);
         }
     }
 

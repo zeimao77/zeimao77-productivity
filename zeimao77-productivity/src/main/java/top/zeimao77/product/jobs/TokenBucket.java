@@ -31,7 +31,7 @@ public class TokenBucket {
      * @return 是否成功
      */
     public synchronized boolean tryConsume(long numTokens) {
-        AssertUtil.notEmpty( numTokens > 0 && numTokens <= this.capacity, "参数必需大于0且小于桶容器");
+        AssertUtil.assertTrue( numTokens > 0 && numTokens <= this.capacity, "参数必需大于0且小于桶容器(%d)",this.capacity);
         this.refill();
         if (numTokens <= this.size) {
             this.size -= numTokens;

@@ -18,7 +18,7 @@ public abstract class JobExecHandler<T extends IJob> implements JobExec{
 
     /**
      * 处理一个任务
-     * 如果处理失败 我们建议您通过异常
+     * 如果处理失败 我们支持您通过异常
      * @see BaseServiceRunException
      * 或者 top.zeimao77.product.jobs.JobExec.Result
      * 返回错误信息;
@@ -52,6 +52,10 @@ public abstract class JobExecHandler<T extends IJob> implements JobExec{
             failed(job,param,fail);
         } catch (RuntimeException e) {
             logger.error("JOB处理出错",e);
+            Result fail = Result.fail(FAILED, "业务处理错误", e);
+            failed(job,param,fail);
+        } catch (Throwable e) {
+            logger.error("JOb处理出错",e);
             Result fail = Result.fail(FAILED, "未知的错误", e);
             failed(job,param,fail);
         }
