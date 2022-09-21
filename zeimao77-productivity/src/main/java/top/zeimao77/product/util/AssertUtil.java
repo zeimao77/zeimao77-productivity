@@ -22,8 +22,19 @@ public class AssertUtil {
        assertTrue(expression,APPERR,message);
     }
 
+    public static void assertTrue(boolean expression,String format,Object...args) {
+        assertTrue(expression,APPERR,format,args);
+    }
+
     public static void assertTrue(boolean expression,Integer code,String message) {
         if(!expression) {
+            throw new BaseServiceRunException(code,message);
+        }
+    }
+
+    public static void assertTrue(boolean expression,Integer code,String format,Object... args) {
+        if(!expression) {
+            String message = String.format(format,args);
             throw new BaseServiceRunException(code,message);
         }
     }

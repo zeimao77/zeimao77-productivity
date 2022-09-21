@@ -19,8 +19,19 @@ public class BeanFactory {
      */
     public static final BeanFactory DEFAULT = new BeanFactory();
 
-    private final Map<String, Object> singletonObjects = new ConcurrentHashMap<>(32);
-    private final Map<String, Supplier<?>> prototypesFactory = new ConcurrentHashMap<>(16);
+    private final Map<String, Object> singletonObjects;
+    private final Map<String, Supplier<?>> prototypesFactory;
+
+
+    public BeanFactory() {
+        singletonObjects = new ConcurrentHashMap<>(64);
+        prototypesFactory = new ConcurrentHashMap<>(16);
+    }
+
+    public BeanFactory(int singletonSize,int prototypesSize) {
+        singletonObjects = new ConcurrentHashMap<>(singletonSize);
+        prototypesFactory = new ConcurrentHashMap<>(prototypesSize);
+    }
 
     /**
      * 注册一个原型的BEAN提供者
