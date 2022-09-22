@@ -27,7 +27,7 @@ class RsaUtilTest extends BaseMain {
         byte[] bytes = rsaUtil.encode1(bs);
         logger.info("密文:{}", ByteArrayCoDesUtil.base64Encode(bytes));
         byte[] bytes1 = rsaUtil.decode1(bytes);
-        logger.info(new String(bytes1,StandardCharsets.UTF_8));
+        logger.info("原文:{}",new String(bytes1,StandardCharsets.UTF_8));
     }
 
     /**
@@ -40,6 +40,6 @@ class RsaUtilTest extends BaseMain {
         byte[] bytes = rsaUtil.encode0(bs);
         logger.info("密文:{}", ByteArrayCoDesUtil.base64Encode(bytes));
         byte[] bytes1 = rsaUtil.decode0(bytes);
-        logger.info(new String(bytes1,StandardCharsets.UTF_8));
+        logger.info("原文:{}",new String(bytes1,StandardCharsets.UTF_8));
     }
 }

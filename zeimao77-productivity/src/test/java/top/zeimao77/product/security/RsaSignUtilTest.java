@@ -20,7 +20,6 @@ class RsaSignUtilTest extends BaseMain {
         String msg = "helloworld!!";
         Pair<RSAPublicKey, RSAPrivateKey> key = RsaUtil.getKey(2048);
         RsaSignUtil rsaSignUtil = new RsaSignUtil(key);
-
         byte[] sign = rsaSignUtil.sign(msg.getBytes());
         logger.info(rsaSignUtil.matches(msg.getBytes(),sign));
     }
