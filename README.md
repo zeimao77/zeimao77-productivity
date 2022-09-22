@@ -144,8 +144,8 @@ docker run -d -v /home/docker/app-main/libs:/home/user0 -w /home/user0 openjdk:1
 ### <a id="57e1d183-a4fd-4832-aa15-664ccd559961">配置</a>
 
 `BaseMain`提供了默认的环境配置，您只需要在classpath或者用户目录下放置一个`localcontext.properties`文件即可;  
-如果在程序中显式读取配置，调用`LocalContext.get***()`方法就可以;
-如果您需要在执行时指定该配置，您也可以通过环境变量或者命令行参数来指定它;
+如果在程序中显式读取配置，调用`LocalContext.get***()`方法就可以;  
+如果您需要在执行时指定该配置，您也可以通过环境变量或者命令行参数来指定它;  
 - `local.context.file` 支持您通过一个路径来指定一个配置文件;
 - `local.context.active` 如果有多个环境需要区分，可以提前将配置放置到classpath下，然后通过参数指定它;例如:`-Dlocal.context.active=dev`将加载`localcontext-dev.properties`配置文件;
 
