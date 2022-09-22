@@ -24,6 +24,15 @@ public class TableCodeConfigBuilder {
         return this;
     }
 
+    public TableCodeConfigBuilder column(int index, String field,Class<?> javaType) {
+        Table.Column column = new Table.Column();
+        column.setIndex(index);
+        column.setField(field);
+        column.setJavaType(javaType);
+        this.columnList.add(column);
+        return this;
+    }
+
     public Table build() {
         this.table.setColumnList(columnList);
         return this.table;

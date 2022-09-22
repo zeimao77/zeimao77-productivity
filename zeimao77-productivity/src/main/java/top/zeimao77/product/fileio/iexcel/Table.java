@@ -36,6 +36,8 @@ public class Table {
         private String field;
         private int index;
 
+        private Class javaType;
+
         public String getField() {
             return field;
         }
@@ -50,6 +52,14 @@ public class Table {
 
         public void setIndex(int index) {
             this.index = index;
+        }
+
+        public Class getJavaType() {
+            return javaType;
+        }
+
+        public void setJavaType(Class javaType) {
+            this.javaType = javaType;
         }
     }
 
