@@ -39,6 +39,16 @@ public class LocalContext {
         return AssertUtil.isBlack(o.toString()) ? null : Long.valueOf(o.toString());
     }
 
+    public static Integer getInteger(String key) {
+        Object o = get(key);
+        return AssertUtil.isBlack(o.toString()) ? null : Integer.valueOf(o.toString());
+    }
+
+    public static Double getDouble(String key) {
+        Object o = get(key);
+        return AssertUtil.isBlack(o.toString()) ? null : Double.valueOf(o.toString());
+    }
+
     public static Boolean getBoolean(String key) {
         Object o = get(key);
         if(o != null) {
