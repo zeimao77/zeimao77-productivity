@@ -7,8 +7,6 @@ import top.zeimao77.product.main.BaseMain;
 
 import java.sql.Connection;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class SimpleSqlTemplateTest extends BaseMain {
 
     private static final String MYSQL="mysql_top_zeimao77";

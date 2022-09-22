@@ -1,6 +1,5 @@
 package top.zeimao77.product.mysql;
 
-import top.zeimao77.product.sql.Dbtype;
 import top.zeimao77.product.sql.StatementParameterInfo;
 import top.zeimao77.product.util.LongIdGenerator;
 import top.zeimao77.product.util.RandomStringUtil;
