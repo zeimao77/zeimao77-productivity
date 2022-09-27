@@ -51,11 +51,11 @@ public abstract class JobExecHandler<T extends IJob> implements JobExec{
             Result fail = Result.fail(e.getCode(), e.getMessage(), e);
             failed(job,param,fail);
         } catch (RuntimeException e) {
-            logger.error("JOB处理出错",e);
+            logger.error("JOB处理运行时错误",e);
             Result fail = Result.fail(FAILED, "业务处理错误", e);
             failed(job,param,fail);
         } catch (Throwable e) {
-            logger.error("JOb处理出错",e);
+            logger.error("JOb处理受检查的错误",e);
             Result fail = Result.fail(FAILED, "未知的错误", e);
             failed(job,param,fail);
         }

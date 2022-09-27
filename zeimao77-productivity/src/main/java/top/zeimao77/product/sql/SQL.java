@@ -24,7 +24,7 @@ public class SQL implements StatementParamResolver, IWhere {
     private static final int FLAG_WHERE = 0x08;
     private static final int FLAG_ON = 0x10;
     private int whereOrSetFlag = 0;
-    private int sqlType = 0; // 1 = SELECT ;2 = DELETE ;3 = UPDATE ;4 INSERT
+    private int sqlType = 0; // 1 = SELECT ;2 = DELETE ;3 = UPDATE ;4 INSERT ;5 = UPSERT ;
     private int paramIndex = 0;
 
     private int dbtype;
@@ -86,19 +86,19 @@ public class SQL implements StatementParamResolver, IWhere {
 
     public SQL innerJoin(String tableName,String alias) {
         sqlBuilder.append(" INNER JOIN ").append(tableName).append(" AS ").append(alias);
-        whereOrSetFlag &= 0xFFFFFFF7;
+        whereOrSetFlag &= (~FLAG_ON);
         return this;
     }
 
     public SQL leftJoin(String tableName,String alias) {
         sqlBuilder.append(" LEFT JOIN ").append(tableName).append(" AS ").append(alias);
-        whereOrSetFlag &= 0xFFFFFFF7;
+        whereOrSetFlag &= (~FLAG_ON);
         return this;
     }
 
     public SQL rightJoin(String tableName,String alias) {
         sqlBuilder.append(" RIGHT JOIN ").append(tableName).append(" AS ").append(alias);
-        whereOrSetFlag &= 0xFFFFFFF7;
+        whereOrSetFlag &= (~FLAG_ON);
         return this;
     }
 
@@ -415,6 +415,7 @@ public class SQL implements StatementParamResolver, IWhere {
      * @return
      */
     public SQL onDuplicateKeyUpdate() {
+        this.sqlType = 5;
         sqlBuilder.append(" ON DUPLICATE KEY UPDATE ");
         return onDuplicateKeyUpdate(o -> true);
     }
@@ -437,6 +438,7 @@ public class SQL implements StatementParamResolver, IWhere {
      * @return
      */
     public SQL onConflict(String columnName) {
+        this.sqlType = 5;
         sqlBuilder.append(" ON CONFLICT (");
         sqlBuilder.append(columnName);
         sqlBuilder.append(") DO UPDATE SET ");
@@ -449,6 +451,7 @@ public class SQL implements StatementParamResolver, IWhere {
     }
 
     public SQL onConflict(String keyName, List<String> columnNameList) {
+        this.sqlType = 5;
         sqlBuilder.append(" ON CONFLICT ON CONSTRAINT ");
         sqlBuilder.append(keyName);
         sqlBuilder.append(" DO UPDATE SET ");

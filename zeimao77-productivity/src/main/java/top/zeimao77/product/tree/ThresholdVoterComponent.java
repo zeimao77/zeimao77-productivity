@@ -63,4 +63,16 @@ public class ThresholdVoterComponent<T> implements Voter<T> {
         }
         throw new BaseServiceRunException(CUSTOM,"表决错误");
     }
+
+    public Double getThreshold() {
+        return threshold;
+    }
+
+    public List<Voter> getVoters() {
+        return voters;
+    }
+
+    public void setVoters(List<Voter> voters) {
+        this.voters = voters;
+    }
 }
