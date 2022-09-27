@@ -27,7 +27,7 @@ public class SimpleRepository<T,W> extends AbstractSimpleRepository<T, W> {
     @Override
     protected void upsert(SQL sql, T t) {
         insert(sql,t);
-        sql.append(" ON DUPLICATE KEY ");
+        sql.append(" ON DUPLICATE KEY UPDATE ");
         sql.onDuplicateKeyUpdate(o -> !isPrimaryKey(o.getName()));
     }
 
