@@ -27,7 +27,7 @@ public class HttpClientUtil11 implements AutoCloseable,IHttpClient {
     private ExecutorService executor;
 
     public HttpClientUtil11(){
-        this(1);
+        this.client = HttpClient.newBuilder().build();
     }
 
     public HttpClientUtil11(HttpClient client) {
@@ -147,7 +147,7 @@ public class HttpClientUtil11 implements AutoCloseable,IHttpClient {
 
     @Override
     public synchronized void close() {
-        if(!this.executor.isShutdown()) {
+        if(this.executor != null && !this.executor.isShutdown()) {
             this.executor.shutdown();
         }
     }

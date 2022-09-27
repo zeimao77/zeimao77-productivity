@@ -58,10 +58,13 @@ public abstract class AbstractNonReFreshConverter<K> implements IConverter<K> {
     public void refreshRule() {
         if (this.convRuleMap.isEmpty()) {
             lock.lock();
-            if (this.convRuleMap.isEmpty()) {
-                this.refresh();
+            try {
+                if (this.convRuleMap.isEmpty()) {
+                    this.refresh();
+                }
+            }finally {
+                lock.unlock();
             }
-            lock.unlock();
         }
     }
 
