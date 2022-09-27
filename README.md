@@ -109,7 +109,7 @@ public class Main extends BaseMain {
 
 ```bash
 ## 守望护进程执行
-nohup /jdk-17.0.3/bin/java -Dlog.file=app-main.log \
+nohup /jdk-17.0.3/bin/java -Xms128m -Xmx1024m -Dlog.file=app-main.log \
 -jar /home/libs/app-main.jar >> /dev/null 2>&1 &
 ```
 
