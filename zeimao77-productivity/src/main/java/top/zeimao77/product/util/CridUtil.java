@@ -18,6 +18,12 @@ public class CridUtil {
         return cc;
     }
 
+    public static Long removeCheckCode(String id) {
+        AssertUtil.assertTrue(matchesCheckCode(id),"身份证号码错误");
+        Long aLong = Long.valueOf(id.substring(0, 17));
+        return aLong;
+    }
+
     public static boolean matchesCheckCode(String id) {
         return calcCheckCode(id) == id.charAt(17);
     }
