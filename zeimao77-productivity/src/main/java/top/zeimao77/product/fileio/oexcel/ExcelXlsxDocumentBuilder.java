@@ -7,7 +7,6 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.NumberToTextConverter;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
-import top.zeimao77.product.converter.AbstractNonReFreshConverter;
 import top.zeimao77.product.converter.IConverter;
 import top.zeimao77.product.util.AssertUtil;
 import top.zeimao77.product.util.BeanUtil;
@@ -26,7 +25,7 @@ public class ExcelXlsxDocumentBuilder {
 
     protected CellStyleFactory cellStyleFactory = null;
 
-    private Map<Table.Column, IConverter<String>> converterMap;
+    private Map<Table.Column, IConverter> converterMap;
 
     protected Table table;
     /**
@@ -58,28 +57,6 @@ public class ExcelXlsxDocumentBuilder {
         this.dataList = dataList;
         this.rowNum = rowNum;
     }
-
-    protected IConverter<String> converter(Table.Column column) {
-        Table.Converter converter = column.getConverter();
-        if(converter == null)
-            return null;
-        if(converterMap == null)
-            converterMap = Collections.EMPTY_MAP;
-        IConverter<String> stringIConverter = converterMap.get(column);
-        if(stringIConverter == null) {
-            stringIConverter = new AbstractNonReFreshConverter<String>(converter.getRule()) {
-                @Override
-                protected void refresh() {
-                }
-                @Override
-                public Object defaultName(String key) {
-                    return converter.getDefaultValue();
-                }
-            };
-        }
-        return stringIConverter;
-    }
-
 
     /**
      * 默认构造xlsx文件
@@ -123,11 +100,12 @@ public class ExcelXlsxDocumentBuilder {
             for (Object o : dataList) {
                 Row row = newRow();
                 for (Table.Column column : columnList) {
-                    IConverter<String> converter = converter(column);
-                    Object v = BeanUtil.getProperty(o,column.getField());
-                    if(v==null){continue;}
+                    Table.Converter converter = column.getConverter();
+                    Object v;
                     if(converter != null) {
-                        v = converter.getName(v.toString());
+                        v = converter.getPrintValue(column,o);
+                    } else {
+                        v = BeanUtil.getProperty(o,column.getField());
                     }
                     Cell cell = row.createCell(column.getIndex());
                     setCellValue(cell,column.getIndex(),column.getFormat(),v);

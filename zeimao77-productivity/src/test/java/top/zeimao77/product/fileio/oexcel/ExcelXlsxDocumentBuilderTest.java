@@ -26,10 +26,12 @@ class ExcelXlsxDocumentBuilderTest extends BaseMain {
          * @see TableXMLConfigBuilder
          */
         Table table = TableCodeConfigBuilder.create("123","uuid")
+                .cellRangeValue(0,0,0,2,"@","总共40条;")
                 .column(0,"ID","id",20)
                 .column(1,"uuid","uuid",36)
                 .column(2,"随机串","rstr",24)
-                .cellRangeValue(0,0,0,2,"@","总共40条;")
+                .column(3,"订单状态","infState",12)
+
                 .build();
 
         /**

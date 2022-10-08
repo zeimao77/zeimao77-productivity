@@ -3,6 +3,8 @@ package top.zeimao77.product.fileio.oexcel;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+import top.zeimao77.product.converter.AbstractNonReFreshConverter;
+import top.zeimao77.product.util.BeanUtil;
 import top.zeimao77.product.xml.AbstractXmlBuiler;
 
 import java.util.ArrayList;
@@ -38,6 +40,7 @@ public class TableXMLConfigBuilder extends AbstractXmlBuiler<Table> {
         super(path);
     }
 
+
     @Override
     public Table build() {
         Table table = new Table();
@@ -64,13 +67,27 @@ public class TableXMLConfigBuilder extends AbstractXmlBuiler<Table> {
             NodeList converter = columnElement.getElementsByTagName("converter");
             if(converter.getLength() > 0) {
                 Element converterElement = (Element)converter.item(0);
-                Table.Converter c = new Table.Converter();
-                c.setConverterId(parseProperty(converterElement,"converterId"));
-                c.setDefaultValue(parseProperty(converterElement,"defaultValue"));
                 NodeList ruleList = converterElement.getElementsByTagName("rule");
                 HashMap<String, Object> stringStringHashMap = parseMap(ruleList);
-                c.setRule(stringStringHashMap);
-                column.setConverter(c);
+                Table.Converter converter1 = new Table.Converter(){
+
+                    AbstractNonReFreshConverter objectAbstractNonReFreshConverter = new AbstractNonReFreshConverter<>(stringStringHashMap) {
+                        @Override
+                        protected void refresh() {}
+                        @Override
+                        public Object defaultName(String key) {
+                            return parseProperty(converterElement,"defaultValue");
+                        }
+                    };
+                    @Override
+                    public Object getPrintValue(Table.Column column, Object line) {
+                        Object property = BeanUtil.getProperty(line, column.getField());
+                        if(property == null)
+                            return null;
+                        return objectAbstractNonReFreshConverter.get(property);
+                    }
+                };
+                column.setConverter(converter1);
             }
             columnList.add(column);
         }
