@@ -12,6 +12,10 @@ public class Table {
 
     private String tableName;
     private String id;
+    /**
+     * 通过select指定如何获取数据 接口/Select查表
+     * 再加上入参就可以获取参数了
+     */
     private String select;
     private List<Column> columnList;
 
