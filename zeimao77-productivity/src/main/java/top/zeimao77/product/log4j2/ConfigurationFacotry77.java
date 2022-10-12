@@ -109,7 +109,7 @@ public class ConfigurationFacotry77 extends ConfigurationFactory {
     private Configuration createConfiguration(final String name, ConfigurationBuilder<BuiltConfiguration> builder) {
         builder.setConfigurationName(name);
         LayoutComponentBuilder layoutComponentBuilder = builder.newLayout("PatternLayout").
-                addAttribute("pattern", "%d [%t] %-5level: %msg%n%throwable");
+                addAttribute("pattern", "%d [%t] %-5level (%c{1}:%L): %msg%n%throwable");
         builder.add(console(builder,layoutComponentBuilder));
 
         RootLoggerComponentBuilder rootLoggerComponentBuilder = builder.newRootLogger(rootLevel);
