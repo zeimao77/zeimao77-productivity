@@ -27,6 +27,7 @@ public interface ExceptionCodeDefinition extends LongBitMap {
 
     Integer IOEXCEPTION = 0x002001;  // IO错误异常(8193);
     Integer SQLEXCEPTION = 0x002002;  // SQL错误异常(8194);
+    Integer SQLICVEXCEPTION = 0x002003;  // SQL数据违反完整性约束(8195);
 
     Integer getCode();
 

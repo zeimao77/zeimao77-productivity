@@ -21,6 +21,7 @@ public interface Reposit {
     <Z> int batchUpdate(List<Z> list, BiConsumer<SQL,Z> con);
 
     int update(String sql);
+    public int update(String sqlt,Object params);
 
     <T> ArrayList<T> selectListObj(String sqlt,Object param, Class<T> clazz);
     <T> ArrayList<T> selectListObj(String sql,Class<T> clazz);

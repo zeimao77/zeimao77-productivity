@@ -12,8 +12,7 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-import static top.zeimao77.product.exception.ExceptionCodeDefinition.IOEXCEPTION;
-import static top.zeimao77.product.exception.ExceptionCodeDefinition.SQLEXCEPTION;
+import static top.zeimao77.product.exception.ExceptionCodeDefinition.*;
 
 /**
  * SQL客户端
@@ -172,6 +171,7 @@ public class SimpleSqlClient implements Reposit,AutoCloseable {
         return select(sql,null,resolve,clazz);
     }
 
+    @Override
     public int update(String sqlt,Object params) {
         DefaultStatementParamResolver defaultStatementParamResolver = new DefaultStatementParamResolver(sqlt, params);
         defaultStatementParamResolver.resolve();
@@ -196,7 +196,9 @@ public class SimpleSqlClient implements Reposit,AutoCloseable {
             int update = preparedStatement.executeUpdate();
             logger.debug("SQL执行耗时：{}ms",(System.currentTimeMillis() - start));
             return update;
-        } catch (SQLException e) {
+        } catch (SQLIntegrityConstraintViolationException e) {
+            throw new BaseServiceRunException(SQLICVEXCEPTION,"数据完整性约束错误",e);
+        }catch (SQLException e) {
             throw new BaseServiceRunException(SQLEXCEPTION,"SQL错误",e);
         } finally {
             close(connection);

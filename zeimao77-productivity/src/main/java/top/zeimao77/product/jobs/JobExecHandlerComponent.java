@@ -18,10 +18,9 @@ public class JobExecHandlerComponent<T extends IJob> extends JobExecHandler<T> {
         for (JobExecHandler<T> tJobExecHandler : jobExecHandlerList) {
             if(tJobExecHandler.support(job,param)) {
                 tJobExecHandler.handle(job,param);
-                return Result.SUCCESS;
             }
         }
-        return Result.fail(FAILED,"没有找到任务的处理实现",null);
+        return Result.SUCCESS;
     }
 
     public boolean register(JobExecHandler<T> jobExecHandler) {

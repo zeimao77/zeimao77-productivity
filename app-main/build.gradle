@@ -44,6 +44,7 @@ jar {
 
 task collectlib(type:Copy) {
     dependsOn('jar')
+
     configurations.runtimeClasspath.collect {
         var t = buildDir.getPath() + "\\" + libsDirName + "\\"
         from it.getAbsoluteFile()

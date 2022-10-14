@@ -60,6 +60,15 @@ public class OnlyPrintReposit implements  Reposit, Closeable {
     }
 
     @Override
+    public int update(String sqlt, Object param) {
+        DefaultStatementParamResolver defaultStatementParamResolver = new DefaultStatementParamResolver(sqlt, param);
+        String execSql = defaultStatementParamResolver.getExecSql();
+        logger.debug(execSql);
+        writer.println(execSql);
+        return 0;
+    }
+
+    @Override
     public <T> ArrayList<T> selectListObj(String sqlt, Object param, Class<T> clazz) {
         DefaultStatementParamResolver defaultStatementParamResolver = new DefaultStatementParamResolver(sqlt, param);
         String execSql = defaultStatementParamResolver.getExecSql();
