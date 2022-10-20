@@ -2,6 +2,7 @@ package top.zeimao77.product.dict;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import top.zeimao77.product.exception.BaseServiceException;
 import top.zeimao77.product.exception.BaseServiceRunException;
 import static top.zeimao77.product.exception.ExceptionCodeDefinition.APPERR;
 import static top.zeimao77.product.exception.ExceptionCodeDefinition.WRONG_SOURCE;
@@ -69,7 +70,22 @@ public enum BoolEnum implements DictEnum {
         throw new BaseServiceRunException(APPERR,"错误的布尔值");
     }
 
-    public static boolean parseBool(String boolStr) {
+
+    public static boolean parseBool(String boolStr,boolean defaultValue) {
+        try{
+            return parseBool(boolStr);
+        } catch (Exception e) {}
+        return defaultValue;
+    }
+
+    /**
+     *
+     * @param boolStr Bool字符串
+     * @return boolean
+     * @throws BaseServiceException 如果解析失败将抛出些异常 真实code查看
+     * @see WRONG_SOURCE
+     */
+    public static boolean parseBool(String boolStr) throws BaseServiceException {
         if("TRUE".equalsIgnoreCase(boolStr)
                 || "Y".equalsIgnoreCase(boolStr)
                 || "YES".equalsIgnoreCase(boolStr)
@@ -84,7 +100,7 @@ public enum BoolEnum implements DictEnum {
                 || "OFF".equalsIgnoreCase(boolStr)) {
             return false;
         }
-        throw new BaseServiceRunException(WRONG_SOURCE,"错误的Bool参数："+boolStr);
+        throw new BaseServiceException(WRONG_SOURCE,"错误的Bool参数："+boolStr);
     }
 
 }

@@ -82,5 +82,12 @@ public abstract class JobExecHandler<T extends IJob> implements JobExec{
         logger.info("JOB({})处理成功:[{}]{}",job.jobId(),result.getResultCode(),result.getResultMsg());
     }
 
+    public interface SuccessHandler<T>{
+        void successed(T job,Map<String,Object> param,Result result);
+    }
+
+    public interface FailureHandler<T>{
+        void failed(T job,Map<String,Object> param,Result result);
+    }
 
 }

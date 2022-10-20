@@ -1,12 +1,10 @@
 package top.zeimao77.product.exception;
 
-import top.zeimao77.product.util.LongBitMap;
-
 /**
  * 为了避免与系统错误冲突
  * 应用级别自定义错误码建议定义范围:[0x060001,0x08FFFF];
  */
-public interface ExceptionCodeDefinition extends LongBitMap {
+public interface ExceptionCodeDefinition {
 
     Integer NON_RETRYABLE = 0x40000000;  // 定义一个错误是不建议再次尝试的;
     Integer CONVERTIBLE = 0x20000000;  // 表示该错误由于捕获一个异常之后转化而来的异常;

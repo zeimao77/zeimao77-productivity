@@ -1,7 +1,6 @@
 package top.zeimao77.product.redis;
 
 import redis.clients.jedis.commands.ScriptingKeyCommands;
-import top.zeimao77.product.factory.BeanFactory;
 
 import java.util.Collections;
 import java.util.List;
