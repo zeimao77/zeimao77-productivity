@@ -5,10 +5,6 @@ import top.zeimao77.product.factory.ComponentFactory;
 import top.zeimao77.product.main.BaseMain;
 import top.zeimao77.product.util.UuidGenerator;
 
-import java.util.concurrent.TimeUnit;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 class SQLLockImplTest extends BaseMain {
 
     private static final String MYSQL="mysql_top_zeimao77";

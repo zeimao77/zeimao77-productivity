@@ -3,6 +3,9 @@ package top.zeimao77.product.sql;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author zeimao77
+ */
 public class SelectCond extends PageSearch {
 
     protected List<SelectCondNode> searchCondNodeList = new ArrayList<>();
@@ -23,7 +26,10 @@ public class SelectCond extends PageSearch {
         return this;
     }
 
-
+    /**
+     * 不分页
+     * @return
+     */
     public SelectCond noPage(){
         set_paging(false);
         return this;
@@ -56,6 +62,9 @@ public class SelectCond extends PageSearch {
         this.searchCondNodeList = searchCondNodeList;
     }
 
+    /**
+     * 条件节点
+     */
     public static class SelectCondNode implements IWhere {
 
         private String bind;
