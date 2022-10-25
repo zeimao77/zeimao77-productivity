@@ -4,6 +4,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import top.zeimao77.product.exception.BaseServiceException;
 import top.zeimao77.product.exception.BaseServiceRunException;
+import top.zeimao77.product.exception.ExceptionCodeDefinition;
+
 import static top.zeimao77.product.exception.ExceptionCodeDefinition.APPERR;
 import static top.zeimao77.product.exception.ExceptionCodeDefinition.WRONG_SOURCE;
 
@@ -83,7 +85,7 @@ public enum BoolEnum implements DictEnum {
      * @param boolStr Bool字符串
      * @return boolean
      * @throws BaseServiceException 如果解析失败将抛出些异常 真实code查看
-     * @see WRONG_SOURCE
+     * @see ExceptionCodeDefinition#WRONG_SOURCE
      */
     public static boolean parseBool(String boolStr) throws BaseServiceException {
         if("TRUE".equalsIgnoreCase(boolStr)

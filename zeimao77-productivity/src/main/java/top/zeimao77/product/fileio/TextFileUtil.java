@@ -69,7 +69,11 @@ public class TextFileUtil {
         lineConsumer(file,con,StandardCharsets.UTF_8);
     }
 
-    // 文本文件的行消费
+    /**
+     * 消费文件的第一行
+     * @param filePath 文本文件路径
+     * @param con 行消费函数
+     */
     public static void lineConsumer(String filePath, BiConsumer<Integer,String> con) {
         File file = new File(filePath);
         lineConsumer(file,con);

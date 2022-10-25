@@ -12,6 +12,14 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author zeimao77
  * @since 2.1.4
+ * CREATE TABLE LOCKIMPL (
+ * lockId VARCHAR(64) NOT NULL COMMENT '锁ID',
+ * lockValue VARCHAR(256) COMMENT '锁钥',
+ * expiredTime DATETIME NOT NULL COMMENT '过期时间',
+ * createdTime DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+ * PRIMARY KEY (lockId),
+ * KEY IDX_EXPIREDTIME(expiredTime)
+ * )ENGINE=INNODB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
  */
 public class SQLLockImpl {
 

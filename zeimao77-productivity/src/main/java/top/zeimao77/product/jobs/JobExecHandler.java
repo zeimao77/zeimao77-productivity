@@ -13,6 +13,7 @@ public abstract class JobExecHandler<T extends IJob> implements JobExec{
      * @param job 任务
      * @param param 扩展参数
      * @return 是否可以处理该任务
+     * 需要注意的是不要让该方法抛出异常，否则可能会带来不可预测的结果;
      */
     public abstract boolean support(T job, Map<String,Object> param);
 
@@ -82,10 +83,18 @@ public abstract class JobExecHandler<T extends IJob> implements JobExec{
         logger.info("JOB({})处理成功:[{}]{}",job.jobId(),result.getResultCode(),result.getResultMsg());
     }
 
+    /**
+     * 成功处理任务的后置处理
+     * @param <T> 任务
+     */
     public interface SuccessHandler<T>{
         void successed(T job,Map<String,Object> param,Result result);
     }
 
+    /**
+     * 失败处理任务的后置处理
+     * @param <T>
+     */
     public interface FailureHandler<T>{
         void failed(T job,Map<String,Object> param,Result result);
     }

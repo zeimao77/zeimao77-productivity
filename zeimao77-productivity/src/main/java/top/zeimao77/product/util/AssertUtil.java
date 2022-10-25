@@ -26,12 +26,25 @@ public class AssertUtil {
         assertTrue(expression,APPERR,format,args);
     }
 
+    /**
+     *
+     * @param expression 断言表达式
+     * @param code 错误编码
+     * @param message 消息
+     */
     public static void assertTrue(boolean expression,Integer code,String message) {
         if(!expression) {
             throw new BaseServiceRunException(code,message);
         }
     }
 
+    /**
+     * 使用这个函数可以减少不必要的错误消息字符串拼接
+     * @param expression 断言表达式
+     * @param code 错误编码
+     * @param format 错误消息格式
+     * @param args 错误消息参数
+     */
     public static void assertTrue(boolean expression,Integer code,String format,Object... args) {
         if(!expression) {
             String message = String.format(format,args);

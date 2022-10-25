@@ -18,6 +18,7 @@ public class CalendarDateUtil {
 
     public static final SimpleDateFormat STANDARDDATETIMEFORMATTER = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     public static final SimpleDateFormat STANDARDDATEFORMATTER = new SimpleDateFormat("yyyy-MM-dd");
+    public static final SimpleDateFormat NUMBERDATEFORMATTER = new SimpleDateFormat("yyyyMMdd");
     public static final SimpleDateFormat STANDARDTIMEFORMATTER = new SimpleDateFormat("HH:mm:ss");
 
     private CalendarDateUtil(){}

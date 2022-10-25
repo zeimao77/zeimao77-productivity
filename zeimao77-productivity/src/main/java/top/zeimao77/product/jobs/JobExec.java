@@ -32,6 +32,11 @@ public interface JobExec {
             return !LongBitMap.matches(this.resultCode,NON_RETRYABLE);
         }
 
+        /**
+         * @param resultCode 响应码
+         * @param resultMsg 响应消息
+         * @param data 携带一个数据
+         */
         public Result(Integer resultCode, String resultMsg,Object data) {
             this.resultCode = resultCode;
             this.resultMsg = resultMsg;

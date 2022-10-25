@@ -9,10 +9,30 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 public @interface StatementParameterInfo {
 
+    /**
+     * @return 适用的数据库
+     */
     int dbtype() default 0x7FFFFFFF;
+
+    /**
+     * 参数类型
+     * @return 1:入参;2:出参
+     */
     int mode() default 1;
+
+    /**
+     * @return 语句类型
+     */
     int jdbcType() default StatementParameter.DEFAULT_JDBCTYPE;
+
+    /**
+     * @return 参数函数前
+     */
     String valSetPre();
+
+    /**
+     * @return 参数函数后
+     */
     String valSetPost();
 
 }

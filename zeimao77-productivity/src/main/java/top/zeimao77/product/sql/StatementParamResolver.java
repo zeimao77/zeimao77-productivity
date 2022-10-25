@@ -22,7 +22,7 @@ import java.util.List;
 public interface StatementParamResolver {
 
     /**
-     * `
+     * 函数引号
      */
     char QUOTATION_MARKS = '\'';
 

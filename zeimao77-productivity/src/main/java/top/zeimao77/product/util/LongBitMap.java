@@ -33,7 +33,7 @@ public interface LongBitMap {
      * @param flag 标志
      * @return 移除标志后的位图
      */
-    static Long remote(long bitmap,long flag) {
+    static Long remove(long bitmap,long flag) {
         return bitmap & (~flag);
     }
 
