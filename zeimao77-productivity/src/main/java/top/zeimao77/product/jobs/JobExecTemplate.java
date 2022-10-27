@@ -22,12 +22,18 @@ public abstract class JobExecTemplate<T extends IJob> implements JobExec{
      * 任务处理的扩展参数
      */
     protected Map<String,Object> jobParam;
-    // 状态
-    // 1:已准备好
-    // 2:正在运行中
-    // 3:没有更多任务了，将不会再调用moreJob()
-    // 4:运行结束停止
-    // 5:请求立即停止任务,我们会在处理完当前任务之后立即停止
+    /**
+     * 1:已准备好
+     * @see JobExecTemplate#prepare()
+     * 2:正在运行中
+     * @see JobExecTemplate#start(int, long, TimeUnit)
+     * 3:没有更多任务了，将不会再调用moreJob()
+     * @see JobExecTemplate#moreJob(int)
+     * 4:运行结束停止
+     * @see JobExecTemplate#start(int, long, TimeUnit)
+     * 5:请求立即停止任务,我们会在处理完当前任务之后立即停止
+     * @see JobExecTemplate#setStatus(int)
+     */
     protected int status = 0;
 
     /**

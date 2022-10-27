@@ -1,4 +1,4 @@
-package top.zeimao77.product.mysql;
+package top.zeimao77.product.oracle.mysql;
 
 import top.zeimao77.product.sql.*;
 import top.zeimao77.product.util.AssertUtil;

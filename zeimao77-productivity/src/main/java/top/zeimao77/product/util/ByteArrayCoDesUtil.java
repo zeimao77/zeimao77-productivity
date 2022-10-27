@@ -92,7 +92,7 @@ public class ByteArrayCoDesUtil {
         int i = 0;
         byte result = 0x00;
         for (byte b : bs) {
-            i = (result + b) & 0x07;
+            i = (result ^ b) & 0x07;
             result ^= ((b >> (8 - i) | (b << i)));
         }
         return result + 0x80;

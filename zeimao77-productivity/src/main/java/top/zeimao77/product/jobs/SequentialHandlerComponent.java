@@ -29,7 +29,8 @@ public class SequentialHandlerComponent<T extends IJob> extends JobExecHandler<T
             try {
                 support = tJobExecHandler.support(job,param);
             }catch (Exception e) {
-                logger.error("{}支持出错;",tJobExecHandler,e);
+                logger.error("{}支持错误,任务({})可能丢失;",tJobExecHandler,job.jobId());
+                logger.error("错误",e);
             }
             if(support) {
                 tJobExecHandler.handle(job,param);
@@ -49,5 +50,9 @@ public class SequentialHandlerComponent<T extends IJob> extends JobExecHandler<T
     public JobExecHandler<T> unregister(int index) {
         return this.jobExecHandlerList.remove(index);
     }
+
+    @Override
+    public void successed(T job, Map<String, Object> param, Result result) {}
+
 
 }

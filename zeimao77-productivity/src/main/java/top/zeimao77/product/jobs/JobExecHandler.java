@@ -18,14 +18,14 @@ public abstract class JobExecHandler<T extends IJob> implements JobExec{
     public abstract boolean support(T job, Map<String,Object> param);
 
     /**
-     * 处理一个任务
-     * 如果处理失败 我们支持您通过异常
-     * @see BaseServiceRunException
-     * 或者 top.zeimao77.product.jobs.JobExec.Result
-     * 返回错误信息;
      * @param job 任务
      * @param param 扩展参数
      * @return 处理结果
+     * 处理一个任务
+     * 如果处理失败 我们希望您通过异常
+     * @see BaseServiceRunException
+     * 或者 top.zeimao77.product.jobs.JobExec.Result
+     * 返回错误信息;
      */
     protected abstract Result doHandle(T job,Map<String,Object> param);
 

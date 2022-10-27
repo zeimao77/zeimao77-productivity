@@ -3,6 +3,7 @@ package top.zeimao77.product.mysql;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import top.zeimao77.product.main.BaseMain;
+import top.zeimao77.product.oracle.mysql.SimpleRepository;
 import top.zeimao77.product.sql.Dbtype;
 import top.zeimao77.product.sql.OnlyPrintReposit;
 import top.zeimao77.product.sql.Reposit;
