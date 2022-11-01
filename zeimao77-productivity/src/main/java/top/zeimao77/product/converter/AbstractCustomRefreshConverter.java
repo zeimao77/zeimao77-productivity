@@ -91,7 +91,13 @@ public abstract class AbstractCustomRefreshConverter<K> implements IConverter<K>
                 lock.unlock();
             }
         }
+        refreshExpiryTime();
     }
+
+    /**
+     * 刷新结束时更新过期时间
+     */
+    protected abstract void refreshExpiryTime();
 
     /**
      * 刷新规则的具体实现;

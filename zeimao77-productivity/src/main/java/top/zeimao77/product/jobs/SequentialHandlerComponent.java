@@ -9,7 +9,7 @@ import java.util.Map;
 
 /**
  * 顺序的处理器组件
- * 对于一个任务，将依次换处理器顺序处理该任务
+ * 对于一个任务，将使用处理器顺序处理该任务
  * @param <T>
  */
 public class SequentialHandlerComponent<T extends IJob> extends JobExecHandler<T> {

@@ -2,9 +2,11 @@ package top.zeimao77.product.config;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import top.zeimao77.product.exception.BaseServiceException;
 import top.zeimao77.product.exception.BaseServiceRunException;
 import static top.zeimao77.product.exception.ExceptionCodeDefinition.IOEXCEPTION;
 import top.zeimao77.product.util.AssertUtil;
+import top.zeimao77.product.util.BoolUtil;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -51,23 +53,13 @@ public class LocalContext {
 
     public static Boolean getBoolean(String key) {
         Object o = get(key);
-        if(o != null) {
-            if("TRUE".equalsIgnoreCase(o.toString())
-                    || "Y".equalsIgnoreCase(o.toString())
-                    || "YES".equalsIgnoreCase(o.toString())
-                    || "1".equals(o.toString())
-                    || "ON".equalsIgnoreCase(o.toString())) {
-                return true;
-            }
-            if("FALSE".equalsIgnoreCase(o.toString())
-                    || "N".equalsIgnoreCase(o.toString())
-                    || "NO".equalsIgnoreCase(o.toString())
-                    || "0".equals(o.toString())
-                    || "OFF".equalsIgnoreCase(o.toString())) {
-                return false;
-            }
+        Boolean result = null;
+        try {
+            result = BoolUtil.parseBool(o.toString());
+        }catch (BaseServiceException e) {
+            logger.error(e.getMessage(),e);
         }
-        return null;
+        return result;
     }
 
     public static Object remove(String key) {

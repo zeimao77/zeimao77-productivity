@@ -27,12 +27,8 @@ public abstract class AbstractIntervalRefreshConverter<K> extends AbstractCustom
         this(0x0E10);
     }
 
-
     @Override
-    public void refreshRule() {
-        super.refreshRule();
+    protected void refreshExpiryTime() {
         setExpiryTime(LocalDateTime.now().plusSeconds(this.cacheTime));
     }
-
-
 }

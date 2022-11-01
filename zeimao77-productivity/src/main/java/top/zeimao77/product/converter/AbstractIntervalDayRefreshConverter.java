@@ -29,9 +29,7 @@ public abstract class AbstractIntervalDayRefreshConverter<K> extends AbstractCus
     }
 
     @Override
-    public void refreshRule() {
-        super.refreshRule();
+    protected void refreshExpiryTime() {
         setExpiryTime(LocalDateTime.of(LocalDate.now().plusDays(1),this.cacheTime));
     }
-
 }
