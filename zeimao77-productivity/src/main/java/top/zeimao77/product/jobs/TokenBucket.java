@@ -16,22 +16,30 @@ import java.util.concurrent.TimeUnit;
  */
 public class TokenBucket {
 
-    // 填充策略
+    /**
+     * 填充策略
+     */
     private RefillStrategy refillStrategy;
-    // 睡眠策略
+    /**
+     * 睡眠策略
+     */
     private SleetStrategy sleetStrategy;
-    // 容量
+    /**
+     * 最大容量
+     */
     private long capacity;
-    // 剩余令牌数
+    /**
+     * 当前剩余令牌
+     */
     private long size;
 
     /**
-     * 尝试获取 立即返回
+     * 尝试获取令牌 立即返回
      * @param numTokens 消费令牌的个数
      * @return 是否成功
      */
     public synchronized boolean tryConsume(long numTokens) {
-        AssertUtil.notEmpty( numTokens > 0 && numTokens <= this.capacity, "参数必需大于0且小于桶容器");
+        AssertUtil.assertTrue( numTokens > 0 && numTokens <= this.capacity, "参数必需大于0且小于桶容器(%d)",this.capacity);
         this.refill();
         if (numTokens <= this.size) {
             this.size -= numTokens;
@@ -42,7 +50,7 @@ public class TokenBucket {
     }
 
     /**
-     * 获取令牌,睡眠阻塞
+     * 获取令牌,睡眠阻塞直到获取到令牌
      * @param numTokens
      */
     public void consume(long numTokens) {

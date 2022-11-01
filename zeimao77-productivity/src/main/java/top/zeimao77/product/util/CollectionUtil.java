@@ -20,7 +20,8 @@ public class CollectionUtil {
      * @return 并集
      */
     public static <T> Set<T> union(Collection<T> t1, Collection<T> t2){
-        HashSet set = new HashSet<>(t1);
+        HashSet set = new HashSet<>(t1.size() + t2.size());
+        set.addAll(t1);
         set.addAll(t2);
         return set;
     }

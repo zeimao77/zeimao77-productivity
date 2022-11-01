@@ -8,8 +8,6 @@ import top.zeimao77.product.util.RandomStringUtil;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class BeanFactoryTest {
 
     @Test

@@ -37,11 +37,10 @@ public class OnlyPrintReposit implements  Reposit, Closeable {
     public <T> ArrayList<T> selectByResolver(StatementParamResolver sql, Class<T> clazz) {
         String execSql = sql.getExecSql();
         logger.debug(execSql);
-        if(appendEnd) {
-            writer.print(execSql);
-            writer.println(";");
-        } else {
+        if(writer != null) {
             writer.println(execSql);
+            if(appendEnd)
+                writer.println(";");
         }
         return new ArrayList<>();
     }
@@ -50,11 +49,11 @@ public class OnlyPrintReposit implements  Reposit, Closeable {
     public int updateByResolver(StatementParamResolver sql) {
         String execSql = sql.getExecSql();
         logger.debug(execSql);
-        if(appendEnd) {
-            writer.print(execSql);
-            writer.println(";");
-        } else {
+        if(writer != null) {
             writer.println(execSql);
+            if(appendEnd) {
+                writer.println(";");
+            }
         }
         return 0;
     }
@@ -72,7 +71,18 @@ public class OnlyPrintReposit implements  Reposit, Closeable {
     @Override
     public int update(String sql) {
         logger.debug(sql);
-        writer.println(sql);
+        if(writer != null)
+            writer.println(sql);
+        return 0;
+    }
+
+    @Override
+    public int update(String sqlt, Object param) {
+        DefaultStatementParamResolver defaultStatementParamResolver = new DefaultStatementParamResolver(sqlt, param);
+        String execSql = defaultStatementParamResolver.getExecSql();
+        logger.debug(execSql);
+        if(writer != null)
+            writer.println(execSql);
         return 0;
     }
 
@@ -81,11 +91,11 @@ public class OnlyPrintReposit implements  Reposit, Closeable {
         DefaultStatementParamResolver defaultStatementParamResolver = new DefaultStatementParamResolver(sqlt, param);
         String execSql = defaultStatementParamResolver.getExecSql();
         logger.debug(execSql);
-        if(appendEnd) {
-            writer.print(execSql);
-            writer.println(";");
-        } else {
+        if(writer != null) {
             writer.println(execSql);
+            if(appendEnd) {
+                writer.println(";");
+            }
         }
         return new ArrayList<>();
     }
@@ -93,11 +103,10 @@ public class OnlyPrintReposit implements  Reposit, Closeable {
     @Override
     public <T> ArrayList<T> selectListObj(String sql, Class<T> clazz) {
         logger.debug(sql);
-        if(appendEnd) {
-            writer.print(sql);
-            writer.println(";");
-        } else {
+        if(writer != null) {
             writer.println(sql);
+            if(appendEnd)
+                writer.println(";");
         }
         return new ArrayList<>();
     }
@@ -107,18 +116,19 @@ public class OnlyPrintReposit implements  Reposit, Closeable {
         DefaultStatementParamResolver defaultStatementParamResolver = new DefaultStatementParamResolver(sqlt, param);
         String execSql = defaultStatementParamResolver.getExecSql();
         logger.debug(execSql);
-        if(appendEnd) {
-            writer.print(execSql);
-            writer.println(";");
-        } else {
+        if(writer != null) {
             writer.println(execSql);
+            if(appendEnd)
+                writer.println(";");
         }
         return new ArrayList<>();
     }
 
     @Override
     public void close() {
-        writer.flush();
-        writer.close();
+        if(writer != null) {
+            writer.flush();
+            writer.close();
+        }
     }
 }

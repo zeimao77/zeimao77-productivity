@@ -8,7 +8,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.function.Consumer;
 
-
 /**
  * @author zeimao77
  * 邮件实体对象
@@ -124,7 +123,7 @@ public class Mail {
      */
     public boolean addAttachment(String fileName,byte[] bs) {
         if(attachments == null) {
-            synchronized (Mail.class) {
+            synchronized (this) {
                 if(attachments == null) {
                     attachments = new ArrayList<>();
                 }

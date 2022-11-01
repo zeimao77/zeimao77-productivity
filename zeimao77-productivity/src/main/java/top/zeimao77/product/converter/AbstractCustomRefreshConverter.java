@@ -82,19 +82,34 @@ public abstract class AbstractCustomRefreshConverter<K> implements IConverter<K>
         long between = ChronoUnit.SECONDS.between(LocalDateTime.now(), expiryTime);
         if(convRuleMap.isEmpty() || between <= 0) {
             lock.lock();
-            between = ChronoUnit.SECONDS.between(LocalDateTime.now(), expiryTime);
-            if(convRuleMap.isEmpty() || between <= 0) {
-                refresh();
+            try {
+                between = ChronoUnit.SECONDS.between(LocalDateTime.now(), expiryTime);
+                if(convRuleMap.isEmpty() || between <= 0) {
+                    refresh();
+                }
+            } finally {
+                lock.unlock();
             }
-            lock.unlock();
         }
+        refreshExpiryTime();
     }
 
     /**
-     * 子类实现规则刷新
+     * 刷新结束时更新过期时间
+     */
+    protected abstract void refreshExpiryTime();
+
+    /**
+     * 刷新规则的具体实现;
+     * 在该函数中调用
+     * @see AbstractNonReFreshConverter#addConvRule(Object, Object)
+     * 来添加规则
      */
     protected abstract void refresh();
 
+    /**
+     * @return 过期时间
+     */
     public LocalDateTime getExpiryTime() {
         return expiryTime;
     }

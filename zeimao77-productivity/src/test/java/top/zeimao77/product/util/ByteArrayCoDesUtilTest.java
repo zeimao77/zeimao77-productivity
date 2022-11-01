@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 import top.zeimao77.product.main.BaseMain;
 
 import java.nio.charset.StandardCharsets;
-import java.util.function.Function;
 
 class ByteArrayCoDesUtilTest extends BaseMain {
 

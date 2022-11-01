@@ -4,9 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import top.zeimao77.product.exception.BaseServiceRunException;
+import static top.zeimao77.product.exception.ExceptionCodeDefinition.APPERR;
 import top.zeimao77.product.util.CalendarDateUtil;
 import top.zeimao77.product.util.JsonBeanUtil;
 import top.zeimao77.product.util.LocalDateTimeUtil;
@@ -24,8 +23,6 @@ import java.util.function.Function;
  * @since 2.0.9
  */
 public class Ijson {
-
-    private static Logger logger = LogManager.getLogger(Ijson.class);
 
     private JsonNode jsonNode;
 
@@ -53,7 +50,7 @@ public class Ijson {
             JsonNode jsonNode = objectMapper.readTree(json);
             instance = new Ijson(jsonNode);
         } catch (JsonProcessingException e) {
-            logger.error("JSON解析出错",e);
+            throw new BaseServiceRunException(APPERR,"JSON解析错误",e);
         }
         return instance;
     }
@@ -67,7 +64,7 @@ public class Ijson {
             JsonNode jsonNode = this.jsonNode.get(fieldName);
             return new Ijson(jsonNode);
         }
-        throw new BaseServiceRunException(String.format("json字段类型错误:%s不可以转换对Obj",this.jsonNode.getNodeType().name()));
+        throw new BaseServiceRunException(APPERR,String.format("json字段类型错误:%s不可以转换对Obj",this.jsonNode.getNodeType().name()));
     }
 
     /**
@@ -79,7 +76,7 @@ public class Ijson {
             JsonNode jsonNode = this.jsonNode.get(index);
             return new Ijson(jsonNode);
         }
-        throw new BaseServiceRunException(String.format("json字段类型错误:%s不可以转换对Obj",this.jsonNode.getNodeType().name()));
+        throw new BaseServiceRunException(APPERR,String.format("json字段类型错误:%s不可以转换对Obj",this.jsonNode.getNodeType().name()));
     }
 
     /**
@@ -91,7 +88,7 @@ public class Ijson {
             JsonNode jsonNode = this.jsonNode.get(fieldName);
             return new Ijson(jsonNode);
         }
-        throw new BaseServiceRunException(String.format("json字段类型错误:%s不可以转换对Arr",this.jsonNode.getNodeType().name()));
+        throw new BaseServiceRunException(APPERR,String.format("json字段类型错误:%s不可以转换对Arr",this.jsonNode.getNodeType().name()));
     }
 
     public long size(String fieldName) {

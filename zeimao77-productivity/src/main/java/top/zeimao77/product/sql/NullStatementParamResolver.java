@@ -1,6 +1,6 @@
 package top.zeimao77.product.sql;
 
-import java.util.ArrayList;
+import java.util.Collections;
 
 public class NullStatementParamResolver extends AbstractStatementParamResolver {
 
@@ -10,7 +10,7 @@ public class NullStatementParamResolver extends AbstractStatementParamResolver {
 
     @Override
     public void resolve() {
-        statementParams = new ArrayList<>(0);
+        statementParams = Collections.emptyList();
         this.sql = this.sqlt;
     }
 

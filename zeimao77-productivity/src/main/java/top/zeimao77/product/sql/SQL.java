@@ -4,7 +4,9 @@ import top.zeimao77.product.exception.BaseServiceRunException;
 import top.zeimao77.product.util.AssertUtil;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -16,15 +18,25 @@ import java.util.function.Predicate;
 public class SQL implements StatementParamResolver, IWhere {
 
     private StringBuilder sqlBuilder = new StringBuilder(1024);
-    ArrayList<StatementParameter> statementParams = new ArrayList<>();
+    private ArrayList<StatementParameter> statementParams = new ArrayList<>();
     private static final int FLAG_SELECT = 0x01;
     private static final int FLAG_SET = 0x02;
     private static final int FLAG_VALUES = 0x04;
     private static final int FLAG_WHERE = 0x08;
     private static final int FLAG_ON = 0x10;
     private int whereOrSetFlag = 0;
-    private int sqlType = 0; // 1 = SELECT ;2 = DELETE ;3 = UPDATE ;4 INSERT
+    private int sqlType = 0; // 1 = SELECT ;2 = DELETE ;3 = UPDATE ;4 INSERT ;5 = UPSERT ;
     private int paramIndex = 0;
+
+    private int dbtype;
+
+    public SQL() {
+        this(Dbtype.ALL);
+    }
+
+    public SQL(int dbtype) {
+        this.dbtype = dbtype;
+    }
 
     public SQL select() {
         sqlBuilder.append("SELECT *");
@@ -33,7 +45,7 @@ public class SQL implements StatementParamResolver, IWhere {
         return this;
     }
 
-    public SQL appent(String text) {
+    public SQL append(String text) {
         sqlBuilder.append(text);
         return this;
     }
@@ -75,19 +87,19 @@ public class SQL implements StatementParamResolver, IWhere {
 
     public SQL innerJoin(String tableName,String alias) {
         sqlBuilder.append(" INNER JOIN ").append(tableName).append(" AS ").append(alias);
-        whereOrSetFlag &= 0xFFFFFFF7;
+        whereOrSetFlag &= (~FLAG_ON);
         return this;
     }
 
     public SQL leftJoin(String tableName,String alias) {
         sqlBuilder.append(" LEFT JOIN ").append(tableName).append(" AS ").append(alias);
-        whereOrSetFlag &= 0xFFFFFFF7;
+        whereOrSetFlag &= (~FLAG_ON);
         return this;
     }
 
     public SQL rightJoin(String tableName,String alias) {
         sqlBuilder.append(" RIGHT JOIN ").append(tableName).append(" AS ").append(alias);
-        whereOrSetFlag &= 0xFFFFFFF7;
+        whereOrSetFlag &= (~FLAG_ON);
         return this;
     }
 
@@ -308,7 +320,7 @@ public class SQL implements StatementParamResolver, IWhere {
     }
 
     public SQL limit(int limit,int offset) {
-        sqlBuilder.append(String.format(" LIMIT %d,%d",limit,offset));
+        sqlBuilder.append(String.format(" LIMIT %d OFFSET %d",offset,limit));
         return this;
     }
 
@@ -400,16 +412,74 @@ public class SQL implements StatementParamResolver, IWhere {
         return this;
     }
 
+    /**
+     * MYSQL upsert操作
+     * @return
+     */
     public SQL onDuplicateKeyUpdate() {
+        this.sqlType = 5;
+        sqlBuilder.append(" ON DUPLICATE KEY UPDATE ");
         return onDuplicateKeyUpdate(o -> true);
     }
+
+    /**
+     * postgreSQL 啥事也不做
+     * @return
+     */
+    public SQL onConflictDoNothing(String keyName) {
+        sqlBuilder.append(" ON CONFLICT ON CONSTRAINT ");
+        sqlBuilder.append(keyName);
+        sqlBuilder.append(" DO NOTHING");
+        return this;
+    }
+
+
+    /**
+     * postgreSQL upsert
+     * @param columnName
+     * @return
+     */
+    public SQL onConflict(String columnName) {
+        this.sqlType = 5;
+        sqlBuilder.append(" ON CONFLICT (");
+        sqlBuilder.append(columnName);
+        sqlBuilder.append(") DO UPDATE SET ");
+        return onDuplicateKeyUpdate(o -> {
+            if (o.getName().equals(columnName)) {
+                return false;
+            }
+            return true;
+        });
+    }
+
+    public SQL onConflict(String keyName, List<String> columnNameList) {
+        this.sqlType = 5;
+        sqlBuilder.append(" ON CONFLICT ON CONSTRAINT ");
+        sqlBuilder.append(keyName);
+        sqlBuilder.append(" DO UPDATE SET ");
+        return onDuplicateKeyUpdate(o -> {
+            if(columnNameList == null || columnNameList.size() == 0)
+                return true;
+            for (String column : columnNameList) {
+                if(o.getName().equals(column)){
+                    return false;
+                }
+            }
+            return true;
+        });
+    }
+
+    public SQL onConflict(String keyName,String... columnNames) {
+        return onConflict(keyName, Arrays.asList(columnNames));
+    }
+
 
     /**
      * @param predicate UPDATE语句字段过滤 如果返回false该字段将被忽略
      * @return this
      */
     public SQL onDuplicateKeyUpdate(Predicate<StatementParameter> predicate) {
-        sqlBuilder.append(" ON DUPLICATE KEY UPDATE ");
+
         int l = statementParams.size();
         boolean firstUpdate = true;
         for (int i = 0; i < l; i++){
@@ -482,5 +552,13 @@ public class SQL implements StatementParamResolver, IWhere {
 
     public int getSqlType() {
         return sqlType;
+    }
+
+    public int getDbtype() {
+        return dbtype;
+    }
+
+    public void setDbtype(int dbtype) {
+        this.dbtype = dbtype;
     }
 }

@@ -4,8 +4,6 @@ import org.junit.jupiter.api.Test;
 import top.zeimao77.product.main.BaseMain;
 import top.zeimao77.product.model.ImmutablePair;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class AbstractIntervalRefreshConverterTest extends BaseMain {
 
     @Test
@@ -31,8 +29,5 @@ class AbstractIntervalRefreshConverterTest extends BaseMain {
         logger.info(converter.getName(new ImmutablePair<>(1,200)));
         delay_ms(3500);
         logger.info(converter.getName(new ImmutablePair<>(1,201)));
-
-
-
     }
 }

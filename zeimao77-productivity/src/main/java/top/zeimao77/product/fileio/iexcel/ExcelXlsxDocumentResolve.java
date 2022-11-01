@@ -16,9 +16,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 public class ExcelXlsxDocumentResolve<T> {
 
@@ -382,7 +380,7 @@ public class ExcelXlsxDocumentResolve<T> {
      */
     public void parse(SXSSFWorkbook workbook, Table table, CellConsumer cellConsumer) {
         if(!sorted) {
-            synchronized (ExcelXlsxDocumentResolve.class) {
+            synchronized (this) {
                 if(!sorted) {
                     resovers.sort(Orderd::compareTo);
                     sorted = true;
@@ -405,7 +403,7 @@ public class ExcelXlsxDocumentResolve<T> {
 
     public ArrayList<T> parse(SXSSFWorkbook workbook, Table table, Class<T> clazz, ArrayList<T> resultList) {
         if(!sorted) {
-            synchronized (ExcelXlsxDocumentResolve.class) {
+            synchronized (this) {
                 if(!sorted) {
                     resovers.sort(Orderd::compareTo);
                     sorted = true;
@@ -415,8 +413,8 @@ public class ExcelXlsxDocumentResolve<T> {
         int rowNum = table.getStartRow();
         List<Table.Column> columnList = table.getColumnList();
         Sheet sheet = workbook.getXSSFWorkbook().getSheetAt(table.getSheetIndex());
-        Row row = null;
-        Cell cell = null;
+        Row row;
+        Cell cell;
         while ((row = sheet.getRow(rowNum)) != null) {
             T t = newObj(clazz);
             for (Table.Column column : columnList) {
@@ -427,6 +425,38 @@ public class ExcelXlsxDocumentResolve<T> {
             rowNum++;
         }
         return resultList;
+    }
+
+    public void parseMap(SXSSFWorkbook workbook, Table table,ArrayList<Map<String,Object>> resultList) {
+        if(!sorted) {
+            synchronized (this) {
+                if(!sorted) {
+                    resovers.sort(Orderd::compareTo);
+                    sorted = true;
+                }
+            }
+        }
+        int rowNum = table.getStartRow();
+        List<Table.Column> columnList = table.getColumnList();
+        Sheet sheet = workbook.getXSSFWorkbook().getSheetAt(table.getSheetIndex());
+        Row row;
+        Cell cell;
+        while ((row = sheet.getRow(rowNum)) != null) {
+            Map<String,Object> t = new HashMap<>();
+            for (Table.Column column : columnList) {
+                cell = row.getCell(column.getIndex());
+                Object value = null;
+                for (CellFiledTypeResover resover : resovers) {
+                    if(resover.support(column.getJavaType(),cell)) {
+                        value = resover.resove(cell);
+                        break;
+                    }
+                }
+                t.put(column.getField(),value);
+            }
+            resultList.add(t);
+            rowNum++;
+        }
     }
 
 }

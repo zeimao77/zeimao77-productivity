@@ -4,10 +4,13 @@ import java.time.*;
 
 /**
  * @author zeimao77
- * 隔天刷新，以cacheTime为界，如果在此时间之后取数据时没有刷新过则刷新
+ * 隔天刷新，以cacheTime为界，如果在此时间点之后取数据时没有刷新过则刷新
  */
 public abstract class AbstractIntervalDayRefreshConverter<K> extends AbstractCustomRefreshConverter<K>{
 
+    /**
+     * 刷新时间界点 如果在此时间点之后取数据时没有刷新过则刷新
+     */
     protected LocalTime cacheTime;
 
     /**
@@ -26,9 +29,7 @@ public abstract class AbstractIntervalDayRefreshConverter<K> extends AbstractCus
     }
 
     @Override
-    public void refreshRule() {
-        super.refreshRule();
+    protected void refreshExpiryTime() {
         setExpiryTime(LocalDateTime.of(LocalDate.now().plusDays(1),this.cacheTime));
     }
-
 }

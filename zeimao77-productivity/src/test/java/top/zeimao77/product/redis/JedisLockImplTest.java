@@ -11,7 +11,7 @@ class JedisLockImplTest extends BaseMain{
     @Test
     void lock() {
         BaseMain.showBanner();
-        Jedis jedis = ComponentFactory.createJedis("redis_top_zeimao77");
+        Jedis jedis = ComponentFactory.initJedis("redis_top_zeimao77",null);
         JedisLockImpl jedisLock = new JedisLockImpl(jedis);
         String generate = UuidGenerator.INSTANCE.generate();
         boolean lock = jedisLock.lock(generate,"1", 2, 100);

@@ -1,6 +1,7 @@
 package top.zeimao77.product.tree;
 
 import top.zeimao77.product.exception.BaseServiceRunException;
+import static top.zeimao77.product.exception.ExceptionCodeDefinition.CUSTOM;
 import top.zeimao77.product.util.AssertUtil;
 
 import java.util.List;
@@ -25,7 +26,7 @@ public class ThresholdVoterComponent<T> implements Voter<T> {
      * @param threshold 阈值
      */
     public ThresholdVoterComponent(List<Voter> voters, Double threshold) {
-        AssertUtil.assertTure(threshold >= 0D && threshold <= 1D,"错误的阈值");
+        AssertUtil.assertTrue(threshold >= 0D && threshold <= 1D,"错误的阈值");
         this.voters = voters;
         this.threshold = threshold;
     }
@@ -64,6 +65,18 @@ public class ThresholdVoterComponent<T> implements Voter<T> {
                 }
             }
         }
-        throw new BaseServiceRunException("表决错误");
+        throw new BaseServiceRunException(CUSTOM,"表决错误");
+    }
+
+    public Double getThreshold() {
+        return threshold;
+    }
+
+    public List<Voter> getVoters() {
+        return voters;
+    }
+
+    public void setVoters(List<Voter> voters) {
+        this.voters = voters;
     }
 }

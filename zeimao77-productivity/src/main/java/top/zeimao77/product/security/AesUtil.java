@@ -2,6 +2,9 @@ package top.zeimao77.product.security;
 
 import top.zeimao77.product.exception.BaseServiceRunException;
 
+import static top.zeimao77.product.exception.ExceptionCodeDefinition.APPERR;
+import static top.zeimao77.product.exception.ExceptionCodeDefinition.CUSTOM;
+
 import javax.crypto.*;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.InvalidKeyException;
@@ -24,7 +27,7 @@ public class AesUtil {
         try {
             keyGenerator = KeyGenerator.getInstance("AES");
         } catch (NoSuchAlgorithmException e) {
-            throw new BaseServiceRunException("AES密钥生成错误",e);
+            throw new BaseServiceRunException(CUSTOM,"AES密钥生成错误",e);
         }
         keyGenerator.init(keysize);
         SecretKey secretKey = keyGenerator.generateKey();
@@ -51,15 +54,15 @@ public class AesUtil {
             byte[]  bs = cipher.doFinal(source);
             return bs;
         } catch (NoSuchAlgorithmException e) {
-            throw new BaseServiceRunException("解密错误",e);
+            throw new BaseServiceRunException(CUSTOM,"解密错误",e);
         } catch (NoSuchPaddingException e) {
-            throw new BaseServiceRunException("解密错误",e);
+            throw new BaseServiceRunException(CUSTOM,"解密错误",e);
         } catch (InvalidKeyException e) {
-            throw new BaseServiceRunException("解密错误",e);
+            throw new BaseServiceRunException(CUSTOM,"解密错误",e);
         } catch (BadPaddingException e) {
-            throw new BaseServiceRunException("解密错误",e);
+            throw new BaseServiceRunException(CUSTOM,"解密错误",e);
         } catch (IllegalBlockSizeException e) {
-            throw new BaseServiceRunException("解密错误",e);
+            throw new BaseServiceRunException(CUSTOM,"解密错误",e);
         }
     }
 
@@ -86,15 +89,15 @@ public class AesUtil {
             byte[] decode = cipher.doFinal(source);
             return decode;
         }catch (IllegalBlockSizeException e) {
-            throw new BaseServiceRunException("非法密文");
+            throw new BaseServiceRunException(APPERR,"非法密文",e);
         }catch (NoSuchAlgorithmException e) {
-            throw new BaseServiceRunException("解密错误",e);
+            throw new BaseServiceRunException(CUSTOM,"解密错误",e);
         } catch (InvalidKeyException e) {
-            throw new BaseServiceRunException("解密错误",e);
+            throw new BaseServiceRunException(CUSTOM,"解密错误",e);
         } catch (NoSuchPaddingException e) {
-            throw new BaseServiceRunException("解密错误",e);
+            throw new BaseServiceRunException(CUSTOM,"解密错误",e);
         } catch (BadPaddingException e) {
-            throw new BaseServiceRunException("解密错误", e);
+            throw new BaseServiceRunException(CUSTOM,"解密错误", e);
         }
     }
 

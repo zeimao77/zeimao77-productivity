@@ -9,6 +9,7 @@ public abstract class AbstractRepository<T,W> implements Repository<T,W> {
 
     protected Reposit repositoryImpl;
     protected String tableName;
+    protected Integer dbType = Dbtype.ALL;
 
     public Class<T> getTClass()
     {
@@ -38,10 +39,7 @@ public abstract class AbstractRepository<T,W> implements Repository<T,W> {
      * @param sql SQL对象
      * @param t 对象
      */
-    protected void upsert(SQL sql,T t) {
-        insert(sql,t);
-        sql.onDuplicateKeyUpdate();
-    }
+    protected abstract void upsert(SQL sql,T t);
     protected abstract void update(SQL sql,T t);
     protected abstract void delete(SQL sql,W id);
 
@@ -87,7 +85,7 @@ public abstract class AbstractRepository<T,W> implements Repository<T,W> {
     protected void afterInsert(T t) {};
     @Override
     public int insert(T t) {
-        SQL sql = new SQL();
+        SQL sql = new SQL(dbType);
         insert(sql,t);
         beforeInsert(sql,t);
         int i = repositoryImpl.updateByResolver(sql);
@@ -96,7 +94,7 @@ public abstract class AbstractRepository<T,W> implements Repository<T,W> {
     }
 
     public T insertAndGet(T t) {
-        SQL mysql = new SQL();
+        SQL mysql = new SQL(dbType);
         W id = insert(mysql,t);
         return id == null ? null : get(id);
     }
@@ -104,7 +102,7 @@ public abstract class AbstractRepository<T,W> implements Repository<T,W> {
     protected void beforeUpsert(SQL sql,T t){};
     protected void afterUpsert(T t){};
     public int upsert(T t) {
-        SQL sql = new SQL();
+        SQL sql = new SQL(dbType);
         upsert(sql,t);
         beforeUpsert(sql,t);
         int i = repositoryImpl.updateByResolver(sql);
@@ -116,7 +114,7 @@ public abstract class AbstractRepository<T,W> implements Repository<T,W> {
     protected void afterUpdate(T t){};
     @Override
     public int update(T t) {
-        SQL sql = new SQL();
+        SQL sql = new SQL(dbType);
         update(sql,t);
         beforeUpdate(sql,t);
         int i = repositoryImpl.updateByResolver(sql);
@@ -128,7 +126,7 @@ public abstract class AbstractRepository<T,W> implements Repository<T,W> {
     protected void afterDelete(W id){};
     @Override
     public int delete(W id) {
-        SQL sql = new SQL();
+        SQL sql = new SQL(dbType);
         delete(sql,id);
         beforeDelete(sql,id);
         int i = repositoryImpl.updateByResolver(sql);
@@ -138,7 +136,7 @@ public abstract class AbstractRepository<T,W> implements Repository<T,W> {
 
     @Override
     public T get(W id) {
-        SQL mysql = new SQL();
+        SQL mysql = new SQL(dbType);
         get(mysql,id);
         ArrayList<T> ts = repositoryImpl.selectByResolver(mysql,getTClass());
         return ts.isEmpty() ? null : ts.get(0);
@@ -146,5 +144,13 @@ public abstract class AbstractRepository<T,W> implements Repository<T,W> {
 
     public String getTableName() {
         return this.tableName;
+    }
+
+    public Integer getDbType() {
+        return dbType;
+    }
+
+    public void setDbType(Integer dbType) {
+        this.dbType = dbType;
     }
 }

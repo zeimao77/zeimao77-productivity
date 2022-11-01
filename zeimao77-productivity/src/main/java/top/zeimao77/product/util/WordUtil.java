@@ -12,6 +12,8 @@ public class WordUtil {
 
     /**
      * 首字母转大写
+     * @param str 串
+     * @return 结果
      */
     public static String initialCase(String str) {
         char[] cs=str.toCharArray();
@@ -23,6 +25,8 @@ public class WordUtil {
 
     /**
      * 首字母转小写
+     * @param str 串
+     * @return 结果
      */
     public static String initialLow(String str) {
         char[] cs=str.toCharArray();
@@ -32,8 +36,11 @@ public class WordUtil {
         return String.valueOf(cs);
     }
 
+
     /**
      * 下划线转驼峰
+     * @param str 串
+     * @return 结果
      */
     public static String lineToHump(String str) {
         str = str.toLowerCase();
@@ -48,6 +55,8 @@ public class WordUtil {
 
     /**
      * 驼峰转下划线
+     * @param str 串
+     * @return 结果
      */
     public static String humpToLine(String str) {
         Matcher matcher = humpPattern.matcher(str);

@@ -1,6 +1,6 @@
 package top.zeimao77.product.sql;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -30,7 +30,7 @@ public class DefaultStatementParamResolver implements StatementParamResolver {
     }
 
     @Override
-    public ArrayList<StatementParameter> getStatementParams() {
+    public List<StatementParameter> getStatementParams() {
         return this.resolver.getStatementParams();
     }
 

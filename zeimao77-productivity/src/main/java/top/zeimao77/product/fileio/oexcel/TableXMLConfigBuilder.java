@@ -3,6 +3,9 @@ package top.zeimao77.product.fileio.oexcel;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+import top.zeimao77.product.converter.AbstractNonReFreshConverter;
+import top.zeimao77.product.factory.BeanFactory;
+import top.zeimao77.product.util.BeanUtil;
 import top.zeimao77.product.xml.AbstractXmlBuiler;
 
 import java.util.ArrayList;
@@ -18,7 +21,7 @@ import java.util.List;
  *       &lt;column index="0" field="id" title="唯一序号" width="22" format="@" /&gt;
  *       &lt;column index="1" field="name" title="姓名" width="14" format="@" /&gt;
  *       &lt;column index="2" field="type" title="类型" width="8" format="@"&gt;
- *           &lt;converter converterId="ef27135ea48240519da968b2ab89567e" defaultValue="OO"&gt;
+ *           &lt;converter converterId="com.zeimao77.***.***Converter" defaultValue="OO"&gt;
  *               &lt;rule key="1" value="Y1"/&gt;
  *               &lt;rule key="2" value="O2"/&gt;
  *           &lt;/converter&gt;
@@ -37,6 +40,7 @@ public class TableXMLConfigBuilder extends AbstractXmlBuiler<Table> {
     public TableXMLConfigBuilder(String path) {
         super(path);
     }
+
 
     @Override
     public Table build() {
@@ -64,13 +68,34 @@ public class TableXMLConfigBuilder extends AbstractXmlBuiler<Table> {
             NodeList converter = columnElement.getElementsByTagName("converter");
             if(converter.getLength() > 0) {
                 Element converterElement = (Element)converter.item(0);
-                Table.Converter c = new Table.Converter();
-                c.setConverterId(parseProperty(converterElement,"converterId"));
-                c.setDefaultValue(parseProperty(converterElement,"defaultValue"));
-                NodeList ruleList = converterElement.getElementsByTagName("rule");
-                HashMap<String, Object> stringStringHashMap = parseMap(ruleList);
-                c.setRule(stringStringHashMap);
-                column.setConverter(c);
+                String converterId = parseProperty(converterElement, "converterId");
+                Table.Converter converter1;
+                if(converterId != null) {
+                    converter1 = BeanFactory.DEFAULT.getBean(converterId,Table.Converter.class);
+                } else {
+                    NodeList ruleList = converterElement.getElementsByTagName("rule");
+                    HashMap<String, Object> stringStringHashMap = parseMap(ruleList);
+                    converter1 = new Table.Converter(){
+
+                        AbstractNonReFreshConverter<String> objectAbstractNonReFreshConverter = new AbstractNonReFreshConverter<String>(stringStringHashMap) {
+                            @Override
+                            protected void refresh() {}
+
+                            @Override
+                            public Object defaultName(String key) {
+                                return parseProperty(converterElement,"defaultValue");
+                            }
+                        };
+                        @Override
+                        public Object getPrintValue(Table.Column column, Object line) {
+                            Object property = BeanUtil.getProperty(line, column.getField());
+                            if(property == null)
+                                return null;
+                            return objectAbstractNonReFreshConverter.get(property.toString());
+                        }
+                    };
+                }
+                column.setConverter(converter1);
             }
             columnList.add(column);
         }

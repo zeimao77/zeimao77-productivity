@@ -14,11 +14,11 @@ public class NonRetryableRuntimeException extends BaseServiceRunException {
     }
 
     public NonRetryableRuntimeException(String message, Throwable cause) {
-        super(CUSTOM | NON_RETRYABLE,message,cause);
+        super(APPERR | NON_RETRYABLE | CONVERTIBLE,message,cause);
     }
 
     public NonRetryableRuntimeException(String message) {
-        super(CUSTOM | NON_RETRYABLE,message);
+        super(APPERR | NON_RETRYABLE,message);
     }
 
 }

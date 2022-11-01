@@ -3,7 +3,7 @@ package top.zeimao77.product.util;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 import top.zeimao77.product.exception.BaseServiceRunException;
-import static top.zeimao77.product.exception.ExceptionCodeDefinition.*;
+import static top.zeimao77.product.exception.ExceptionCodeDefinition.WRONG_SOURCE;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;

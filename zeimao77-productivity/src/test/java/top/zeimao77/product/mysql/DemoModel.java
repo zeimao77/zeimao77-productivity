@@ -12,7 +12,7 @@ public class DemoModel {
 
     private Long demoId;
     private String demoName;
-    @StatementParameterInfo(mode = 1,valSetPre = "to_date(",valSetPost = ",'YYYY-MM-DD')")
+    @StatementParameterInfo(dbtype = 0x00000002,mode = 1,valSetPre = "to_date(",valSetPost = ",'YYYY-MM-DD')")
     private LocalDateTime createdTime;
     private Integer ch;
     private Boolean bo;

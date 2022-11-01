@@ -2,8 +2,6 @@ package top.zeimao77.product.jobs;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import top.zeimao77.product.exception.BaseServiceRunException;
-import top.zeimao77.product.exception.ExceptionCodeDefinition;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,36 +51,18 @@ public abstract class JobExecTemplateBatch<T extends IJob> implements JobExec{
      */
     protected abstract void moreJob(int page);
 
-    public abstract Result handle(List<T> jobs);
+    /**
+     * 处理任务
+     * 需要注意的是不要让处理方法抛出异常;
+     * @param jobs 任务
+     */
+    public abstract void handle(List<T> jobs);
 
     /**
-     * 失败了，如果
-     * @see JobExecTemplateBatch#handle(java.util.List)
-     * 处理失败，将调用此函数进行下一步处理
-     * @param jobList
+     * @see JobExecTemplateBatch#start(int, long, TimeUnit, int)
+     * @param nThread 线程数
+     * @param pageSize 页长
      */
-    public void failed(List<T> jobList,Result result){
-        if(result.retrieable()) {
-            for (T job : jobList) {
-                logger.warn("任务(ID:{})处理失败，即将重新处理!",job.jobId());
-                if (job.consume() > 0) {
-                    logger.warn("任务(ID:{})处理失败，即将重新处理",job.jobId());
-                    addJob(job);
-                } else {
-                    logger.warn("任务(ID:{})处理失败，即将丢弃任务",job.jobId());
-                }
-            }
-        } else {
-            logger.warn("任务(ID:{})处理失败,失败原因:{},即将放弃处理!",jobList.get(0).jobId(),result.getResultMsg());
-        }
-    }
-
-    public void successed(List<T> jobList) {
-        for (T job : jobList) {
-            logger.info("任务(ID:{})处理成功",job.jobId());
-        }
-    }
-
     public void start(int nThread,int pageSize) {
         start(nThread,240,TimeUnit.HOURS,pageSize);
     }
@@ -94,6 +74,7 @@ public abstract class JobExecTemplateBatch<T extends IJob> implements JobExec{
      * @param nThreads 线程数
      * @param timeout 任务执行超时时间
      * @param unit 时间单位
+     * @param pageSize 页长
      */
     public void start(int nThreads,long timeout, TimeUnit unit,int pageSize) {
         if(executorService == null) {
@@ -106,7 +87,7 @@ public abstract class JobExecTemplateBatch<T extends IJob> implements JobExec{
             executorService.execute(()->{
                 ArrayList<T> jobList = new ArrayList<>(pageSize);
                 while (status != 5) {
-                    synchronized (JobExecTemplateBatch.class) {
+                    synchronized (this) {
                         int q = pageSize < jobs.size() ? pageSize : jobs.size();
                         for (int j = 0; j < q; j++) {
                             T job =jobs.poll();
@@ -127,22 +108,7 @@ public abstract class JobExecTemplateBatch<T extends IJob> implements JobExec{
                         logger.debug("线程({})没有取到更多任务，即将退出",Thread.currentThread().getName());
                         break;
                     }
-                    try{
-                        Result handle = handle(jobList);
-                        if(handle == Result.SUCCESS || SUCCESSED == handle.getResultCode()) {
-                            successed(jobList);
-                        } else {
-                            failed(jobList,handle);
-                        }
-                    } catch (BaseServiceRunException e) {
-                        logger.error("任务处理异常",e);
-                        Result fail = Result.fail(e.getCode(), e.getMessage());
-                        failed(jobList,fail);
-                    } catch (Exception e) {
-                        logger.error("任务处理异常",e);
-                        Result fail = Result.fail(ExceptionCodeDefinition.UNKNOWN,"未知的异常");
-                        failed(jobList,fail);
-                    }
+                    handle(jobList);
                     jobList.clear();
                 }
             });

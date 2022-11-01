@@ -16,10 +16,12 @@ public class StringUtil {
      * @return 截取后的字符串
      */
     public static String cut(String str,int len,String suffix) {
+        if(suffix == null)
+            suffix = DEFAULT_SUFFIX;
         len = len >= str.length() ? str.length() : len - suffix.length();
         String s = str.substring(0,len);
         if(len < str.length()) {
-            s = s.concat("...");
+            s = s.concat(suffix);
         }
         return s;
     }

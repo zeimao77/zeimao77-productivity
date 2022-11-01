@@ -1,7 +1,7 @@
 package top.zeimao77.product.factory;
 
 import top.zeimao77.product.exception.BaseServiceRunException;
-import top.zeimao77.product.exception.ExceptionCodeDefinition;
+import static top.zeimao77.product.exception.ExceptionCodeDefinition.WRONG_ACTION;
 import top.zeimao77.product.util.AssertUtil;
 
 import java.util.Map;
@@ -19,8 +19,19 @@ public class BeanFactory {
      */
     public static final BeanFactory DEFAULT = new BeanFactory();
 
-    private final Map<String, Object> singletonObjects = new ConcurrentHashMap<>(32);
-    private final Map<String, Supplier<?>> prototypesFactory = new ConcurrentHashMap<>(16);
+    private final Map<String, Object> singletonObjects;
+    private final Map<String, Supplier<?>> prototypesFactory;
+
+
+    public BeanFactory() {
+        singletonObjects = new ConcurrentHashMap<>(64);
+        prototypesFactory = new ConcurrentHashMap<>(16);
+    }
+
+    public BeanFactory(int singletonSize,int prototypesSize) {
+        singletonObjects = new ConcurrentHashMap<>(singletonSize);
+        prototypesFactory = new ConcurrentHashMap<>(prototypesSize);
+    }
 
     /**
      * 注册一个原型的BEAN提供者
@@ -70,7 +81,7 @@ public class BeanFactory {
         Supplier<?> supplier = prototypesFactory.get(beanName);
         if(supplier != null)
             return (T)supplier.get();
-        throw new BaseServiceRunException(ExceptionCodeDefinition.WRONG_ACTION,"没有这样的BEAN实例");
+        throw new BaseServiceRunException(WRONG_ACTION,"没有这样的BEAN实例:"+beanName);
     }
 
     /**
@@ -85,7 +96,7 @@ public class BeanFactory {
                 return (T)value;
             }
         }
-        throw new BaseServiceRunException(ExceptionCodeDefinition.WRONG_ACTION,"没有这样的单例BEAN实例");
+        throw new BaseServiceRunException(WRONG_ACTION,"没有这样的单例BEAN实例:"+requiredType.getName());
     }
 
     /**

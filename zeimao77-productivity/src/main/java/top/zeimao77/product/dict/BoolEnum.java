@@ -1,12 +1,18 @@
 package top.zeimao77.product.dict;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import top.zeimao77.product.exception.BaseServiceRunException;
+
+import static top.zeimao77.product.exception.ExceptionCodeDefinition.APPERR;
 
 public enum BoolEnum implements DictEnum {
 
     Y(1,"true","是"),
     N(0,"false","否"),
     ;
+
+    private static Logger logger = LogManager.getLogger(BoolEnum.class);
 
     private int bool;
     private String englistName;
@@ -60,7 +66,8 @@ public enum BoolEnum implements DictEnum {
                 return value;
             }
         }
-        throw new BaseServiceRunException("错误的布尔值");
+        throw new BaseServiceRunException(APPERR,"错误的布尔值");
     }
+
 
 }

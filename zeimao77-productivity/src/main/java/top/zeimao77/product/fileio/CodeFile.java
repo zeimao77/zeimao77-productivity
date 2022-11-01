@@ -1,6 +1,7 @@
 package top.zeimao77.product.fileio;
 
 import top.zeimao77.product.exception.BaseServiceRunException;
+import static top.zeimao77.product.exception.ExceptionCodeDefinition.IOEXCEPTION;
 
 import java.io.File;
 import java.io.IOException;
@@ -84,7 +85,7 @@ public class CodeFile {
                 file.createNewFile();
                 printStream = new PrintStream(file);
             } catch (IOException e) {
-                throw new BaseServiceRunException("IO异常",e);
+                throw new BaseServiceRunException(IOEXCEPTION,"IO异常",e);
             }
         }
         for (String line : _lines) {

@@ -1,5 +1,8 @@
 package top.zeimao77.product.fileio.oexcel;
 
+import top.zeimao77.product.converter.AbstractNonReFreshConverter;
+import top.zeimao77.product.util.BeanUtil;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -61,13 +64,32 @@ public class TableCodeConfigBuilder{
         return this;
     }
 
+    public TableCodeConfigBuilder converter(int index, Table.Converter converter) {
+        for (Table.Column column : this.columnList) {
+            if(index == column.getIndex()) {
+                column.setConverter(converter);
+                break;
+            }
+        }
+        return this;
+    }
+
     public TableCodeConfigBuilder converter(int index, String defaultName, Map<String,Object> ruleMap) {
         for (Table.Column column : this.columnList) {
             if(index == column.getIndex()) {
-                Table.Converter converter = new Table.Converter();
-                converter.setDefaultValue(defaultName);
-                converter.setRule(ruleMap);
-                column.setConverter(converter);
+                AbstractNonReFreshConverter<String> converter = new AbstractNonReFreshConverter(ruleMap) {
+                    @Override
+                    protected void refresh() {}
+
+                    @Override
+                    public Object defaultName(Object key) {
+                        return defaultName;
+                    }
+                };
+                column.setConverter((o1,o2) -> {
+                    Object property = BeanUtil.getProperty(o2, o1.getField());
+                    return converter.getName(property.toString());
+                });
                 break;
             }
         }

@@ -3,6 +3,7 @@ package top.zeimao77.product.mysql;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import top.zeimao77.product.main.BaseMain;
+import top.zeimao77.product.sql.Dbtype;
 import top.zeimao77.product.sql.OnlyPrintReposit;
 import top.zeimao77.product.sql.Reposit;
 import top.zeimao77.product.sql.SelectCond;
@@ -19,6 +20,7 @@ class SimpleRepositoryTest extends BaseMain {
 
         public DemoRepository(Reposit repositoryImpl) {
             super(repositoryImpl, "demo", new String[]{"demoId"}, null, null);
+            setDbType(Dbtype.ORACLE);
         }
 
         @Override

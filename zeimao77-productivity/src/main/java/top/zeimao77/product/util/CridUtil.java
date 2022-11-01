@@ -1,7 +1,5 @@
 package top.zeimao77.product.util;
 
-import top.zeimao77.product.util.LocalDateTimeUtil;
-
 import java.time.LocalDate;
 
 public class CridUtil {
@@ -9,7 +7,7 @@ public class CridUtil {
     public static final int[] SCORE = {7,9,10,5,8,4,2,1,6,3,7,9,10,5,8,4,2};
     public static final char[] CODE = {'1','0','X','9','8','7','6','5','4','3','2'};
 
-    public static boolean matchesCheckCode(String id) {
+    public static char calcCheckCode(String id) {
         int s = 0;
         for (int i = 0; i < 17; i++) {
             int numericValue = Character.getNumericValue(id.charAt(i));
@@ -17,7 +15,17 @@ public class CridUtil {
         }
         s %= 11;
         char cc = CODE[s];
-        return cc == id.charAt(17);
+        return cc;
+    }
+
+    public static Long removeCheckCode(String id) {
+        AssertUtil.assertTrue(matchesCheckCode(id),"身份证号码错误");
+        Long aLong = Long.valueOf(id.substring(0, 17));
+        return aLong;
+    }
+
+    public static boolean matchesCheckCode(String id) {
+        return calcCheckCode(id) == id.charAt(17);
     }
 
     public static String getRegion(String id) {

@@ -1,12 +1,22 @@
 package top.zeimao77.product.fileio.oexcel;
 
+import top.zeimao77.product.util.BeanUtil;
+import top.zeimao77.product.util.CalendarDateUtil;
+import top.zeimao77.product.util.LocalDateTimeUtil;
+
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 public class Table {
 
     private String tableName;
     private String id;
+    /**
+     * 通过select指定如何获取数据 接口/Select查表
+     * 再加上入参就可以获取参数了
+     */
     private String select;
     private List<Column> columnList;
 
@@ -20,35 +30,62 @@ public class Table {
         this.id = id;
     }
 
-    public static class Converter{
-        private String converterId;
-        private String defaultValue;
-        private Map<String,Object> rule;
+    public interface Converter {
+        Object getPrintValue(Column column,Object line);
+    }
 
-        public String getConverterId() {
-            return converterId;
+    public static final Converter DATETIMECONVERTER = (o1,o2) -> {
+        Object v = BeanUtil.getProperty(o2,o1.getField());
+        if(v instanceof Date) {
+            Date d = (Date) v;
+            return CalendarDateUtil.toDateTime(d);
         }
-
-        public void setConverterId(String converterId) {
-            this.converterId = converterId;
+        if(v instanceof Timestamp) {
+            Timestamp d = (Timestamp) v;
+            return LocalDateTimeUtil.toDateTime(d.toLocalDateTime());
         }
-
-        public String getDefaultValue() {
-            return defaultValue;
+        if(v instanceof java.sql.Date) {
+            java.sql.Date d = (java.sql.Date) v;
+            return LocalDateTimeUtil.toDateTime(d.toLocalDate());
         }
-
-        public void setDefaultValue(String defaultValue) {
-            this.defaultValue = defaultValue;
+        if(v instanceof LocalDateTime) {
+            LocalDateTime d = (LocalDateTime) v;
+            return LocalDateTimeUtil.toDateTime(d);
         }
+        return v;
+    };
 
-        public Map<String, Object> getRule() {
-            return rule;
+    public static final Converter DATECONVERTER = (o1,o2) -> {
+        Object v = BeanUtil.getProperty(o2,o1.getField());
+        if(v instanceof Date) {
+            Date d = (Date) v;
+            return CalendarDateUtil.toDate(d);
         }
+        if(v instanceof Timestamp ) {
+            Timestamp d = (Timestamp) v;
+            return LocalDateTimeUtil.toDate(d.toLocalDateTime());
+        }
+        if(v instanceof java.sql.Date) {
+            java.sql.Date d = (java.sql.Date) v;
+            return LocalDateTimeUtil.toDate(d.toLocalDate());
+        }
+        if(v instanceof LocalDateTime) {
+            LocalDateTime d = (LocalDateTime) v;
+            return LocalDateTimeUtil.toDate(d);
+        }
+        return v;
+    };
 
-        public void setRule(Map<String, Object> rule) {
-            this.rule = rule;
+    public static class MapperConverter implements Converter {
+
+        @Override
+        public Object getPrintValue(Column column, Object line) {
+            Object v = BeanUtil.getProperty(line,column.getField());
+            return v;
         }
     }
+
+
 
     public static class Column {
         private String title;

@@ -33,10 +33,11 @@ public class ComponentFactory {
      * @param prefx 前缀
      * @return SQL客户端工厂对象
      */
-    public static SimpleSqlFacroty initSimpleSqlFacroty(String prefx) {
+    public static SimpleSqlTemplate initSimpleSqlTemplate(String prefx,BeanFactory beanFactory) {
         DataSource dataSource = createDataSource(prefx);
-        SimpleSqlFacroty simpleSqlFacroty = new SimpleSqlFacroty(dataSource);
-        BeanFactory.DEFAULT.registerSingleton(prefx,simpleSqlFacroty);
+        SimpleSqlTemplate simpleSqlFacroty = new SimpleSqlTemplate(dataSource);
+        if(beanFactory != null)
+            beanFactory.registerSingleton(prefx,simpleSqlFacroty);
         return simpleSqlFacroty;
     }
 
@@ -46,12 +47,13 @@ public class ComponentFactory {
      * @param prefx 前缀
      * @return SQL客户端
      */
-    public static SimpleSqlClient initSimpleSqlClient(String prefx) {
+    public static SimpleSqlClient initSimpleSqlClient(String prefx,BeanFactory beanFactory) {
         DataSource dataSource = createDataSource(prefx);
         DataSourceTransactionFactory dataSourceTransactionFactory = new DataSourceTransactionFactory(dataSource);
         SimpleSqlClient simpleSqlClient = new SimpleSqlClient(dataSourceTransactionFactory
                 , DefaultPreparedStatementSetter.INSTANCE, DefaultResultSetResolve.INSTANCE);
-        BeanFactory.DEFAULT.registerSingleton(prefx,simpleSqlClient);
+        if(beanFactory != null)
+            beanFactory.registerSingleton(prefx,simpleSqlClient);
         return simpleSqlClient;
     }
 
@@ -124,7 +126,7 @@ public class ComponentFactory {
      * @param prefx 前缀
      * @return JedisCluster实例
      */
-    public static JedisCluster createJedisCluster(String prefx) {
+    public static JedisCluster initJedisCluster(String prefx,BeanFactory beanFactory) {
         ArrayList<String> hps = LocalContext.get(prefx+"_host[%d]",6);
         String passoword = LocalContext.getString(prefx+"_passoword");
         String maxIdle = LocalContext.getString(prefx + "_maxIdle");
@@ -167,6 +169,8 @@ public class ComponentFactory {
         }
         jedisClusterBuilder.password(passoword);
         JedisCluster build = jedisClusterBuilder.build(poolConfig);
+        if(beanFactory != null)
+            beanFactory.registerSingleton(prefx,build);
         return build;
     }
 
@@ -179,12 +183,14 @@ public class ComponentFactory {
      * @param prefx 前缀
      * @return Jedis实例
      */
-    public static Jedis createJedis(String prefx) {
+    public static Jedis initJedis(String prefx,BeanFactory beanFactory) {
         String host = LocalContext.getString(prefx + "_host");
         String password = LocalContext.getString(prefx + "_password");
         Jedis build = JedisBuilder.create().host(HostAndPort.from(host))
                 .password(password)
                 .build();
+        if(build != null)
+            beanFactory.registerSingleton(prefx,build);
         return build;
     }
 
@@ -199,13 +205,15 @@ public class ComponentFactory {
      * @param prefx 前缀
      * @return SimpleEmailSender实例
      */
-    public static SimpleEmailSender createSimpleEmailSender(String prefx) {
+    public static SimpleEmailSender initSimpleEmailSender(String prefx,BeanFactory beanFactory) {
         String smtpHost = LocalContext.getString(prefx+"_smtpHost");
         String from = LocalContext.getString(prefx+"_from");
         String username = LocalContext.getString(prefx + "_username");
         String password = LocalContext.getString(prefx + "_password");
         SimpleEmailSender simpleEmailSender = new SimpleEmailSender(smtpHost, from);
         simpleEmailSender.authenticator(username,password);
+        if(beanFactory != null)
+            beanFactory.registerSingleton(prefx,beanFactory);
         return simpleEmailSender;
     }
 

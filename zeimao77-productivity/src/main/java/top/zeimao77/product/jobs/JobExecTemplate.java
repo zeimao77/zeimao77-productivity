@@ -2,9 +2,8 @@ package top.zeimao77.product.jobs;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import top.zeimao77.product.exception.BaseServiceRunException;
-import top.zeimao77.product.exception.ExceptionCodeDefinition;
 
+import java.util.Map;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -18,14 +17,30 @@ public abstract class JobExecTemplate<T extends IJob> implements JobExec{
 
     protected ArrayBlockingQueue<T> jobs;
     protected ExecutorService executorService;
-    // 状态
-    // 1:已准备好
-    // 2:正在运行中
-    // 3:没有更多任务了，将不会再调用moreJob()
-    // 4:运行结束停止
-    // 5:请求立即停止任务,我们会在处理完当前任务之后立即停止
+    protected JobExecHandler<T> jobExecHandler;
+    /**
+     * 任务处理的扩展参数
+     */
+    protected Map<String,Object> jobParam;
+    /**
+     * 1:已准备好
+     * @see JobExecTemplate#prepare()
+     * 2:正在运行中
+     * @see JobExecTemplate#start(int, long, TimeUnit)
+     * 3:没有更多任务了，将不会再调用moreJob()
+     * @see JobExecTemplate#moreJob(int)
+     * 4:运行结束停止
+     * @see JobExecTemplate#start(int, long, TimeUnit)
+     * 5:请求立即停止任务,我们会在处理完当前任务之后立即停止
+     * @see JobExecTemplate#setStatus(int)
+     */
     protected int status = 0;
 
+    /**
+     *
+     * @param executorService
+     * @param nMaxJobs 单次调用添加任务的最大任务数
+     */
     public JobExecTemplate(ExecutorService executorService,int nMaxJobs) {
         this.jobs = new ArrayBlockingQueue<>(nMaxJobs);
         this.executorService = executorService;
@@ -58,33 +73,17 @@ public abstract class JobExecTemplate<T extends IJob> implements JobExec{
     protected abstract void moreJob(int page);
 
     /**
-     * 处理任务
+     * 处理任务的实现
      * @param job 任务
-     * @return 其它值未知将不作处理
-     * @see JobExec#SUCCESSED  成功
-     * @see JobExec#FAILED 失败
      */
-    public abstract Result handle(T job);
+    public void handle(T job) {
+        jobExecHandler.handle(job,jobParam);
+    }
 
     /**
-     * 失败了，如果
-     * @see JobExecTemplate#handle(top.zeimao77.product.jobs.IJob)
-     * 处理失败，将调用此函数进行下一步处理
-     * @param job
+     * 开始任务 默认10天超时时间
+     * @param nThread 线程数
      */
-    public void failed(T job,Result result){
-        if(result.retrieable() && job.consume() > 0) {
-            logger.warn("任务(ID:{})处理失败，即将重新处理!",job.jobId());
-            addJob(job);
-        } else {
-            logger.warn("任务(ID:{})处理失败,失败原因:{},即将放弃处理!",job.jobId(),result.getResultMsg());
-        }
-    }
-
-    public void successed(T job) {
-        logger.info("任务(ID:{})处理成功",job.jobId());
-    }
-
     public void start(int nThread) {
         start(nThread,240,TimeUnit.HOURS);
     }
@@ -109,7 +108,7 @@ public abstract class JobExecTemplate<T extends IJob> implements JobExec{
                 while (status != 5) {
                     T job =jobs.poll();
                     if(job == null) {
-                        synchronized (JobExecTemplate.class) {
+                        synchronized (this) {
                             if(jobs.isEmpty() && 2 == status) {
                                 moreJob(page.getAndAdd(1));
                             }
@@ -120,22 +119,7 @@ public abstract class JobExecTemplate<T extends IJob> implements JobExec{
                         logger.debug("线程({})没有取到更多任务，即将退出",Thread.currentThread().getName());
                         break;
                     }
-                    try{
-                        Result handle = handle(job);
-                        if(handle == Result.SUCCESS || SUCCESSED == handle.getResultCode()) {
-                            successed(job);
-                        } else {
-                            failed(job,handle);
-                        }
-                    } catch (BaseServiceRunException e) {
-                        logger.error("任务处理异常",e);
-                        Result fail = Result.fail(e.getCode(), e.getMessage());
-                        failed(job,fail);
-                    }  catch (Exception e) {
-                        logger.error("任务处理异常",e);
-                        Result fail = Result.fail(ExceptionCodeDefinition.UNKNOWN,"未知的异常");
-                        failed(job,fail);
-                    }
+                    handle(job);
                 }
             });
         }
@@ -155,6 +139,22 @@ public abstract class JobExecTemplate<T extends IJob> implements JobExec{
         if(status != 5) {
             setStatus(4);
         }
+    }
+
+    public JobExecHandler<T> getJobExecHandler() {
+        return jobExecHandler;
+    }
+
+    public void setJobExecHandler(JobExecHandler<T> jobExecHandler) {
+        this.jobExecHandler = jobExecHandler;
+    }
+
+    public Map<String, Object> getJobParam() {
+        return jobParam;
+    }
+
+    public void setJobParam(Map<String, Object> jobParam) {
+        this.jobParam = jobParam;
     }
 
     /**

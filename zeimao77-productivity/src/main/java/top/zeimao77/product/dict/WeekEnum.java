@@ -1,6 +1,8 @@
 package top.zeimao77.product.dict;
 
 import top.zeimao77.product.exception.BaseServiceRunException;
+import static top.zeimao77.product.exception.ExceptionCodeDefinition.APPERR;
+
 
 public enum WeekEnum implements DictEnum {
 
@@ -51,7 +53,7 @@ public enum WeekEnum implements DictEnum {
                 return value;
             }
         }
-        throw new BaseServiceRunException("错误的星期");
+        throw new BaseServiceRunException(APPERR,"错误的星期");
     }
 
 }

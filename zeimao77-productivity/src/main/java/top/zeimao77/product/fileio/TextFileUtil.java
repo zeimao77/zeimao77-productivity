@@ -2,6 +2,10 @@ package top.zeimao77.product.fileio;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import top.zeimao77.product.exception.BaseServiceRunException;
+
+import static top.zeimao77.product.exception.ExceptionCodeDefinition.IOEXCEPTION;
+import static top.zeimao77.product.exception.ExceptionCodeDefinition.WRONG_SOURCE;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -55,9 +59,9 @@ public class TextFileUtil {
             reader.close();
             in.close();
         } catch (FileNotFoundException e) {
-            logger.error("文件未找到",e);
+            throw new BaseServiceRunException(WRONG_SOURCE,"文件未找到",e);
         } catch (IOException e) {
-            logger.error("读取文件失败",e);
+            throw new BaseServiceRunException(IOEXCEPTION,"IO错误",e);
         }
     }
 
@@ -65,7 +69,11 @@ public class TextFileUtil {
         lineConsumer(file,con,StandardCharsets.UTF_8);
     }
 
-    // 文本文件的行消费
+    /**
+     * 消费文件的第一行
+     * @param filePath 文本文件路径
+     * @param con 行消费函数
+     */
     public static void lineConsumer(String filePath, BiConsumer<Integer,String> con) {
         File file = new File(filePath);
         lineConsumer(file,con);

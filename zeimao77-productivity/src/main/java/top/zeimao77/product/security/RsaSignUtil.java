@@ -1,6 +1,7 @@
 package top.zeimao77.product.security;
 
 import top.zeimao77.product.exception.BaseServiceRunException;
+import static top.zeimao77.product.exception.ExceptionCodeDefinition.CUSTOM;
 import top.zeimao77.product.model.Pair;
 import top.zeimao77.product.util.AssertUtil;
 
@@ -53,13 +54,13 @@ public class RsaSignUtil {
             byte[] result = __signature.sign();
             return result;
         } catch (NoSuchAlgorithmException e) {
-            throw new BaseServiceRunException("签名错误");
+            throw new BaseServiceRunException(CUSTOM,"签名错误");
         } catch (SignatureException e) {
-            throw new BaseServiceRunException("签名错误");
+            throw new BaseServiceRunException(CUSTOM,"签名错误");
         } catch (InvalidKeyException e) {
-            throw new BaseServiceRunException("签名错误");
+            throw new BaseServiceRunException(CUSTOM,"签名错误");
         } catch (InvalidKeySpecException e) {
-            throw new BaseServiceRunException("签名错误");
+            throw new BaseServiceRunException(CUSTOM,"签名错误");
         }
     }
 
@@ -81,13 +82,13 @@ public class RsaSignUtil {
             boolean verify = __maches_signature.verify(sign);
             return verify;
         } catch (NoSuchAlgorithmException e) {
-            throw new BaseServiceRunException("验证错误",e);
+            throw new BaseServiceRunException(CUSTOM,"验证错误",e);
         } catch (InvalidKeyException e) {
-            throw new BaseServiceRunException("验证错误",e);
+            throw new BaseServiceRunException(CUSTOM,"验证错误",e);
         } catch (InvalidKeySpecException e) {
-            throw new BaseServiceRunException("验证错误",e);
+            throw new BaseServiceRunException(CUSTOM,"验证错误",e);
         } catch (SignatureException e) {
-            throw new BaseServiceRunException("验证错误",e);
+            throw new BaseServiceRunException(CUSTOM,"验证错误",e);
         }
     }
 
