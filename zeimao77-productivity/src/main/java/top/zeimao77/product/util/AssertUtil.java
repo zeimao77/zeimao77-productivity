@@ -33,9 +33,8 @@ public class AssertUtil {
      * @param message 消息
      */
     public static void assertTrue(boolean expression,Integer code,String message) {
-        if(!expression) {
+        if(!expression)
             throw new BaseServiceRunException(code,message);
-        }
     }
 
     /**
@@ -99,9 +98,8 @@ public class AssertUtil {
      * @param message 异常信息
      */
     public static void notEmpty(Object obj,String message) {
-        if(isEmpty(obj)) {
+        if(isEmpty(obj))
             throw new BaseServiceRunException(APPERR,message);
-        }
     }
 
     /**
@@ -110,9 +108,8 @@ public class AssertUtil {
      * @param message 异常信息
      */
     public static void notNull(Object obj,String message) {
-        if(obj == null) {
+        if(obj == null)
             throw new BaseServiceRunException(APPERR,message);
-        }
     }
 
 }

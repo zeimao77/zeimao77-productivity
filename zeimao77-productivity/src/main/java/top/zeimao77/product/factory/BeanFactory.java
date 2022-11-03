@@ -1,5 +1,7 @@
 package top.zeimao77.product.factory;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import top.zeimao77.product.exception.BaseServiceRunException;
 import static top.zeimao77.product.exception.ExceptionCodeDefinition.WRONG_ACTION;
 import top.zeimao77.product.util.AssertUtil;
@@ -14,6 +16,7 @@ import java.util.function.Supplier;
  */
 public class BeanFactory {
 
+    private static Logger logger = LogManager.getLogger(BeanFactory.class);
     /**
      * 默认的BEAN工厂实现
      */
@@ -24,8 +27,7 @@ public class BeanFactory {
 
 
     public BeanFactory() {
-        singletonObjects = new ConcurrentHashMap<>(64);
-        prototypesFactory = new ConcurrentHashMap<>(16);
+        this(64,16);
     }
 
     public BeanFactory(int singletonSize,int prototypesSize) {
@@ -110,6 +112,32 @@ public class BeanFactory {
         T bean = getBean(beanName, requiredType);
         if(logOff != null)
             logOff.accept(bean);
+        if(logOff == null && bean instanceof AutoCloseable a) {
+            try {
+                a.close();
+            } catch (Exception e) {
+                logger.error("自动关闭错误",e);
+            }
+        }
+        this.singletonObjects.remove(beanName);
     }
+
+    /**
+     * 销毁工厂
+     * 如果单例Bean实现自 java.lang.AutoCloseable 将自动执行 close() 方法;
+     */
+    public void destory() {
+        this.singletonObjects.forEach((o1,o2) -> {
+            if(o2 instanceof AutoCloseable a) {
+                try {
+                    a.close();
+                } catch (Exception e) {
+                    logger.error("自动关闭错误",e);
+                }
+            }
+        });
+        this.singletonObjects.clear();
+    }
+
 
 }
