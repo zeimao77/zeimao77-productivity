@@ -12,6 +12,7 @@ class AbstractIntervalRefreshConverterTest extends BaseMain {
                 new AbstractIntervalRefreshConverter<ImmutablePair<Integer, Integer>>(3) {
             @Override
             protected void refresh() {
+                clear();
                 addConvRule(1, 200, "A1200");
                 addConvRule(2, 300, "B2300");
                 addConvRule(3, 400, "C3400");

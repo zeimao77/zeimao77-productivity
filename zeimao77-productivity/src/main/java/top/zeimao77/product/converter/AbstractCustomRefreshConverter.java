@@ -8,7 +8,6 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
-import java.util.HashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
@@ -29,7 +28,7 @@ public abstract class AbstractCustomRefreshConverter<K> implements IConverter<K>
     /**
      * 规则缓存
      */
-    protected HashMap<K,Object> convRuleMap = new HashMap<>();
+    protected RuleRepository<K> ruleRepository = new MemoryRuleRepository<>();
 
     /**
      * 设置过期时间
@@ -55,7 +54,7 @@ public abstract class AbstractCustomRefreshConverter<K> implements IConverter<K>
      * @param value 值
      */
     protected void addConvRule(K key, Object value) {
-        this.convRuleMap.put(key,value);
+        this.ruleRepository.put(key,value);
     }
 
     /**
@@ -68,8 +67,8 @@ public abstract class AbstractCustomRefreshConverter<K> implements IConverter<K>
     public Object get(K key) {
         refreshRule();
         Object resultValue = defaultName(key);
-        if (this.convRuleMap.containsKey(key)) {
-            resultValue = this.convRuleMap.get(key);
+        if (this.ruleRepository.containsKey(key)) {
+            resultValue = this.ruleRepository.get(key);
         }
         return resultValue;
     }
@@ -80,11 +79,11 @@ public abstract class AbstractCustomRefreshConverter<K> implements IConverter<K>
     @Override
     public void refreshRule() {
         long between = ChronoUnit.SECONDS.between(LocalDateTime.now(), expiryTime);
-        if(convRuleMap.isEmpty() || between <= 0) {
+        if(ruleRepository.isEmpty() || between <= 0) {
             lock.lock();
             try {
                 between = ChronoUnit.SECONDS.between(LocalDateTime.now(), expiryTime);
-                if(convRuleMap.isEmpty() || between <= 0) {
+                if(ruleRepository.isEmpty() || between <= 0) {
                     refresh();
                 }
             } finally {
@@ -112,5 +111,17 @@ public abstract class AbstractCustomRefreshConverter<K> implements IConverter<K>
      */
     public LocalDateTime getExpiryTime() {
         return expiryTime;
+    }
+
+    public void clear() {
+        this.ruleRepository.clear();
+    }
+
+    public RuleRepository<K> getRuleRepository() {
+        return ruleRepository;
+    }
+
+    public void setRuleRepository(RuleRepository<K> ruleRepository) {
+        this.ruleRepository = ruleRepository;
     }
 }

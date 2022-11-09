@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.config.plugins.util.PluginManager;
 import top.zeimao77.product.config.LocalContext;
 import top.zeimao77.product.exception.BaseServiceRunException;
+
 import static top.zeimao77.product.exception.ExceptionCodeDefinition.WRONG_SOURCE;
 import static top.zeimao77.product.exception.ExceptionCodeDefinition.IOEXCEPTION;
 
@@ -36,7 +37,7 @@ public class BaseMain {
     private static void initLocalContext(){
         String localContextFile = getPropertyOrEnv("local.context.file",null);
         String localContextActive = getPropertyOrEnv("local.context.active",null);
-        String contextFile = null;
+        String contextFile;
         if(localContextFile != null && localContextFile.endsWith(".properties")) {
             contextFile = localContextFile;
         } else if(localContextActive != null) {
@@ -52,12 +53,12 @@ public class BaseMain {
             } catch (FileNotFoundException e) {
                 throw new BaseServiceRunException(WRONG_SOURCE,"文件不存在",e);
             } catch (IOException e) {
-                logger.error("IO错误",e);
+                throw new BaseServiceRunException(IOEXCEPTION,"IO错误",e);
             }
             return;
         }
         {
-            InputStream resourceAsStream = null;
+            InputStream resourceAsStream;
             if(localContextActive == null) {
                 resourceAsStream = BaseMain.class.getClassLoader().getResourceAsStream("localcontext.properties");
                 if(resourceAsStream != null)
