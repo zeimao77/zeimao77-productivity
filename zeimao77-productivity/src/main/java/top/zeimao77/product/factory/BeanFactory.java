@@ -87,7 +87,7 @@ public class BeanFactory {
     }
 
     /**
-     * 对通类型获取一个单例BEAN对象
+     * 通过类型获取一个单例BEAN对象
      * @param requiredType BEAN类型
      * @param <T> BEAN泛型
      * @return BEAN对象
@@ -105,14 +105,22 @@ public class BeanFactory {
      * 注销一个BEAN
      * @param beanName BEAN名称
      * @param requiredType BEAN类型
-     * @param logOff 注册后置调用
+     * @param logOff 注销后调用
      * @param <T> BEAN泛型
      */
     public <T> void logOffSingleton(String beanName, Class<T> requiredType, Consumer<T> logOff) {
         T bean = getBean(beanName, requiredType);
-        if(logOff != null)
+        if(logOff == null) {
+            logOffSingleton(beanName,requiredType);
+        } else {
             logOff.accept(bean);
-        if(logOff == null && bean instanceof AutoCloseable a) {
+            this.singletonObjects.remove(beanName);
+        }
+    }
+
+    public <T> void logOffSingleton(String beanName, Class<T> requiredType) {
+        T bean = getBean(beanName, requiredType);
+        if(bean instanceof AutoCloseable a) {
             try {
                 a.close();
             } catch (Exception e) {
