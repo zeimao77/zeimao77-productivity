@@ -1,5 +1,7 @@
 package top.zeimao77.product.util;
 
+import top.zeimao77.product.exception.BaseServiceRunException;
+
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
@@ -25,7 +27,7 @@ public class ParamValidateUtil {
             Object obj = map.get(key);
             if (obj instanceof Map o) {
                 mapRemoveEmpty(o);
-                if (AssertUtil.isEmpty(o)) {
+                if (o.isEmpty()) {
                     ite.remove();
                 }
             } else if(obj instanceof Collection o) {
@@ -52,6 +54,7 @@ public class ParamValidateUtil {
         }
     }
 
+    static Pattern paramCheckPattern = Pattern.compile("(\\S+?)\\.(.*)");
     /**
      * 检查map参数
      * @param map 需要检查的map
@@ -59,25 +62,34 @@ public class ParamValidateUtil {
      */
     public static void mapCheck(Map<String, Object> map,String check){
         AssertUtil.notEmpty(map,"参数空");
-        Pattern pattern = Pattern.compile("(\\S+?)\\.(.*)");
-        Matcher matcher = pattern.matcher(check);
+        Matcher matcher = paramCheckPattern.matcher(check);
         if(matcher.matches()) {
             String c1 = matcher.group(1);
             String c2 = matcher.group(2);
             Object o = map.get(c1);
-            AssertUtil.assertTrue(!AssertUtil.isEmpty(o),APPERR,"参数 %s 空或是无效参数,该参数必需",c1);
             if(o instanceof Map m){
+                AssertUtil.assertTrue(!m.isEmpty(),APPERR,"参数 %s 空或是无效参数,该参数必需",c1);
                 mapCheck(m,c2);
             } else if(o instanceof Collection o1) {
                 for (Object o2 : o1) {
-                    if(o2 instanceof Map){
+                    if(o2 instanceof Map)
                         mapCheck(((Map) o2),c2);
-                    }
+                    else
+                        throw new BaseServiceRunException(APPERR,"参数 " + c1 + " 检查错误,不支持的类型");
                 }
+            } else if(o == null) {
+                throw new BaseServiceRunException(APPERR,"参数 " + c1 + " 空或是无效参数,该参数必需");
+            } else {
+                throw new BaseServiceRunException(APPERR,"参数 " + c1 + " 检查错误,不支持的类型");
             }
         } else {
             Object o = map.get(check);
-            AssertUtil.assertTrue(!AssertUtil.isEmpty(o),APPERR,"参数 %s 空或是无效参数,该参数必需",check);
+            if(o instanceof Map m)
+                AssertUtil.assertTrue(!m.isEmpty(),APPERR,"参数 %s 空或是无效参数,该参数必需",check);
+            else if(o instanceof Collection c)
+                AssertUtil.assertTrue(!c.isEmpty(),APPERR,"参数 %s 空或是无效参数,该参数必需",check);
+            else
+                AssertUtil.assertTrue(!AssertUtil.isEmpty(o),"参数 %s 空或是无效参数,该参数必需",check);
         }
     }
 
