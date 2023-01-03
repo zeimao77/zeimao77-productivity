@@ -2,7 +2,11 @@ package top.zeimao77.product.fileio.serialize;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import top.zeimao77.product.exception.BaseServiceRunException;
+import top.zeimao77.product.exception.ExceptionCodeDefinition;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -68,7 +72,9 @@ public class SerializeWriter {
         } else if(obj instanceof Map t) {
             writeMap(t);
         }
+        throw new BaseServiceRunException(ExceptionCodeDefinition.WRONG_ACTION,"不支持的操作");
     }
+
 
     public void writeBytes(byte[] bs) {
         if(bs == null)
@@ -241,5 +247,12 @@ public class SerializeWriter {
         return Arrays.copyOfRange(byteBuffer.array(), 0, byteBuffer.position());
     }
 
+    public void write(OutputStream os) {
+        try {
+            os.write(byteBuffer.array(),0,byteBuffer.position());
+        } catch (IOException e) {
+            throw new BaseServiceRunException(ExceptionCodeDefinition.IOEXCEPTION,"IO错误",e);
+        }
+    }
 
 }

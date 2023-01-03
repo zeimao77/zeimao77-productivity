@@ -2,6 +2,8 @@ package top.zeimao77.product.fileio.serialize;
 
 import top.zeimao77.product.exception.BaseServiceRunException;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -19,6 +21,14 @@ public class SerializeReader {
 
     public SerializeReader(ByteBuffer byteBuffer){
         this.byteBuffer = byteBuffer;
+    }
+
+    public SerializeReader(InputStream is) {
+        try {
+            byteBuffer = ByteBuffer.wrap(is.readAllBytes());
+        } catch (IOException e) {
+            throw new BaseServiceRunException(WRONG_ACTION,"读取错误");
+        }
     }
 
     public SerializeReader(byte[] bs) {
