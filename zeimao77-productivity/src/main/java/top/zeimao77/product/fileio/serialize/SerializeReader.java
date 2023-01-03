@@ -9,10 +9,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static top.zeimao77.product.exception.ExceptionCodeDefinition.WRONG_ACTION;
 
@@ -172,6 +169,42 @@ public class SerializeReader {
         throw new BaseServiceRunException(WRONG_ACTION,"读取错误,非日期时间类型:" + b);
     }
 
+    private void readList(int size,Collection<Object> coll) {
+        for (int i = 0; i < size; i++) {
+            switch (nextType()) {
+                case NULL -> coll.add(null);
+                case STRING -> coll.add(nextString());
+                case BOOL -> coll.add(nextBool());
+                case INT32 -> coll.add(nextInt32());
+                case INT64 -> coll.add(nextInt64());
+                case DOUBLE -> coll.add(nextDouble());
+                case SHORT -> coll.add(nextShort());
+                case FLOAT -> coll.add(nextFloat());
+                case CHAR -> coll.add(nextChar());
+                case DATE -> coll.add(nextDate());
+                case TIME -> coll.add(nextTime());
+                case DATETIME -> coll.add(nextDateTime());
+                case ARRAY -> coll.add(nextList());
+                case SET -> coll.add(nextSet());
+                case BYTES -> coll.add(nextBytes());
+                case MAP -> coll.add(nextMap());
+            }
+        }
+    }
+
+    public HashSet<Object> nextSet() {
+        byte b = byteBuffer.get();
+        if(b == Type.NULL.getTypeValue())
+            return null;
+        else if(b == Type.ARRAY.getTypeValue() || b == Type.SET.getTypeValue()) {
+            int size = byteBuffer.getInt();
+            HashSet<Object> res = new HashSet<>(size);
+            readList(size,res);
+            return res;
+        }
+        throw new BaseServiceRunException(WRONG_ACTION,"读取错误,非日期时间类型:" + b);
+    }
+
     public List<Object> nextList() {
         byte b = byteBuffer.get();
         if(b == Type.NULL.getTypeValue())
@@ -179,23 +212,7 @@ public class SerializeReader {
         else if(b == Type.ARRAY.getTypeValue() || b == Type.SET.getTypeValue()) {
             int size = byteBuffer.getInt();
             ArrayList<Object> res = new ArrayList<>(size);
-            for (int i = 0; i < size; i++) {
-                switch (nextType()) {
-                    case STRING -> res.add(nextString());
-                    case BOOL -> res.add(nextBool());
-                    case INT32 -> res.add(nextInt32());
-                    case INT64 -> res.add(nextInt64());
-                    case DOUBLE -> res.add(nextDouble());
-                    case SHORT -> res.add(nextShort());
-                    case FLOAT -> res.add(nextFloat());
-                    case CHAR -> res.add(nextChar());
-                    case DATE -> res.add(nextDate());
-                    case TIME -> res.add(nextTime());
-                    case DATETIME -> res.add(nextDateTime());
-                    case ARRAY -> res.add(nextList());
-                    case BYTES -> res.add(nextBytes());
-                }
-            }
+            readList(size,res);
             return res;
         }
         throw new BaseServiceRunException(WRONG_ACTION,"读取错误,非日期时间类型:" + b);
@@ -224,7 +241,7 @@ public class SerializeReader {
                     case TIME -> res.put(key,nextTime());
                     case DATETIME -> res.put(key,nextDateTime());
                     case ARRAY -> res.put(key,nextList());
-                    case SET -> res.put(key,nextList());
+                    case SET -> res.put(key,nextSet());
                     case BYTES -> res.put(key,nextBytes());
                     case MAP -> res.put(key,nextMap());
                 }
