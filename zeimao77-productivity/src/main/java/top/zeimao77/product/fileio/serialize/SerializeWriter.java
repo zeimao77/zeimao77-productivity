@@ -36,9 +36,9 @@ public class SerializeWriter {
     public void write(LocalDate d) { writeDate(d);}
     public void write(LocalTime t) { writeTime(t);}
     public void write(LocalDateTime d) { writeDateTime( d);}
-    public void write(Map<String,Object> m) {}
-    public void write(Set<Object> s) {}
-    public void write(List<Object> l) {}
+    public void write(Map<String,Object> m) { writeMap( m);}
+    public void write(Set<Object> s) { writeList(s);}
+    public void write(List<Object> l) { writeList(l);}
 
     public void writeObject(Object obj) {
         if(obj == null)
