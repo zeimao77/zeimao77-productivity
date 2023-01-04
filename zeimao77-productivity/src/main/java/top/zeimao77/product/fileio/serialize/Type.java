@@ -15,18 +15,14 @@ public enum Type {
     ,TIME(0x0B)
     ,DATE(0x0C)
     ,DATETIME(0x0D)
+    ,ZIPSTRING(0x0E)
     ,ARRAY(0x11)
     ,SET(0x12)
     ,MAP(0x13)
+    ,DECIMAL(0x14)
 
-    ,CUS1(0xA1)
-    ,CUS2(0xA2)
-    ,CUS3(0xA3)
-    ,CUS4(0xA4)
-    ,CUS5(0xA5)
-    ,CUS6(0xA6)
+    ,CUS1(0xA1);
 
-    ;
     private byte typeValue;
 
     Type(int typeValue) {
