@@ -2,6 +2,7 @@ package top.zeimao77.product.fileio.serialize;
 
 public enum Type {
 
+    // 基本数据类型
     NULL(0x01)
     ,BYTES(0x02)
     ,CHAR(0x03)
@@ -12,16 +13,19 @@ public enum Type {
     ,INT64(0x08)
     ,DOUBLE(0x09)
     ,STRING(0x0A)
-    ,TIME(0x0B)
-    ,DATE(0x0C)
-    ,DATETIME(0x0D)
-    ,ZIPSTRING(0x0E)
-    ,ARRAY(0x11)
-    ,SET(0x12)
-    ,MAP(0x13)
-    ,DECIMAL(0x14)
+    ,ARRAY(0x0B)
+    ,MAP(0x0C)
+    ,SET(0x0D)
 
-    ,CUS1(0xA1);
+    // 扩展数据类型
+    ,ZIPSTRING(0x11)
+    ,TIME(0x12)
+    ,DATE(0x13)
+    ,DATETIME(0x14)
+    ,DECIMAL(0x16)
+
+    // 自定义数据类型 建议的区间从0x70开始 0x00-0x6F建议先保留;
+    ,CUS1(0x71);
 
     private byte typeValue;
 

@@ -15,6 +15,8 @@ import java.time.LocalTime;
 import java.time.ZoneOffset;
 import java.util.*;
 
+import static top.zeimao77.product.fileio.serialize.Type.*;
+
 public class SerializeUtil {
 
     public interface DataSerialize<T> {
@@ -43,18 +45,18 @@ public class SerializeUtil {
 
         @Override
         public boolean canRead(byte type) {
-            return Type.NULL.getTypeValue() == type || Type.MAP.getTypeValue() == type;
+            return NULL.getTypeValue() == type || MAP.getTypeValue() == type;
         }
 
         @Override
         public boolean canWrite(Object t,byte type) {
-            return (t instanceof String) && (Type.STRING.getTypeValue() == type);
+            return (t instanceof String) && (STRING.getTypeValue() == type);
         }
 
         @Override
         public String read(ByteBuffer byteBuffer) {
             byte b = byteBuffer.get();
-            if(b == Type.STRING.getTypeValue()) {
+            if(b == STRING.getTypeValue()) {
                 int anInt = byteBuffer.getInt();
                 byte[] bs = new byte[anInt];
                 byteBuffer.get(bs,0,anInt);
@@ -66,9 +68,9 @@ public class SerializeUtil {
         @Override
         public void write(ByteBuffer byteBuffer, String val) {
             if(val == null)
-                byteBuffer.put(Type.NULL.getTypeValue());
+                byteBuffer.put(NULL.getTypeValue());
             else {
-                byteBuffer.put(Type.STRING.getTypeValue());
+                byteBuffer.put(STRING.getTypeValue());
                 byte[] bytes = val.getBytes(charset);
                 byteBuffer.putInt(bytes.length);
                 byteBuffer.put(bytes);
@@ -77,19 +79,19 @@ public class SerializeUtil {
     }
     public static class ZipStringDataSerialize implements DataSerialize<String> {
 
-        private Charset byteset;
+        private Charset charset;
 
-        public ZipStringDataSerialize(Charset byteset) {
-            this.byteset = byteset;
+        public ZipStringDataSerialize(Charset charset) {
+            this.charset = charset;
         }
 
         public ZipStringDataSerialize() {
-            this.byteset = StandardCharsets.UTF_8;
+            this.charset = StandardCharsets.UTF_8;
         }
 
         @Override
         public boolean canRead(byte type) {
-            return Type.NULL.getTypeValue() == type || Type.ZIPSTRING.getTypeValue() == type;
+            return NULL.getTypeValue() == type || ZIPSTRING.getTypeValue() == type;
         }
 
         @Override
@@ -100,12 +102,12 @@ public class SerializeUtil {
         @Override
         public String read(ByteBuffer byteBuffer) {
             byte b = byteBuffer.get();
-            if(b == Type.ZIPSTRING.getTypeValue()) {
+            if(b == ZIPSTRING.getTypeValue()) {
                 int anInt = byteBuffer.getInt();
                 byte[] bs = new byte[anInt];
                 byteBuffer.get(bs,0,anInt);
                 byte[] zipDecode = ByteArrayCoDesUtil.zipDecode(bs);
-                return new String(zipDecode,byteset);
+                return new String(zipDecode, charset);
             }
             return null;
         }
@@ -113,11 +115,11 @@ public class SerializeUtil {
         @Override
         public void write(ByteBuffer byteBuffer, String val) {
             if(val == null)
-                byteBuffer.put(Type.NULL.getTypeValue());
+                byteBuffer.put(NULL.getTypeValue());
             else {
-                byteBuffer.put(Type.ZIPSTRING.getTypeValue());
-                byte[] bytes = val.getBytes(byteset);
-                byte[] zipDecode = ByteArrayCoDesUtil.zipDecode(bytes);
+                byteBuffer.put(ZIPSTRING.getTypeValue());
+                byte[] bytes = val.getBytes(charset);
+                byte[] zipDecode = ByteArrayCoDesUtil.zipEncode(bytes);
                 byteBuffer.putInt(zipDecode.length);
                 byteBuffer.put(zipDecode);
             }
@@ -137,8 +139,8 @@ public class SerializeUtil {
 
         @Override
         public boolean canRead(byte type) {
-            return Type.NULL.getTypeValue() == type || Type.STRING.getTypeValue() == type
-                    || Type.ZIPSTRING.getTypeValue() == type;
+            return NULL.getTypeValue() == type || STRING.getTypeValue() == type
+                    || ZIPSTRING.getTypeValue() == type;
         }
 
         @Override
@@ -149,7 +151,7 @@ public class SerializeUtil {
         @Override
         public String read(ByteBuffer byteBuffer) {
             byte b = nextType(byteBuffer);
-            if (b == Type.STRING.getTypeValue()) {
+            if (b == STRING.getTypeValue()) {
                 if(stringDataSerialize == null)
                     stringDataSerialize = new StringDataSerialize(charset);
                 return stringDataSerialize.read(byteBuffer);
@@ -188,7 +190,7 @@ public class SerializeUtil {
 
         @Override
         public boolean canRead(byte type) {
-            return Type.NULL.getTypeValue() == type || Type.MAP.getTypeValue() == type;
+            return NULL.getTypeValue() == type || MAP.getTypeValue() == type;
         }
 
         @Override
@@ -199,7 +201,7 @@ public class SerializeUtil {
         @Override
         public Map<String, Object> read(ByteBuffer byteBuffer) {
             byte b = byteBuffer.get();
-            if(b == Type.MAP.getTypeValue()) {
+            if(b == MAP.getTypeValue()) {
                 int size = byteBuffer.getInt();
                 HashMap<String, Object> res = new HashMap<>(size);
                 for (int i = 0; i < size; i++) {
@@ -215,9 +217,9 @@ public class SerializeUtil {
         @Override
         public void write(ByteBuffer byteBuffer, Map<String,Object> val) {
             if(val == null)
-                byteBuffer.put(Type.NULL.getTypeValue());
+                byteBuffer.put(NULL.getTypeValue());
             else {
-                byteBuffer.put(Type.MAP.getTypeValue());
+                byteBuffer.put(MAP.getTypeValue());
                 byteBuffer.putInt(val.size());
                 for (String key : val.keySet()) {
                     AUTOSTRING_DATA_SERIALIZE.write(byteBuffer,key);
@@ -241,7 +243,7 @@ public class SerializeUtil {
 
         @Override
         public boolean canRead(byte type) {
-            return Type.NULL.getTypeValue() == type || Type.ARRAY.getTypeValue() == type;
+            return NULL.getTypeValue() == type || ARRAY.getTypeValue() == type;
         }
 
         @Override
@@ -252,7 +254,7 @@ public class SerializeUtil {
         @Override
         public List<Object> read(ByteBuffer byteBuffer) {
             byte b = byteBuffer.get();
-            if(b == Type.ARRAY.getTypeValue()) {
+            if(b == ARRAY.getTypeValue()) {
                 int size = byteBuffer.getInt();
                 ArrayList<Object> res = new ArrayList<>(size);
                 for (int i = 0; i < size; i++) {
@@ -266,9 +268,9 @@ public class SerializeUtil {
         @Override
         public void write(ByteBuffer byteBuffer, List<Object> val) {
             if(val == null)
-                byteBuffer.put(Type.NULL.getTypeValue());
+                byteBuffer.put(NULL.getTypeValue());
             else {
-                byteBuffer.put(Type.ARRAY.getTypeValue());
+                byteBuffer.put(ARRAY.getTypeValue());
                 byteBuffer.putInt(val.size());
                 for (Object o : val) {
                     serialize.write(byteBuffer,o);
@@ -290,7 +292,7 @@ public class SerializeUtil {
 
         @Override
         public boolean canRead(byte type) {
-            return Type.NULL.getTypeValue() == type || Type.ARRAY.getTypeValue() == type;
+            return NULL.getTypeValue() == type || ARRAY.getTypeValue() == type;
         }
 
         @Override
@@ -301,7 +303,7 @@ public class SerializeUtil {
         @Override
         public Set<Object> read(ByteBuffer byteBuffer) {
             byte b = byteBuffer.get();
-            if(b == Type.ARRAY.getTypeValue() || b == Type.SET.getTypeValue()) {
+            if(b == ARRAY.getTypeValue() || b == SET.getTypeValue()) {
                 int size = byteBuffer.getInt();
                 HashSet<Object> res = new HashSet<>(size);
                 for (int i = 0; i < size; i++) {
@@ -315,9 +317,9 @@ public class SerializeUtil {
         @Override
         public void write(ByteBuffer byteBuffer, Set<Object> val) {
             if(val == null)
-                byteBuffer.put(Type.NULL.getTypeValue());
+                byteBuffer.put(NULL.getTypeValue());
             else {
-                byteBuffer.put(Type.SET.getTypeValue());
+                byteBuffer.put(SET.getTypeValue());
                 byteBuffer.putInt(val.size());
                 for (Object o : val) {
                     serialize.write(byteBuffer,o);
@@ -340,39 +342,40 @@ public class SerializeUtil {
         @Override
         public Object read(ByteBuffer byteBuffer) {
             byte b = nextType(byteBuffer);
-            switch (b) {
-                case 0x01:
+            Type type = parse(b);
+            switch (type) {
+                case NULL:
                     return VOID_DATA_SERIALIZER.read(byteBuffer);
-                case 0x02:
+                case BYTES:
                     return BYTES_DATA_SERIALIZE.read(byteBuffer);
-                case 0x03:
+                case CHAR:
                     return CHARACTER_DATA_SERIALIZE.read(byteBuffer);
-                case 0x04:
+                case SHORT:
                     return SHORT_DATA_SERIALIZE.read(byteBuffer);
-                case 0x05:
+                case BOOL:
                     return BOOLEAN_DATA_SERIALIZE.read(byteBuffer);
-                case 0x06:
+                case INT32:
                     return INTEGER_DATA_SERIALIZE.read(byteBuffer);
-                case 0x07:
+                case FLOAT:
                     return FLOAT_DATA_SERIALIZE.read(byteBuffer);
-                case 0x08:
+                case INT64:
                     return LONG_DATA_SERIALIZE.read(byteBuffer);
-                case 0x09:
+                case DOUBLE:
                     return DOUBLE_DATA_SERIALIZE.read(byteBuffer);
-                case 0x0A:
-                case 0x0E:
+                case STRING:
+                case ZIPSTRING:
                     return AUTOSTRING_DATA_SERIALIZE.read(byteBuffer);
-                case 0x0B:
+                case TIME:
                     return LOCAL_TIME_DATA_SERIALIZE.read(byteBuffer);
-                case 0x0C:
+                case DATE:
                     return LOCAL_DATE_DATA_SERIALIZE.read(byteBuffer);
-                case 0x0D:
+                case DATETIME:
                     return LOCAL_DATE_TIME_DATA_SERIALIZE.read(byteBuffer);
-                case 0x11:
+                case ARRAY:
                     return LIST_DATA_SERIALIZE.read(byteBuffer);
-                case 0x012:
+                case SET:
                     return SET_DATA_SERIALIZE.read(byteBuffer);
-                case 0x13:
+                case MAP:
                     return MAP_DATA_SERIALIZE.read(byteBuffer);
             }
             return null;
@@ -382,7 +385,7 @@ public class SerializeUtil {
         public void write(ByteBuffer byteBuffer, Object o) {
             if(o == null)
                 VOID_DATA_SERIALIZER.write(byteBuffer,null);
-            else if(BYTES_DATA_SERIALIZE.canWrite(byteBuffer,Type.BYTES.getTypeValue()))
+            else if(BYTES_DATA_SERIALIZE.canWrite(byteBuffer, BYTES.getTypeValue()))
                 BYTES_DATA_SERIALIZE.write(byteBuffer,(byte[])o);
             else if(o instanceof Character t)
                 CHARACTER_DATA_SERIALIZE.write(byteBuffer,t);
@@ -420,7 +423,7 @@ public class SerializeUtil {
     public static final DataSerialize<Integer> INTEGER_DATA_SERIALIZE = new DataSerialize<>() {
         @Override
         public boolean canRead(byte type) {
-            return Type.NULL.getTypeValue() == type || Type.INT32.getTypeValue() == type;
+            return NULL.getTypeValue() == type || INT32.getTypeValue() == type;
         }
 
         @Override
@@ -431,7 +434,7 @@ public class SerializeUtil {
         @Override
         public Integer read(ByteBuffer byteBuffer) {
             byte b = byteBuffer.get();
-            if (b == Type.INT32.getTypeValue())
+            if (b == INT32.getTypeValue())
                 return byteBuffer.getInt();
             return null;
         }
@@ -439,9 +442,9 @@ public class SerializeUtil {
         @Override
         public void write(ByteBuffer byteBuffer, Integer val) {
             if(val == null)
-                byteBuffer.put(Type.NULL.getTypeValue());
+                byteBuffer.put(NULL.getTypeValue());
             else {
-                byteBuffer.put(Type.INT32.getTypeValue());
+                byteBuffer.put(INT32.getTypeValue());
                 byteBuffer.putInt(val);
             }
         }
@@ -449,7 +452,7 @@ public class SerializeUtil {
     public static final DataSerialize<Long> LONG_DATA_SERIALIZE = new DataSerialize<>() {
         @Override
         public boolean canRead(byte type) {
-            return Type.NULL.getTypeValue() == type || Type.INT64.getTypeValue() == type;
+            return NULL.getTypeValue() == type || INT64.getTypeValue() == type;
         }
 
         @Override
@@ -460,7 +463,7 @@ public class SerializeUtil {
         @Override
         public Long read(ByteBuffer byteBuffer) {
             byte b = byteBuffer.get();
-            if(b == Type.INT64.getTypeValue())
+            if(b == INT64.getTypeValue())
                 return byteBuffer.getLong();
             return null;
         }
@@ -468,9 +471,9 @@ public class SerializeUtil {
         @Override
         public void write(ByteBuffer byteBuffer, Long val) {
             if(val == null)
-                byteBuffer.put(Type.NULL.getTypeValue());
+                byteBuffer.put(NULL.getTypeValue());
             else {
-                byteBuffer.put(Type.INT64.getTypeValue());
+                byteBuffer.put(INT64.getTypeValue());
                 byteBuffer.putLong(val);
             }
         }
@@ -478,7 +481,7 @@ public class SerializeUtil {
     public static final DataSerialize<Boolean> BOOLEAN_DATA_SERIALIZE = new DataSerialize<>() {
         @Override
         public boolean canRead(byte type) {
-            return Type.NULL.getTypeValue() == type || Type.BOOL.getTypeValue() == type;
+            return NULL.getTypeValue() == type || BOOL.getTypeValue() == type;
         }
 
         @Override
@@ -489,7 +492,7 @@ public class SerializeUtil {
         @Override
         public Boolean read(ByteBuffer byteBuffer) {
             byte b = byteBuffer.get();
-            if(b == Type.BOOL.getTypeValue()) {
+            if(b == BOOL.getTypeValue()) {
                 byte bool = byteBuffer.get();
                 return bool == 0x00 ? false : true;
             }
@@ -499,9 +502,9 @@ public class SerializeUtil {
         @Override
         public void write(ByteBuffer byteBuffer, Boolean val) {
             if(val == null)
-                byteBuffer.put(Type.NULL.getTypeValue());
+                byteBuffer.put(NULL.getTypeValue());
             else {
-                byteBuffer.put(Type.BOOL.getTypeValue());
+                byteBuffer.put(BOOL.getTypeValue());
                 byteBuffer.put(val ? (byte) 0x01 : (byte) 0x00);
             }
         }
@@ -509,7 +512,7 @@ public class SerializeUtil {
     public static final DataSerialize<Double> DOUBLE_DATA_SERIALIZE = new DataSerialize<>() {
         @Override
         public boolean canRead(byte type) {
-            return Type.NULL.getTypeValue() == type || Type.DOUBLE.getTypeValue() == type;
+            return NULL.getTypeValue() == type || DOUBLE.getTypeValue() == type;
         }
 
         @Override
@@ -520,7 +523,7 @@ public class SerializeUtil {
         @Override
         public Double read(ByteBuffer byteBuffer) {
             byte b = byteBuffer.get();
-            if(b == Type.DOUBLE.getTypeValue())
+            if(b == DOUBLE.getTypeValue())
                 return byteBuffer.getDouble();
             return null;
         }
@@ -528,9 +531,9 @@ public class SerializeUtil {
         @Override
         public void write(ByteBuffer byteBuffer, Double val) {
             if(val == null)
-                byteBuffer.put(Type.NULL.getTypeValue());
+                byteBuffer.put(NULL.getTypeValue());
             else {
-                byteBuffer.put(Type.DOUBLE.getTypeValue());
+                byteBuffer.put(DOUBLE.getTypeValue());
                 byteBuffer.putDouble(val);
             }
         }
@@ -538,7 +541,7 @@ public class SerializeUtil {
     public static final DataSerialize<LocalTime> LOCAL_TIME_DATA_SERIALIZE = new DataSerialize<>() {
         @Override
         public boolean canRead(byte type) {
-            return Type.NULL.getTypeValue() == type || Type.TIME.getTypeValue() == type;
+            return NULL.getTypeValue() == type || TIME.getTypeValue() == type;
         }
 
         @Override
@@ -549,7 +552,7 @@ public class SerializeUtil {
         @Override
         public LocalTime read(ByteBuffer byteBuffer) {
             byte b = byteBuffer.get();
-            if(b == Type.TIME.getTypeValue()) {
+            if(b == TIME.getTypeValue()) {
                 int anInt = byteBuffer.getInt();
                 LocalTime localTime = LocalTime.ofSecondOfDay(anInt);
                 return localTime;
@@ -560,9 +563,9 @@ public class SerializeUtil {
         @Override
         public void write(ByteBuffer byteBuffer, LocalTime val) {
             if(val == null)
-                byteBuffer.put(Type.NULL.getTypeValue());
+                byteBuffer.put(NULL.getTypeValue());
             else {
-                byteBuffer.put(Type.TIME.getTypeValue());
+                byteBuffer.put(TIME.getTypeValue());
                 int i = val.toSecondOfDay();
                 byteBuffer.putInt(i);
             }
@@ -571,7 +574,7 @@ public class SerializeUtil {
     public static final DataSerialize<LocalDate> LOCAL_DATE_DATA_SERIALIZE = new DataSerialize<>() {
         @Override
         public boolean canRead(byte type) {
-            return Type.NULL.getTypeValue() == type || Type.DATE.getTypeValue() == type;
+            return NULL.getTypeValue() == type || DATE.getTypeValue() == type;
         }
 
         @Override
@@ -582,7 +585,7 @@ public class SerializeUtil {
         @Override
         public LocalDate read(ByteBuffer byteBuffer) {
             byte b = byteBuffer.get();
-            if(b == Type.DATE.getTypeValue()) {
+            if(b == DATE.getTypeValue()) {
                 long aLong = byteBuffer.getLong();
                 LocalDate localDate = LocalDate.ofEpochDay(aLong);
                 return localDate;
@@ -593,9 +596,9 @@ public class SerializeUtil {
         @Override
         public void write(ByteBuffer byteBuffer, LocalDate val) {
             if(val == null)
-                byteBuffer.put(Type.NULL.getTypeValue());
+                byteBuffer.put(NULL.getTypeValue());
             else {
-                byteBuffer.put(Type.DATE.getTypeValue());
+                byteBuffer.put(DATE.getTypeValue());
                 long i = val.toEpochDay();
                 byteBuffer.putLong(i);
             }
@@ -604,7 +607,7 @@ public class SerializeUtil {
     public static final DataSerialize<Short> SHORT_DATA_SERIALIZE = new DataSerialize<>() {
         @Override
         public boolean canRead(byte type) {
-            return Type.NULL.getTypeValue() == type || Type.SHORT.getTypeValue() == type;
+            return NULL.getTypeValue() == type || SHORT.getTypeValue() == type;
         }
 
         @Override
@@ -615,7 +618,7 @@ public class SerializeUtil {
         @Override
         public Short read(ByteBuffer byteBuffer) {
             byte b = byteBuffer.get();
-            if(b == Type.SHORT.getTypeValue())
+            if(b == SHORT.getTypeValue())
                 return byteBuffer.getShort();
             return null;
         }
@@ -623,9 +626,9 @@ public class SerializeUtil {
         @Override
         public void write(ByteBuffer byteBuffer, Short val) {
             if(val == null)
-                byteBuffer.put(Type.NULL.getTypeValue());
+                byteBuffer.put(NULL.getTypeValue());
             else {
-                byteBuffer.put(Type.SHORT.getTypeValue());
+                byteBuffer.put(SHORT.getTypeValue());
                 byteBuffer.putShort(val);
             }
         }
@@ -633,7 +636,7 @@ public class SerializeUtil {
     public static final DataSerialize<Float> FLOAT_DATA_SERIALIZE = new DataSerialize<>() {
         @Override
         public boolean canRead(byte type) {
-            return Type.NULL.getTypeValue() == type || Type.FLOAT.getTypeValue() == type;
+            return NULL.getTypeValue() == type || FLOAT.getTypeValue() == type;
         }
 
         @Override
@@ -644,7 +647,7 @@ public class SerializeUtil {
         @Override
         public Float read(ByteBuffer byteBuffer) {
             byte b = byteBuffer.get();
-            if(b == Type.FLOAT.getTypeValue()) {
+            if(b == FLOAT.getTypeValue()) {
                 return byteBuffer.getFloat();
             }
             return null;
@@ -653,9 +656,9 @@ public class SerializeUtil {
         @Override
         public void write(ByteBuffer byteBuffer, Float val) {
             if(val == null)
-                byteBuffer.put(Type.NULL.getTypeValue());
+                byteBuffer.put(NULL.getTypeValue());
             else {
-                byteBuffer.put(Type.FLOAT.getTypeValue());
+                byteBuffer.put(FLOAT.getTypeValue());
                 byteBuffer.putFloat(val);
             }
         }
@@ -663,7 +666,7 @@ public class SerializeUtil {
     public static final DataSerialize<LocalDateTime> LOCAL_DATE_TIME_DATA_SERIALIZE = new DataSerialize<>() {
         @Override
         public boolean canRead(byte type) {
-            return Type.NULL.getTypeValue() == type || Type.DATETIME.getTypeValue() == type;
+            return NULL.getTypeValue() == type || DATETIME.getTypeValue() == type;
         }
 
         @Override
@@ -674,7 +677,7 @@ public class SerializeUtil {
         @Override
         public LocalDateTime read(ByteBuffer byteBuffer) {
             byte b = byteBuffer.get();
-            if(b == Type.DATETIME.getTypeValue()) {
+            if(b == DATETIME.getTypeValue()) {
                 long aLong = byteBuffer.getLong();
                 LocalDateTime localDateTime = LocalDateTime.ofEpochSecond(aLong, 0, ZoneOffset.UTC);
                 return localDateTime;
@@ -685,9 +688,9 @@ public class SerializeUtil {
         @Override
         public void write(ByteBuffer byteBuffer, LocalDateTime val) {
             if(val == null)
-                byteBuffer.put(Type.NULL.getTypeValue());
+                byteBuffer.put(NULL.getTypeValue());
             else {
-                byteBuffer.put(Type.DATETIME.getTypeValue());
+                byteBuffer.put(DATETIME.getTypeValue());
                 long l = val.toEpochSecond(ZoneOffset.UTC);
                 byteBuffer.putLong(l);
             }
@@ -696,7 +699,7 @@ public class SerializeUtil {
     public static final DataSerialize<Character> CHARACTER_DATA_SERIALIZE = new DataSerialize<>() {
         @Override
         public boolean canRead(byte type) {
-            return Type.NULL.getTypeValue() == type || Type.CHAR.getTypeValue() == type;
+            return NULL.getTypeValue() == type || CHAR.getTypeValue() == type;
         }
 
         @Override
@@ -707,7 +710,7 @@ public class SerializeUtil {
         @Override
         public Character read(ByteBuffer byteBuffer) {
             byte b = byteBuffer.get();
-            if(b == Type.CHAR.getTypeValue()) {
+            if(b == CHAR.getTypeValue()) {
                 return byteBuffer.getChar();
             }
             return null;
@@ -716,9 +719,9 @@ public class SerializeUtil {
         @Override
         public void write(ByteBuffer byteBuffer, Character val) {
             if(val == null)
-                byteBuffer.put(Type.NULL.getTypeValue());
+                byteBuffer.put(NULL.getTypeValue());
             else {
-                byteBuffer.put(Type.CHAR.getTypeValue());
+                byteBuffer.put(CHAR.getTypeValue());
                 byteBuffer.putChar(val);
             }
         }
@@ -726,7 +729,7 @@ public class SerializeUtil {
     public static final DataSerialize<byte[]> BYTES_DATA_SERIALIZE = new DataSerialize<>() {
         @Override
         public boolean canRead(byte type) {
-            return Type.NULL.getTypeValue() == type || Type.BYTES.getTypeValue() == type;
+            return NULL.getTypeValue() == type || BYTES.getTypeValue() == type;
         }
 
         @Override
@@ -737,7 +740,7 @@ public class SerializeUtil {
         @Override
         public byte[] read(ByteBuffer byteBuffer) {
             byte b = byteBuffer.get();
-            if(b == Type.BYTES.getTypeValue()) {
+            if(b == BYTES.getTypeValue()) {
                 int length = byteBuffer.getInt();
                 byte[] res = new byte[length];
                 byteBuffer.get(res,0,length);
@@ -749,9 +752,9 @@ public class SerializeUtil {
         @Override
         public void write(ByteBuffer byteBuffer, byte[] val) {
             if(val == null)
-                byteBuffer.put(Type.NULL.getTypeValue());
+                byteBuffer.put(NULL.getTypeValue());
             else {
-                byteBuffer.put(Type.BYTES.getTypeValue());
+                byteBuffer.put(BYTES.getTypeValue());
                 byteBuffer.putInt(val.length);
                 byteBuffer.put(val,0,val.length);
             }
@@ -761,7 +764,7 @@ public class SerializeUtil {
 
         @Override
         public boolean canRead(byte type) {
-            return Type.NULL.getTypeValue() == type;
+            return NULL.getTypeValue() == type;
         }
 
         @Override
@@ -777,7 +780,7 @@ public class SerializeUtil {
 
         @Override
         public void write(ByteBuffer byteBuffer, Void unused) {
-            byteBuffer.put(Type.NULL.getTypeValue());
+            byteBuffer.put(NULL.getTypeValue());
         }
     };
     public static final DataSerialize<Set<Object>> SET_DATA_SERIALIZE = new SetDataSerialize();
@@ -786,7 +789,7 @@ public class SerializeUtil {
     public static final DataSerialize<BigDecimal> BIGDECIMAL_DATA_SERIALIZE = new DataSerialize<>() {
         @Override
         public boolean canRead(byte type) {
-            return Type.NULL.getTypeValue() == type || Type.DECIMAL.getTypeValue() == type;
+            return NULL.getTypeValue() == type || DECIMAL.getTypeValue() == type;
         }
 
         @Override
@@ -797,7 +800,7 @@ public class SerializeUtil {
         @Override
         public BigDecimal read(ByteBuffer byteBuffer) {
             byte b = byteBuffer.get();
-            if(Type.DECIMAL.getTypeValue() == b) {
+            if(DECIMAL.getTypeValue() == b) {
                 short scale = byteBuffer.getShort();
                 short length = byteBuffer.getShort();
                 byte[] bs = new byte[length];
@@ -812,11 +815,11 @@ public class SerializeUtil {
         @Override
         public void write(ByteBuffer byteBuffer, BigDecimal val) {
             if(val == null) {
-                byteBuffer.put(Type.NULL.getTypeValue());
+                byteBuffer.put(NULL.getTypeValue());
                 return;
             }
             short scale = (short) val.scale();
-            byteBuffer.put(Type.DECIMAL.getTypeValue());
+            byteBuffer.put(DECIMAL.getTypeValue());
             byteBuffer.putShort(scale);
             try {
                 Field intVal = BigDecimal.class.getDeclaredField("intVal");

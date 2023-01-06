@@ -24,8 +24,17 @@ public class SerializeWriter {
         this.byteBuffer = byteBuffer;
     }
 
+    /**
+     * 由于自身不支持扩容
+     * 容量的分配要特别注意分配充足
+     * @param capacity
+     */
+    public SerializeWriter(int capacity) {
+        byteBuffer = ByteBuffer.allocate(capacity);
+    }
+
     public SerializeWriter() {
-        byteBuffer = ByteBuffer.allocate(512);
+        byteBuffer = ByteBuffer.allocate(1024);
     }
 
     public <T> void writeNext(SerializeUtil.DataSerialize<T> dataSerialize,T t,byte type){
@@ -109,6 +118,10 @@ public class SerializeWriter {
         } catch (IOException e) {
             throw new BaseServiceRunException(ExceptionCodeDefinition.IOEXCEPTION,"IO错误",e);
         }
+    }
+
+    public int size() {
+        return byteBuffer.position();
     }
 
 }
