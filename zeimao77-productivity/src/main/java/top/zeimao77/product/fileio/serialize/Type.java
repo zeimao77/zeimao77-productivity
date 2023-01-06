@@ -1,5 +1,7 @@
 package top.zeimao77.product.fileio.serialize;
 
+import top.zeimao77.product.exception.BaseServiceRunException;
+
 public enum Type {
 
     // 基本数据类型
@@ -22,7 +24,7 @@ public enum Type {
     ,TIME(0x12)
     ,DATE(0x13)
     ,DATETIME(0x14)
-    ,DECIMAL(0x16)
+    ,DECIMAL(0x15)
 
     // 自定义数据类型 建议的区间从0x70开始 0x00-0x6F建议先保留;
     ,CUS1(0x71);
@@ -60,19 +62,23 @@ public enum Type {
             case 0x0A:
                 return STRING;
             case 0x0B:
-                return TIME;
-            case 0x0C:
-                return DATE;
-            case 0x0D:
-                return DATETIME;
-            case 0x11:
                 return ARRAY;
-            case 0x12:
-                return SET;
-            case 0x013:
+            case 0x0C:
                 return MAP;
+            case 0x0D:
+                return SET;
+            case 0x11:
+                return ZIPSTRING;
+            case 0x12:
+                return TIME;
+            case 0x13:
+                return DATE;
+            case 0x14:
+                return DATETIME;
+            case 0x15:
+                return DECIMAL;
             default:
-                return NULL;
+                throw new BaseServiceRunException("不能识别的自定义类型");
         }
     }
 
