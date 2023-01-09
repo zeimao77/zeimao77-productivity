@@ -10,9 +10,6 @@ repositories {
     maven {
         url 'https://maven.aliyun.com/nexus/content/groups/public'
     }
-    maven {
-        url publishing_maven_aliyun_url
-    }
     mavenCentral()
 }
 
