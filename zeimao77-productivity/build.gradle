@@ -94,10 +94,11 @@ dependencies {
 
 }
 
+
 jar {
     manifest {
         attributes("Created-By":"Gradle("+this.gradle.gradleVersion+")")
-        attributes("Build-Jdk-Spec": "17")
+        attributes("Build-Jdk-Spec": this.targetCompatibility)
     }
 }
 
