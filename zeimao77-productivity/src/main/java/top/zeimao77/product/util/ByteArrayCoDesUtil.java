@@ -89,9 +89,14 @@ public class ByteArrayCoDesUtil {
      * @return 检验码
      */
     public static int checkCode(byte[] bs) {
-        int i = 0;
+        return checkCode(bs,0,bs.length);
+    }
+
+    public static int checkCode(byte[] bs,int start,int end) {
         byte result = 0x00;
-        for (byte b : bs) {
+        int i = 0x00;
+        for(int j = start;j<end;j++) {
+            byte b = bs[i];
             i = (result ^ b) & 0x07;
             result ^= ((b >> (8 - i) | (b << i)));
         }
@@ -99,11 +104,7 @@ public class ByteArrayCoDesUtil {
     }
 
     public static boolean matchesCheckCode(byte[] bs,int checkCode) {
-        int i = checkCode(bs);
-        if(i == checkCode) {
-            return true;
-        }
-        return false;
+        return checkCode == checkCode(bs);
     }
 
     /**

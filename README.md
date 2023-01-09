@@ -133,10 +133,10 @@ docker run -d -v /home/docker/app-main/libs:/home/user0 -w /home/user0 openjdk:1
 ### <a id="5ad276d9-622e-4383-a552-0a15e71d0239">日志</a>
 
 `BaseMain`提供了log4j2的日志支持，您可以使用环境变量或者命令行参数来简单配置它;
-- `log.level` : 日志级别,缺省为DEBUG;
+- `log.level` : 日志级别,缺省为`DEBUG`;
 - `log.file` : 指定日志文件路径以开启文件日志功能;
-- `log.rolling` : TRUE:开启滚动日志，缺少为FALSE;
-- `log.rolloverStrategyMax` : 最多保留几个历史日志,缺省值10;
+- `log.rolling` : TRUE:开启滚动日志，缺省为`FALSE`;
+- `log.rolloverStrategyMax` : 最多保留几个历史日志,缺省值`10`;
 
 
 当然它仅仅是一个默认的实现，其优先值为3，如果您觉得它很烂完全可以自己通过`log4j2.xml`等文件重新配置,配置文件有较高的优先级;
@@ -198,6 +198,10 @@ docker run -d -v /home/docker/app-main/libs:/home/user0 -w /home/user0 openjdk:1
 ### JSON
 
 - [字符串与JSON](https://github.com/zeimao77/zeimao77-productivity/blob/master/zeimao77-productivity/src/test/java/top/zeimao77/product/json/IjsonTest.java)
+
+### 序列化
+
+- [自实现序列化](https://github.com/zeimao77/zeimao77-productivity/blob/master/zeimao77-productivity/src/test/java/top/zeimao77/product/fileio/serialize/SerializeUtilTest.java)
 
 ### 邮件
 

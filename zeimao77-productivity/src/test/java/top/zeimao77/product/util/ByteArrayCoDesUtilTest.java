@@ -53,4 +53,9 @@ class ByteArrayCoDesUtilTest extends BaseMain {
         byte[] bs2 = "hello world.".getBytes(StandardCharsets.UTF_8);
         logger.info("{}",ByteArrayCoDesUtil.matchesCheckCode(bs2,i));
     }
+
+    @Test
+    void toByteArray() {
+        logger.info(ByteArrayCoDesUtil.hexEncode(ByteArrayCoDesUtil.toByteArray(5.5D)));
+    }
 }

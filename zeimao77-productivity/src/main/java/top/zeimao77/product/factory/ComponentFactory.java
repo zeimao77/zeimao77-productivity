@@ -27,6 +27,8 @@ import java.util.ArrayList;
  */
 public class ComponentFactory {
 
+    public static final String AUTOBEAN_PREFIX = "$_";
+
     /**
      * 配置参考:
      * @see ComponentFactory#createDataSource(String)
@@ -35,6 +37,8 @@ public class ComponentFactory {
      */
     public static SimpleSqlTemplate initSimpleSqlTemplate(String prefx,BeanFactory beanFactory) {
         DataSource dataSource = createDataSource(prefx);
+        if(beanFactory != null)
+            beanFactory.registerSingleton(AUTOBEAN_PREFIX+"datasource_"+prefx,dataSource);
         SimpleSqlTemplate simpleSqlFacroty = new SimpleSqlTemplate(dataSource);
         if(beanFactory != null)
             beanFactory.registerSingleton(prefx,simpleSqlFacroty);
@@ -50,6 +54,8 @@ public class ComponentFactory {
     public static SimpleSqlClient initSimpleSqlClient(String prefx,BeanFactory beanFactory) {
         DataSource dataSource = createDataSource(prefx);
         DataSourceTransactionFactory dataSourceTransactionFactory = new DataSourceTransactionFactory(dataSource);
+        if(beanFactory != null)
+            beanFactory.registerSingleton(AUTOBEAN_PREFIX+"transactionFactory_"+prefx,dataSourceTransactionFactory);
         SimpleSqlClient simpleSqlClient = new SimpleSqlClient(dataSourceTransactionFactory
                 , DefaultPreparedStatementSetter.INSTANCE, DefaultResultSetResolve.INSTANCE);
         if(beanFactory != null)
@@ -126,6 +132,7 @@ public class ComponentFactory {
      * @param prefx 前缀
      * @return JedisCluster实例
      */
+
     public static JedisCluster initJedisCluster(String prefx,BeanFactory beanFactory) {
         ArrayList<String> hps = LocalContext.get(prefx+"_host[%d]",6);
         String passoword = LocalContext.getString(prefx+"_passoword");
@@ -168,10 +175,10 @@ public class ComponentFactory {
             jedisClusterBuilder.addNode(HostAndPort.from(hp));
         }
         jedisClusterBuilder.password(passoword);
-        JedisCluster build = jedisClusterBuilder.build(poolConfig);
+        JedisCluster cluster = jedisClusterBuilder.build(poolConfig);
         if(beanFactory != null)
-            beanFactory.registerSingleton(prefx,build);
-        return build;
+            beanFactory.registerSingleton(prefx,cluster);
+        return cluster;
     }
 
     /**
@@ -186,12 +193,12 @@ public class ComponentFactory {
     public static Jedis initJedis(String prefx,BeanFactory beanFactory) {
         String host = LocalContext.getString(prefx + "_host");
         String password = LocalContext.getString(prefx + "_password");
-        Jedis build = JedisBuilder.create().host(HostAndPort.from(host))
+        Jedis jedis = JedisBuilder.create().host(HostAndPort.from(host))
                 .password(password)
                 .build();
-        if(build != null)
-            beanFactory.registerSingleton(prefx,build);
-        return build;
+        if(jedis != null)
+            beanFactory.registerSingleton(prefx,jedis);
+        return jedis;
     }
 
     /**

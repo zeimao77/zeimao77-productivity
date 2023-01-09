@@ -14,4 +14,6 @@ public class Main extends BaseMain {
         logger.error(LongIdGenerator.INSTANCE.generate());
         logger.fatal(LongIdGenerator.INSTANCE.generate());
     }
+
+
 }

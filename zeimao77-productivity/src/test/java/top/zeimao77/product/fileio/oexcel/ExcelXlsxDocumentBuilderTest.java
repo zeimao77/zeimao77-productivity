@@ -31,7 +31,6 @@ class ExcelXlsxDocumentBuilderTest extends BaseMain {
                 .column(1,"uuid","uuid",36)
                 .column(2,"随机串","rstr",24)
                 .column(3,"订单状态","infState",12)
-
                 .build();
 
         /**

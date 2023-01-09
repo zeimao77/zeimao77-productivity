@@ -77,7 +77,8 @@ public abstract class JobExecTemplate<T extends IJob> implements JobExec{
      * @param job 任务
      */
     public void handle(T job) {
-        jobExecHandler.handle(job,jobParam);
+        if(jobExecHandler.support(job,jobParam))
+            jobExecHandler.handle(job,jobParam);
     }
 
     /**

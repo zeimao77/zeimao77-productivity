@@ -31,17 +31,12 @@ public class RandomVoter implements Voter<Void> {
 
     @Override
     public int vote(Void obj) {
-        if(this.seed == 1) {
+        if(this.seed == 1)
             return ACCESS_GRANTED;
-        }
-        if(this.seed == 0) {
+        if(this.seed == 0)
             return ACCESS_DENIED;
-        }
         int r = this.random.nextInt(1000000);
-        if(r < bound) {
-            return ACCESS_GRANTED;
-        }
-        return ACCESS_DENIED;
+        return r < bound ? ACCESS_GRANTED : ACCESS_DENIED;
     }
 
     public double getSeed() {

@@ -96,6 +96,13 @@ public class SQLLockImpl {
         return false;
     }
 
+    /**
+     * 续锁
+     * @param lockId 锁ID
+     * @param value
+     * @param expire 过期时间 秒数
+     * @return
+     */
     public boolean reLook(String lockId,String value,int expire) {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime expireTime = now.plusSeconds(expire);

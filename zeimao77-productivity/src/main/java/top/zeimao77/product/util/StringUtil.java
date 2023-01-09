@@ -5,6 +5,7 @@ package top.zeimao77.product.util;
  */
 public class StringUtil {
 
+    public static final String EMPTY_SUFFIX = "";
     public static final String DEFAULT_SUFFIX = "...";
 
     /**
@@ -16,8 +17,10 @@ public class StringUtil {
      * @return 截取后的字符串
      */
     public static String cut(String str,int len,String suffix) {
+        if(str == null)
+            return null;
         if(suffix == null)
-            suffix = DEFAULT_SUFFIX;
+            suffix = EMPTY_SUFFIX;
         len = len >= str.length() ? str.length() : len - suffix.length();
         String s = str.substring(0,len);
         if(len < str.length()) {

@@ -32,9 +32,8 @@ public class LongIdGenerator implements IdGenerator<Long>{
      * @param timeoffset 算法的时间偏移
      */
     public LongIdGenerator(final long macid,final long timeoffset) {
-        if(macid > 0x3F) {
+        if(macid > 0x3F)
             throw new NonRetryableRuntimeException(WRONG_SOURCE,"机器ID范围从0到63");
-        }
         this.macid = macid;
         this.timeoffset = timeoffset;
     }

@@ -9,9 +9,9 @@ import jakarta.mail.internet.MimeMultipart;
 import jakarta.mail.util.ByteArrayDataSource;
 import top.zeimao77.product.exception.BaseServiceRunException;
 
-import static top.zeimao77.product.exception.ExceptionCodeDefinition.APPERR;
 import static top.zeimao77.product.exception.ExceptionCodeDefinition.CUSTOM;
 import top.zeimao77.product.model.ImmutablePair;
+import top.zeimao77.product.util.AssertUtil;
 
 import java.util.List;
 import java.util.Properties;
@@ -62,9 +62,7 @@ public class SimpleEmailSender {
      * @param mail 邮件
      */
     public void send(Mail mail) {
-        if(session == null) {
-            throw new BaseServiceRunException(APPERR,"需要先调用authenticator(username,password)认证");
-        }
+        AssertUtil.notNull(session,"需要先调用authenticator(username,password)认证");
         final MimeMessage message = new MimeMessage(session);
         try {
             message.setFrom(new InternetAddress(from));

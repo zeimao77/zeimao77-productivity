@@ -99,7 +99,7 @@ public interface StatementParamResolver {
             } else if(String.class.isAssignableFrom(javaType)) {
                 String s = value.toString();
                 if(s.contains("'")) {
-                    execSqlBuilder.append(QUOTATION_MARKS).append(s.replaceAll("'","\'")).append(QUOTATION_MARKS);
+                    execSqlBuilder.append(QUOTATION_MARKS).append(s.replaceAll("'","\\\\'")).append(QUOTATION_MARKS);
                 } else {
                     execSqlBuilder.append(QUOTATION_MARKS).append(value).append(QUOTATION_MARKS);
                 }

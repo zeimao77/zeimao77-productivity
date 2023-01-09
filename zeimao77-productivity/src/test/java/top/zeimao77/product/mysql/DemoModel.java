@@ -86,7 +86,7 @@ public class DemoModel {
         public static DemoModel create() {
             DemoModel demoModel = new DemoModel();
             demoModel.setDemoId(LongIdGenerator.INSTANCE.generate());
-            demoModel.setDemoName(randomStringUtil.randomStr(6));
+            demoModel.setDemoName("asdf'asdf");
             demoModel.setCh(random.nextInt(127));
             demoModel.setBo(demoModel.getCh() % 2 == 1);
             demoModel.setCreatedTime(LocalDateTime.now());
