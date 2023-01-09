@@ -34,7 +34,7 @@ public class SerializeWriter {
     }
 
     public SerializeWriter() {
-        byteBuffer = ByteBuffer.allocate(1024);
+        this(1024);
     }
 
     public <T> void writeNext(SerializeUtil.DataSerialize<T> dataSerialize,T t,byte type){

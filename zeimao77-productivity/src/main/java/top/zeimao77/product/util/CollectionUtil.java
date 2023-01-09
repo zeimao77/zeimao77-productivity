@@ -1,5 +1,4 @@
 package top.zeimao77.product.util;
-
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -62,6 +61,19 @@ public class CollectionUtil {
         ThreadLocalRandom random = ThreadLocalRandom.current();
         int i = random.nextInt(list.size());
         return list.get(i);
+    }
+
+    public static <T> List<T> page(List<T> list,int pageNo,int pageSize) {
+        int start = (pageNo - 1) * pageSize;
+        if(start >= list.size())
+            return Collections.EMPTY_LIST;
+        int end = start + pageSize;
+        end = end > list.size() ? list.size() : end;
+        return list.subList(start,end);
+    }
+
+    public static int maxPage(int total,int pageSize) {
+        return total % pageSize == 0 ? (total / pageSize) : (total / pageSize) + 1;
     }
 
 }

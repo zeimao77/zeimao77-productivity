@@ -198,6 +198,9 @@ docker run -d -v /home/docker/app-main/libs:/home/user0 -w /home/user0 openjdk:1
 ### JSON
 
 - [字符串与JSON](https://github.com/zeimao77/zeimao77-productivity/blob/master/zeimao77-productivity/src/test/java/top/zeimao77/product/json/IjsonTest.java)
+
+### 序列化
+
 - [自实现序列化](https://github.com/zeimao77/zeimao77-productivity/blob/master/zeimao77-productivity/src/test/java/top/zeimao77/product/fileio/serialize/SerializeUtilTest.java)
 
 ### 邮件

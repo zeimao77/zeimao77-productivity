@@ -1,6 +1,8 @@
 package top.zeimao77.product.fileio.serialize;
 
 import sun.misc.Unsafe;
+import top.zeimao77.product.exception.BaseServiceRunException;
+import top.zeimao77.product.exception.ExceptionCodeDefinition;
 import top.zeimao77.product.util.ByteArrayCoDesUtil;
 
 import java.lang.reflect.Field;
@@ -27,6 +29,8 @@ public class SerializeUtil {
     }
 
     public static byte nextType(ByteBuffer byteBuffer) {
+        if(byteBuffer.position() >= byteBuffer.limit())
+            throw new BaseServiceRunException(ExceptionCodeDefinition.NOT_SUPPORTED,"没有更多可读取数据;");
         byteBuffer.mark();
         byte b = byteBuffer.get();
         byteBuffer.reset();

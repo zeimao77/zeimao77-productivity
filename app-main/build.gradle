@@ -10,6 +10,9 @@ repositories {
     maven {
         url 'https://maven.aliyun.com/nexus/content/groups/public'
     }
+    maven {
+        url publishing_maven_aliyun_url
+    }
     mavenCentral()
 }
 
@@ -20,7 +23,7 @@ tasks.withType(JavaCompile) {
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
-    implementation group: 'top.zeimao77',name:'zeimao77-productivity',version: '2.1.4'
+    implementation group: 'top.zeimao77',name:'zeimao77-productivity',version: '2.1.5'
     implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.18.0'
 }
 

@@ -22,11 +22,13 @@ public class SerializeReader {
         this.byteBuffer = byteBuffer;
     }
 
-    public SerializeReader(InputStream is) {
+    public SerializeReader() {}
+
+    public void load(InputStream is) {
         try {
             byteBuffer = ByteBuffer.wrap(is.readAllBytes());
         } catch (IOException e) {
-            throw new BaseServiceRunException(WRONG_ACTION,"读取错误");
+            throw new BaseServiceRunException(WRONG_ACTION,"读取错误",e);
         }
     }
 
