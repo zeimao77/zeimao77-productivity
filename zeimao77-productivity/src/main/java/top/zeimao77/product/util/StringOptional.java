@@ -1,0 +1,68 @@
+package top.zeimao77.product.util;
+
+import top.zeimao77.product.exception.BaseServiceRunException;
+import top.zeimao77.product.exception.ExceptionCodeDefinition;
+
+import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+
+public class StringOptional {
+
+    public static final Predicate<String> BLACK_CHECK = o -> !o.isEmpty();
+    public static final Predicate<String> TRIM_BLACK_CHECK = o -> !o.trim().isEmpty() ;
+
+    private final Predicate<String> check;
+    private final Optional<String> optional;
+
+    public StringOptional(String value){
+        this.optional = Optional.ofNullable(value);
+        this.check = TRIM_BLACK_CHECK;
+    }
+
+    public StringOptional(String value, Predicate<String> check){
+        this.optional = Optional.ofNullable(value);
+        this.check = check;
+    }
+
+    public boolean isBlack() {
+        return optional.filter(check).isEmpty();
+    }
+
+    public void ifNotBlack(Consumer<String> action) {
+        if (!isBlack())
+            action.accept(optional.get());
+    }
+
+    public String orBlackGet(String defaultValue) {
+        return isBlack() ? defaultValue : optional.get();
+    }
+
+    public String orBlackGet(Supplier<String> supplier) {
+        return isBlack() ? supplier.get() : optional.get();
+    }
+
+    public String ifBalckThrow(String fieldName) {
+        if(isBlack())
+            throw new BaseServiceRunException(ExceptionCodeDefinition.WRONG_SOURCE,fieldName + "参数为必需;");
+        return optional.get();
+    }
+
+    public <X extends Throwable> String ifBalckThrow(Supplier<? extends X> exceptionSupplier) throws X {
+        if (isBlack()) {
+            return optional.get();
+        } else {
+            throw exceptionSupplier.get();
+        }
+    }
+
+    public Optional<String> getOptional() {
+        return optional;
+    }
+
+    public String get() {
+        return optional.get();
+    }
+
+}
