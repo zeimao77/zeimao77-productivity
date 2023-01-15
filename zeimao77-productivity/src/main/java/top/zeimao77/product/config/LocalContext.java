@@ -81,6 +81,8 @@ public class LocalContext {
             Object value = LocalContext.get(key);
             if(AssertUtil.isNotEmpty(value)) {
                 resultList.add(value.toString());
+            } else {
+                break;
             }
         }
         return resultList;

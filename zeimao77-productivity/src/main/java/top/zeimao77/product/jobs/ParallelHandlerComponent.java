@@ -72,6 +72,14 @@ public class ParallelHandlerComponent<T extends IJob> extends JobExecHandler<T> 
         return executors;
     }
 
+    public void shutdown() {
+        this.executors.shutdown();
+    }
+
+    public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
+        return this.executors.awaitTermination(timeout,unit);
+    }
+
     @Override
     public void successed(T job, Map<String, Object> param, Result result) {}
 }
