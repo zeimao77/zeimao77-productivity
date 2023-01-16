@@ -10,10 +10,10 @@ import java.util.function.Supplier;
 
 public class StringOptional {
 
-    public static final Predicate<String> BLACK_CHECK = o -> !o.isEmpty();
     public static final Predicate<String> TRIM_BLACK_CHECK = o -> !o.trim().isEmpty() ;
+    public static final StringOptional EMPTY = new StringOptional(null);
 
-    private final Predicate<String> check;
+    private Predicate<String> check;
     private final Optional<String> optional;
 
     public StringOptional(String value){
@@ -21,9 +21,12 @@ public class StringOptional {
         this.check = TRIM_BLACK_CHECK;
     }
 
-    public StringOptional(String value, Predicate<String> check){
-        this.optional = Optional.ofNullable(value);
+    public void setCheck(Predicate<String> check) {
         this.check = check;
+    }
+
+    public static StringOptional empty() {
+        return EMPTY;
     }
 
     public boolean isBlack() {
@@ -43,13 +46,13 @@ public class StringOptional {
         return isBlack() ? supplier.get() : optional.get();
     }
 
-    public String ifBalckThrow(String fieldName) {
+    public String ifBlackThrow(String fieldName) {
         if(isBlack())
-            throw new BaseServiceRunException(ExceptionCodeDefinition.WRONG_SOURCE,fieldName + "参数为必需;");
+            throw new BaseServiceRunException(ExceptionCodeDefinition.WRONG_SOURCE,fieldName + "参数必需;");
         return optional.get();
     }
 
-    public <X extends Throwable> String ifBalckThrow(Supplier<? extends X> exceptionSupplier) throws X {
+    public <X extends Throwable> String ifBlackThrow(Supplier<? extends X> exceptionSupplier) throws X {
         if (isBlack()) {
             return optional.get();
         } else {
@@ -65,4 +68,8 @@ public class StringOptional {
         return optional.get();
     }
 
+    @Override
+    public String toString() {
+        return optional.isEmpty() ? null : optional.get();
+    }
 }
