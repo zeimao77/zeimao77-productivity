@@ -5,6 +5,7 @@ import static top.zeimao77.product.exception.ExceptionCodeDefinition.SQLEXCEPTIO
 
 import top.zeimao77.product.util.CalendarDateUtil;
 import top.zeimao77.product.util.LocalDateTimeUtil;
+import top.zeimao77.product.util.StringOptional;
 
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;
@@ -24,6 +25,8 @@ public class DefaultPreparedStatementSetter implements PreparedStatementSetter {
                 preparedStatement.setNull(index, Types.NULL);
             } else if(String.class.isAssignableFrom(javaType)) {
                 preparedStatement.setString(index, (String) value);
+            } else if(StringOptional.class.isAssignableFrom(javaType)) {
+                preparedStatement.setString(index,((StringOptional)value).isBlack() ? null : ((StringOptional)value).get());
             } else if(Integer.class.isAssignableFrom(javaType)) {
                 preparedStatement.setInt(index, ((Integer) value));
             } else if(Long.class.isAssignableFrom(javaType)) {

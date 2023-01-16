@@ -6,9 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
 import top.zeimao77.product.exception.BaseServiceRunException;
 import static top.zeimao77.product.exception.ExceptionCodeDefinition.APPERR;
-import top.zeimao77.product.util.CalendarDateUtil;
-import top.zeimao77.product.util.JsonBeanUtil;
-import top.zeimao77.product.util.LocalDateTimeUtil;
+
+import top.zeimao77.product.util.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -149,6 +148,10 @@ public class Ijson {
             case BOOLEAN -> String.valueOf(jsonNode1.asBoolean());
             default -> throw new BaseServiceRunException(APPERR,String.format("json字段类型错误:%s不可以转换对Str",jsonNode1.getNodeType().name()));
         };
+    }
+
+    public StringOptional getStringOptional(String fieldName) {
+        return new StringOptional(getString(fieldName));
     }
 
     /**

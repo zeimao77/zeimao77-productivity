@@ -7,6 +7,7 @@ import static top.zeimao77.product.exception.ExceptionCodeDefinition.*;
 import top.zeimao77.product.model.Orderd;
 import top.zeimao77.product.util.CalendarDateUtil;
 import top.zeimao77.product.util.LocalDateTimeUtil;
+import top.zeimao77.product.util.StringOptional;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -311,6 +312,19 @@ public class DefaultResultSetResolve implements ResultSetResolve {
             @Override
             public int orderd() {
                 return 2400;
+            }
+        });
+        resovers.add(new FiledTypeResover<StringOptional>() {
+
+            @Override
+            public StringOptional resove(Object obj) {
+                if(obj == null) return StringOptional.empty();
+                return new StringOptional(obj.toString());
+            }
+
+            @Override
+            public int orderd() {
+                return 2500;
             }
         });
         resovers.add(new FiledTypeResover<Object>() {
