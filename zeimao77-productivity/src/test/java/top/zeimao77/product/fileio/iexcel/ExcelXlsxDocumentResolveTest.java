@@ -5,6 +5,8 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import top.zeimao77.product.exception.BaseServiceRunException;
 import top.zeimao77.product.main.BaseMain;
 import top.zeimao77.product.util.JsonBeanUtil;
@@ -16,8 +18,13 @@ import java.util.Map;
 
 class ExcelXlsxDocumentResolveTest extends BaseMain {
 
+    private static Logger logger = LoggerFactory.getLogger(ExcelXlsxDocumentResolveTest.class);
+
     @Test
     void parse() throws IOException, InvalidFormatException {
+        // new BaseMain();
+        logger.info("------------------------------");
+
         /**
          * 构建表格模型
          */

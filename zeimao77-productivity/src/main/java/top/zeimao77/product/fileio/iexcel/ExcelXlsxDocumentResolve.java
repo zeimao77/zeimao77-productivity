@@ -2,7 +2,6 @@ package top.zeimao77.product.fileio.iexcel;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.poi.sl.draw.geom.GuideIf;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFFormulaEvaluator;
@@ -369,7 +368,7 @@ public class ExcelXlsxDocumentResolve<T> {
         }
     }
 
-     public void parseCell(int rowNo, Table.Column column, Cell cell, T t) {
+    public void parseCell(int rowNo, Table.Column column, Cell cell, T t) {
         if(cell == null)
             return;
         Class<?> propertyType = BeanUtil.getPropertyType(t, column.getField());
@@ -467,6 +466,14 @@ public class ExcelXlsxDocumentResolve<T> {
         return t;
     }
 
+    /**
+     * excel解析到model
+     * @param workbook 工作簿
+     * @param table 表描述
+     * @param clazz MODEL类
+     * @param resultList 返回列表
+     * @param errorMsgList 错误信息列表
+     */
     public void parse(SXSSFWorkbook workbook, Table table, Class<T> clazz, ArrayList<T> resultList,ArrayList<ErrorMsg> errorMsgList) {
         if(!sorted) {
             synchronized (this) {
@@ -487,6 +494,13 @@ public class ExcelXlsxDocumentResolve<T> {
         }
     }
 
+    /**
+     * 解析excel到map
+     * @param workbook 工作簿
+     * @param table 表描述
+     * @param resultList 返回列表
+     * @param errorMsgList 错误信息列表
+     */
     public void parseMap(SXSSFWorkbook workbook, Table table,ArrayList<Map<String,Object>> resultList,ArrayList<ErrorMsg> errorMsgList) {
         if(!sorted) {
             synchronized (this) {
