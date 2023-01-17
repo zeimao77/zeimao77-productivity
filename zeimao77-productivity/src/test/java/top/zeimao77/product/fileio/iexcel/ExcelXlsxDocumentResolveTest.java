@@ -5,6 +5,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Test;
+import top.zeimao77.product.exception.BaseServiceRunException;
 import top.zeimao77.product.main.BaseMain;
 import top.zeimao77.product.util.JsonBeanUtil;
 
@@ -25,7 +26,7 @@ class ExcelXlsxDocumentResolveTest extends BaseMain {
                 .column(1,"uuid",String.class)
                 .column(2,"rstr",String.class)
                 .build();
-        ExcelXlsxDocumentResolve<Object> objectExcelXlsxDocumentResolve = new ExcelXlsxDocumentResolve<>();
+        ExcelXlsxDocumentResolve<Object> objectExcelXlsxDocumentResolve = new ExcelXlsxDocumentResolve<>(false);
         File file = new File("C:\\Users\\zeimao77\\Desktop\\test.xlsx");
         SXSSFWorkbook workbook = new SXSSFWorkbook(new XSSFWorkbook(file));
 
@@ -43,10 +44,19 @@ class ExcelXlsxDocumentResolveTest extends BaseMain {
          * 解析到Map
          */
         ArrayList<Map<String,Object>> list = new ArrayList<>(64);
-        objectExcelXlsxDocumentResolve.parseMap(workbook,table,list);
+        ArrayList<ErrorMsg> errorMsgs = new ArrayList<>();
+        try {
+            objectExcelXlsxDocumentResolve.parseMap(workbook,table,null,errorMsgs);
+        }catch (BaseServiceRunException e){
+            logger.error("错误:{}",e.getMessage());
+        }
+
         for (Map<String, Object> stringObjectMap : list) {
             logger.info(JsonBeanUtil.DEFAULT.toJsonString(stringObjectMap));
         }
 
+        for (ErrorMsg errorMsg : errorMsgs) {
+            logger.info(errorMsg.describe());
+        }
     }
 }

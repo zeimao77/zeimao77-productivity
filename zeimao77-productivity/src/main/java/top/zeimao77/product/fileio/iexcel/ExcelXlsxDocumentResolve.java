@@ -1,15 +1,16 @@
 package top.zeimao77.product.fileio.iexcel;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.poi.sl.draw.geom.GuideIf;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFFormulaEvaluator;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import top.zeimao77.product.exception.BaseServiceRunException;
+import top.zeimao77.product.exception.ExceptionCodeDefinition;
 import top.zeimao77.product.model.Orderd;
-import top.zeimao77.product.util.BeanUtil;
-import top.zeimao77.product.util.ByteArrayCoDesUtil;
-import top.zeimao77.product.util.CalendarDateUtil;
-import top.zeimao77.product.util.LocalDateTimeUtil;
+import top.zeimao77.product.util.*;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
@@ -20,10 +21,17 @@ import java.util.*;
 
 public class ExcelXlsxDocumentResolve<T> {
 
+    private static Logger logger = LogManager.getLogger(ExcelXlsxDocumentResolve.class);
+
     private List<CellFiledTypeResover> resovers;
     private boolean sorted;
+    private boolean stopOnError = true;
 
-    public ExcelXlsxDocumentResolve() {
+    /**
+     * @param stopOnError 是否出错时停止
+     */
+    public ExcelXlsxDocumentResolve(boolean stopOnError) {
+        this.stopOnError = stopOnError;
         resovers = new ArrayList<>(32);
         resovers.add(new CellFiledTypeResover<String>() {
             @Override
@@ -309,6 +317,34 @@ public class ExcelXlsxDocumentResolve<T> {
                 }
             }
         });
+        resovers.add(new CellFiledTypeResover<StringOptional>() {
+            @Override
+            public int orderd() {
+                return 2200;
+            }
+
+            @Override
+            public StringOptional resove(Cell cell) {
+                switch (cell.getCellType()) {
+                    case _NONE:
+                        return StringOptional.empty();
+                    case NUMERIC:
+                        return new StringOptional(String.valueOf(cell.getNumericCellValue()));
+                    case STRING:
+                        return new StringOptional(cell.getStringCellValue());
+                    case FORMULA:
+                        CellValue evaluate = evaluate(cell);
+                        return new StringOptional(evaluate.getStringValue());
+                    case BLANK:
+                        return new StringOptional("");
+                    case BOOLEAN:
+                        return new StringOptional(String.valueOf(cell.getBooleanCellValue()));
+                    case ERROR:
+                        return new StringOptional("0X" + ByteArrayCoDesUtil.hexEncode(cell.getErrorCellValue()));
+                }
+                return new StringOptional(cell.getStringCellValue());
+            }
+        });
         this.sorted = true;
     }
 
@@ -333,17 +369,17 @@ public class ExcelXlsxDocumentResolve<T> {
         }
     }
 
-     public void parse(int rowNo, Table.Column column, Cell cell, T t) {
+     public void parseCell(int rowNo, Table.Column column, Cell cell, T t) {
         if(cell == null)
             return;
-         Class<?> propertyType = BeanUtil.getPropertyType(t, column.getField());
-         Object value = null;
-         for (CellFiledTypeResover resover : resovers) {
-             if(resover.support(propertyType,cell)) {
-                 value = resover.resove(cell);
+        Class<?> propertyType = BeanUtil.getPropertyType(t, column.getField());
+        for (CellFiledTypeResover resover : resovers) {
+            if(resover.support(propertyType,cell)) {
+                Object value = resover.resove(cell);
+                BeanUtil.setProperty(t,column.getField(),value);
              }
-         }
-         BeanUtil.setProperty(t,column.getField(),value);
+        }
+
     }
 
     protected <T> T resolve(Cell cell,Class<T> clazz) {
@@ -401,7 +437,37 @@ public class ExcelXlsxDocumentResolve<T> {
         }
     }
 
-    public ArrayList<T> parse(SXSSFWorkbook workbook, Table table, Class<T> clazz, ArrayList<T> resultList) {
+    public T parseRow(Row row,Table table, Class<T> clazz,ArrayList<ErrorMsg> errorMsgList) {
+        T t = newObj(clazz);
+        List<Table.Column> columnList = table.getColumnList();
+        Cell cell;
+        int rowNum = table.getStartRow();
+        for (Table.Column column : columnList) {
+            ErrorMsg errorMsg = null;
+            cell = row.getCell(column.getIndex());
+            try {
+                parseCell(rowNum, column, cell, t);
+            } catch (BaseServiceRunException e) {
+                errorMsg = new ErrorMsg(rowNum,column,e.getCode(),e.getMessage());
+            } catch (IllegalStateException e) {
+                errorMsg = new ErrorMsg(rowNum,column, ExceptionCodeDefinition.APPERR,"单元格格式错误");
+            }catch (NumberFormatException e) {
+                errorMsg = new ErrorMsg(rowNum,column, ExceptionCodeDefinition.APPERR,"数字格式错误");
+            } catch (Throwable e) {
+                logger.error("单元格解析错误:",e);
+                errorMsg = new ErrorMsg(rowNum,column,e.getMessage());
+            }
+            if(errorMsg != null && errorMsgList != null) {
+                errorMsgList.add(errorMsg);
+            }
+            if(stopOnError && errorMsg != null) {
+                throw new BaseServiceRunException(ExceptionCodeDefinition.WRONG_SOURCE | ExceptionCodeDefinition.NON_RETRYABLE ,"出错停止解析");
+            }
+        }
+        return t;
+    }
+
+    public void parse(SXSSFWorkbook workbook, Table table, Class<T> clazz, ArrayList<T> resultList,ArrayList<ErrorMsg> errorMsgList) {
         if(!sorted) {
             synchronized (this) {
                 if(!sorted) {
@@ -411,23 +477,17 @@ public class ExcelXlsxDocumentResolve<T> {
             }
         }
         int rowNum = table.getStartRow();
-        List<Table.Column> columnList = table.getColumnList();
         Sheet sheet = workbook.getXSSFWorkbook().getSheetAt(table.getSheetIndex());
         Row row;
-        Cell cell;
         while ((row = sheet.getRow(rowNum)) != null) {
-            T t = newObj(clazz);
-            for (Table.Column column : columnList) {
-                cell = row.getCell(column.getIndex());
-                parse(rowNum, column, cell,t);
-            }
-            resultList.add(t);
+            T t = parseRow(row,table,clazz,errorMsgList);
+            if(resultList != null)
+                resultList.add(t);
             rowNum++;
         }
-        return resultList;
     }
 
-    public void parseMap(SXSSFWorkbook workbook, Table table,ArrayList<Map<String,Object>> resultList) {
+    public void parseMap(SXSSFWorkbook workbook, Table table,ArrayList<Map<String,Object>> resultList,ArrayList<ErrorMsg> errorMsgList) {
         if(!sorted) {
             synchronized (this) {
                 if(!sorted) {
@@ -446,15 +506,37 @@ public class ExcelXlsxDocumentResolve<T> {
             for (Table.Column column : columnList) {
                 cell = row.getCell(column.getIndex());
                 Object value = null;
-                for (CellFiledTypeResover resover : resovers) {
-                    if(resover.support(column.getJavaType(),cell)) {
-                        value = resover.resove(cell);
-                        break;
+
+
+                ErrorMsg errorMsg = null;
+                cell = row.getCell(column.getIndex());
+                try {
+                    for (CellFiledTypeResover resover : resovers) {
+                        if(resover.support(column.getJavaType(),cell)) {
+                            value = resover.resove(cell);
+                            break;
+                        }
                     }
+                } catch (BaseServiceRunException e) {
+                    errorMsg = new ErrorMsg(rowNum+1,column,e.getCode(),e.getMessage());
+                } catch (IllegalStateException e) {
+                    errorMsg = new ErrorMsg(rowNum+1,column, ExceptionCodeDefinition.APPERR,"单元格格式错误");
+                }catch (NumberFormatException e) {
+                    errorMsg = new ErrorMsg(rowNum+1,column, ExceptionCodeDefinition.APPERR,"数字格式错误");
+                } catch (Throwable e) {
+                    logger.error("单元格解析错误:",e);
+                    errorMsg = new ErrorMsg(rowNum+1,column,e.getMessage());
+                }
+                if(errorMsg != null && errorMsgList != null) {
+                    errorMsgList.add(errorMsg);
+                }
+                if(stopOnError && errorMsg != null) {
+                    throw new BaseServiceRunException(ExceptionCodeDefinition.WRONG_SOURCE | ExceptionCodeDefinition.NON_RETRYABLE ,"出错停止解析");
                 }
                 t.put(column.getField(),value);
             }
-            resultList.add(t);
+            if(resultList != null)
+                resultList.add(t);
             rowNum++;
         }
     }

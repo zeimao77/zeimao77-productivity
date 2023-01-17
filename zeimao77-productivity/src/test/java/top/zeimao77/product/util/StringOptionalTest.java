@@ -10,7 +10,7 @@ class StringOptionalTest extends BaseMain {
     @Test
     void ifNotBlack() {
         String param = "123";
-        StringOptional stringOptional = new StringOptional(param,StringOptional.TRIM_BLACK_CHECK);
+        StringOptional stringOptional = new StringOptional(param);
         stringOptional.ifNotBlack(logger::info);
         logger.info("Done..................");
     }
@@ -18,7 +18,7 @@ class StringOptionalTest extends BaseMain {
     @Test
     void orBlackGet() {
         String param = " ";
-        StringOptional stringOptional = new StringOptional(param,StringOptional.TRIM_BLACK_CHECK);
+        StringOptional stringOptional = new StringOptional(param);
         String s = stringOptional.orBlackGet(() -> "6666");
         logger.info(s);
         logger.info("Done..................");
@@ -27,8 +27,8 @@ class StringOptionalTest extends BaseMain {
     @Test
     void ifBalckThrow() {
         String param = " ";
-        StringOptional stringOptional = new StringOptional(param,StringOptional.TRIM_BLACK_CHECK);
-        stringOptional.ifBalckThrow("param");
+        StringOptional stringOptional = new StringOptional(param);
+        stringOptional.ifBlackThrow("param");
         logger.info("Done..................");
     }
 
