@@ -397,6 +397,8 @@ public class DefaultResultSetResolve implements ResultSetResolve {
                     fieldValue = resolve(value,field.getType());
                 }
                 field.setAccessible(true);
+                if(fieldValue == null && field.getType() == StringOptional.class)
+                    fieldValue = StringOptional.empty();
                 field.set(obj,fieldValue);
             } catch (NoSuchFieldException e) {
                 logger.warn("字段未找到:{}",columnLabel);

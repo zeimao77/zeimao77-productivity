@@ -49,7 +49,7 @@ public class JsonBeanUtil {
                 if (p.hasToken(JsonToken.VALUE_STRING)) {
                     return new StringOptional(p.getText());
                 }
-                return null;
+                return StringOptional.empty();
             }
         });
         objectMapper.registerModule(javaTimeModule);

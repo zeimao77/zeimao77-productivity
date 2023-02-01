@@ -10,7 +10,7 @@ class JsonBeanUtilTest extends BaseMain {
     @Test
     void toJsonString() {
 
-        DemoModel demo12345 = new DemoModel(123L, new StringOptional("demo1235"));
+        DemoModel demo12345 = new DemoModel(123L, StringOptional.empty());
         logger.info(JsonBeanUtil.DEFAULT.toJsonString(demo12345));
     }
 
