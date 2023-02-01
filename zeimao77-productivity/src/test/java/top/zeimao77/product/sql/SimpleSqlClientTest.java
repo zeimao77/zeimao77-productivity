@@ -7,6 +7,7 @@ import top.zeimao77.product.model.ImmutablePair;
 import top.zeimao77.product.mysql.DemoModel;
 import top.zeimao77.product.util.JsonBeanUtil;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,6 +16,21 @@ import java.util.Map;
 class SimpleSqlClientTest extends BaseMain {
 
     private static final String MYSQL="mysql_top_zeimao77";
+
+    @Test
+    void select() {
+        SimpleSqlClient simpleSqlClient = ComponentFactory.initSimpleSqlClient(MYSQL,null);
+        ArrayList<ResultStr> select = simpleSqlClient.select("SELECT demo_name AS result FROM demo WHERE demo_id <= ?", o -> {
+            try {
+                o.setLong(1, 22309205499183107L);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }, DefaultResultSetResolve.INSTANCE, ResultStr.class);
+        select.forEach(o -> logger.info(o.getResult()));
+    }
+
+
 
     /**
      * 动态SQL查询
@@ -127,5 +143,6 @@ class SimpleSqlClientTest extends BaseMain {
         param.put("id",1);
         simpleSqlClient.call("CALL delete_demo(#{id,javaType=Integer,jdbcType=INT,mode=IN})",param,null);
     }
+
 
 }

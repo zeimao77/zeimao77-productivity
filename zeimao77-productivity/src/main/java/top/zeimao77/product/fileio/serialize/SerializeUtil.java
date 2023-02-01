@@ -28,7 +28,7 @@ public class SerializeUtil {
         void write(ByteBuffer byteBuffer,T t);
     }
 
-    public static byte nextType(ByteBuffer byteBuffer) {
+    static byte nextType(ByteBuffer byteBuffer) {
         if(byteBuffer.position() >= byteBuffer.limit())
             throw new BaseServiceRunException(ExceptionCodeDefinition.NOT_SUPPORTED,"没有更多可读取数据;");
         byteBuffer.mark();

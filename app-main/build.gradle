@@ -10,6 +10,14 @@ repositories {
     maven {
         url 'https://maven.aliyun.com/nexus/content/groups/public'
     }
+    maven {
+        name 'aliyun'
+        credentials {
+            username publishing_maven_aliyun_username
+            password publishing_maven_aliyun_password
+        }
+        url publishing_maven_aliyun_url
+    }
     mavenCentral()
 }
 
