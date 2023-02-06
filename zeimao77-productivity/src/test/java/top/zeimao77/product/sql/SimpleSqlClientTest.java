@@ -5,8 +5,13 @@ import top.zeimao77.product.factory.ComponentFactory;
 import top.zeimao77.product.main.BaseMain;
 import top.zeimao77.product.model.ImmutablePair;
 import top.zeimao77.product.mysql.DemoModel;
+import top.zeimao77.product.mysql.SimpleRepository;
+import top.zeimao77.product.util.AssertUtil;
 import top.zeimao77.product.util.JsonBeanUtil;
+import top.zeimao77.product.util.StreamUtil;
+import top.zeimao77.product.util.WordUtil;
 
+import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,6 +21,70 @@ import java.util.Map;
 class SimpleSqlClientTest extends BaseMain {
 
     private static final String MYSQL="mysql_top_zeimao77";
+
+    @Test
+    void test() {
+        // 取客户端
+        SimpleSqlClient simpleSqlClient = ComponentFactory.initSimpleSqlClient(MYSQL,null);
+        // 静态SQL 用法1
+        simpleSqlClient.update("DELETE FROM demo WHERE demo_id = ?",new Object[]{22309205499183107L});
+        simpleSqlClient.update("insert into demo(demo_id,demo_name,ch,bo,de) values ('22309205499183107','demo0',2,2,32.456)", null);
+        simpleSqlClient.update("UPDATE demo SET demo_name = ? WHERE demo_id = ?"
+                ,new Object[]{"demo1",22309205499183107L});
+        String demoName = simpleSqlClient.selectString("SELECT demo_name AS result FROM demo WHERE demo_id = '22309205499183107'", null);
+        logger.info(demoName);
+        // 静态SQL 用法2
+        HashMap<Object, Object> param = new HashMap<>();
+        param.put("demoId",22309205499183107L);
+        param.put("demoName","demo2");
+        simpleSqlClient.update("UPDATE demo SET demo_name = #{demoName} WHERE demo_id = ${demoId}",param);
+        // 静态SQL 用法
+        DemoModel demoModel = new DemoModel();
+        demoModel.setDemoId(22309205499183107L);
+        demoModel.setDemoName("demo3");
+        simpleSqlClient.update("UPDATE demo SET demo_name = #{demoName} WHERE demo_id = ${demoId}",demoModel);
+        demoName = simpleSqlClient.selectString("SELECT demo_name AS result FROM demo WHERE demo_id = '22309205499183107'", null);
+        logger.info(demoName);
+        // 其它更多方法参考实现即可 并不复杂
+        // 动态SQL
+        SQL sql = new SQL()
+                .update("demo")
+                .set(AssertUtil.isNotEmpty(demoModel.getCh()),"ch",demoModel.getCh())
+                .set(AssertUtil.isNotEmpty(demoModel.getDemoName()),"demo_name",demoModel.getDemoName())
+                .where(SQL.BIND_AND,"demo_id",SQL.COND_QIS,demoModel.getDemoId());
+        // 输出一下可执行SQL  这样我们可以保存到文件
+        // 执行动态SQL 输出SQL
+        OnlyPrintReposit onlyPrintReposit = new OnlyPrintReposit(new PrintWriter(System.out));
+        onlyPrintReposit.updateByResolver(sql);
+        simpleSqlClient.updateByResolver(sql);
+
+        // 不写SQL的动态SQL 支持增删改查、upsert操作
+        // 需要注意的是null值也将设置 除非加了 StatementParameterInfo 注解会忽略空值
+        SimpleRepository<DemoModel, Long> demoModelLongSimpleRepository =
+                new SimpleRepository(simpleSqlClient,"demo","demoId") {
+                    @Override
+                    public String codeNameToDbName(String name) {
+                        return WordUtil.humpToLine(name);
+                    }
+                };
+        demoModelLongSimpleRepository.update(demoModel);
+
+        // 事务
+        SimpleSqlTemplate simpleSqlTemplate = ComponentFactory.initSimpleSqlTemplate(MYSQL, null);
+        simpleSqlTemplate.execute(o -> {
+            o.update("UPDATE demo SET demo_name = 'demo4' WHERE demo_id = 22309205499183107");
+            o.update("UPDATE demo SET demo_namea = 'demo4' WHERE demo_id = 22309205499183107");
+            return null;
+        });
+        SimpleSqlClient client = simpleSqlTemplate.openSession();
+        client.commit();
+        client.close();
+        demoName = simpleSqlClient.selectString("SELECT demo_name AS result FROM demo WHERE demo_id = '22309205499183107'", null);
+        logger.info(demoName);
+
+
+    }
+
 
     @Test
     void select() {

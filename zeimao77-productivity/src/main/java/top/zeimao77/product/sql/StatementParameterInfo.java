@@ -28,11 +28,13 @@ public @interface StatementParameterInfo {
     /**
      * @return 参数函数前
      */
-    String valSetPre();
+    String valSetPre() default "";
 
     /**
      * @return 参数函数后
      */
-    String valSetPost();
+    String valSetPost() default "";
+
+
 
 }
