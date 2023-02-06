@@ -56,6 +56,7 @@ class SimpleSqlClientTest extends BaseMain {
         // 执行动态SQL 输出SQL
         OnlyPrintReposit onlyPrintReposit = new OnlyPrintReposit(new PrintWriter(System.out));
         onlyPrintReposit.updateByResolver(sql);
+        onlyPrintReposit.close();
         simpleSqlClient.updateByResolver(sql);
 
         // 不写SQL的动态SQL 支持增删改查、upsert操作
@@ -81,7 +82,6 @@ class SimpleSqlClientTest extends BaseMain {
         client.close();
         demoName = simpleSqlClient.selectString("SELECT demo_name AS result FROM demo WHERE demo_id = '22309205499183107'", null);
         logger.info(demoName);
-
 
     }
 
