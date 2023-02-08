@@ -62,13 +62,22 @@ class SimpleSqlClientTest extends BaseMain {
         // 不写SQL的动态SQL 支持增删改查、upsert操作
         // 需要注意的是null值也将设置 除非加了 StatementParameterInfo 注解会忽略空值
         SimpleRepository<DemoModel, Long> demoModelLongSimpleRepository =
-                new SimpleRepository(simpleSqlClient,"demo","demoId") {
+                new SimpleRepository<DemoModel, Long>(simpleSqlClient,"demo","demoId") {
                     @Override
                     public String codeNameToDbName(String name) {
                         return WordUtil.humpToLine(name);
                     }
                 };
         demoModelLongSimpleRepository.update(demoModel);
+        SelectCond selectCond = SelectCond.select()
+                .page(1, 4)
+                .where(SQL.BIND_AND, "demo_id", SQL.COND_QGTE, 22309205499183107L);
+        List<DemoModel> list = demoModelLongSimpleRepository.list(selectCond);
+
+        logger.info("总行数:{}",selectCond.getTotal());
+        for (int i = 0; i < list.size(); i++) {
+            logger.info("第{}行:{}",i,list.get(i).getDemoName());
+        }
 
         // 事务
         SimpleSqlTemplate simpleSqlTemplate = ComponentFactory.initSimpleSqlTemplate(MYSQL, null);
@@ -82,6 +91,7 @@ class SimpleSqlClientTest extends BaseMain {
         client.close();
         demoName = simpleSqlClient.selectString("SELECT demo_name AS result FROM demo WHERE demo_id = '22309205499183107'", null);
         logger.info(demoName);
+
 
     }
 

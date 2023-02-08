@@ -9,6 +9,7 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisCluster;
 import top.zeimao77.product.config.LocalContext;
 import top.zeimao77.product.email.SimpleEmailSender;
+import top.zeimao77.product.exception.BaseServiceRunException;
 import top.zeimao77.product.redis.JedisBuilder;
 import top.zeimao77.product.redis.JedisClusterBuilder;
 import top.zeimao77.product.sql.*;
@@ -23,6 +24,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Optional;
 
+import static top.zeimao77.product.exception.ExceptionCodeDefinition.WRONG_ACTION;
+
 /**
  * 辅助初始化部分组件
  * @author zeimao77
@@ -30,18 +33,18 @@ import java.util.Optional;
  */
 public class ComponentFactory {
 
-    public static final String AUTOBEAN_PREFIX = "$_";
+    public static final String AUTOBEAN_DATASOURCE_PREFIX = "$_datasource_";
 
     /**
      * 配置参考:
-     * @see ComponentFactory#createDataSource(String)
+     * @see ComponentFactory#createDataSource(String, BeanFactory)
      * @param prefx 前缀
      * @return SQL客户端工厂对象
      */
     public static SimpleSqlTemplate initSimpleSqlTemplate(String prefx,BeanFactory beanFactory) {
-        DataSource dataSource = createDataSource(prefx);
-        if(beanFactory != null)
-            beanFactory.registerSingleton(AUTOBEAN_PREFIX+"datasource_"+prefx,dataSource);
+        if(beanFactory.hasBean(prefx))
+            throw new BaseServiceRunException(WRONG_ACTION,prefx+" Bean已经被定义！");
+        DataSource dataSource = createDataSource(prefx,beanFactory);
         SimpleSqlTemplate simpleSqlFacroty = new SimpleSqlTemplate(dataSource);
         if(beanFactory != null)
             beanFactory.registerSingleton(prefx,simpleSqlFacroty);
@@ -50,15 +53,15 @@ public class ComponentFactory {
 
     /**
      * 配置参考:
-     * @see ComponentFactory#createDataSource(String)
+     * @see ComponentFactory#createDataSource(String, BeanFactory)
      * @param prefx 前缀
      * @return SQL客户端
      */
     public static SimpleSqlClient initSimpleSqlClient(String prefx,BeanFactory beanFactory) {
-        DataSource dataSource = createDataSource(prefx);
+        if(beanFactory.hasBean(prefx))
+            throw new BaseServiceRunException(WRONG_ACTION,prefx+" Bean已经被定义！");
+        DataSource dataSource = createDataSource(prefx,beanFactory);
         DataSourceTransactionFactory dataSourceTransactionFactory = new DataSourceTransactionFactory(dataSource);
-        if(beanFactory != null)
-            beanFactory.registerSingleton(AUTOBEAN_PREFIX+"transactionFactory_"+prefx,dataSourceTransactionFactory);
         SimpleSqlClient simpleSqlClient = new SimpleSqlClient(dataSourceTransactionFactory
                 , DefaultPreparedStatementSetter.INSTANCE, DefaultResultSetResolve.INSTANCE);
         if(beanFactory != null)
@@ -77,9 +80,16 @@ public class ComponentFactory {
      * ${prefx}_keepaliveTime=30000
      * </pre>
      * @param prefx 前缀
+     * @param beanFactory Bean工厂
      * @return SimpleMysql实例
      */
-    public static DataSource createDataSource(String prefx) {
+    public static DataSource createDataSource(String prefx,BeanFactory beanFactory) {
+        String datasourceBeanName = null;
+        if(beanFactory != null) {
+            datasourceBeanName = AUTOBEAN_DATASOURCE_PREFIX+prefx;
+            if(beanFactory.hasBean(prefx))
+                return beanFactory.getBean(datasourceBeanName,DataSource.class);
+        }
         StringOptional url = LocalContext.getString(prefx + "_url");
         url.ifBlackThrow(prefx+"_url");
         StringOptional username = LocalContext.getString(prefx + "_username");
@@ -117,6 +127,8 @@ public class ComponentFactory {
         keepaliveTime.ifNotBlack(o -> dataSource.setKeepaliveTime(Long.valueOf(o)));
         // 存在Connection.isValid() API时不建议设置此值
         connectionTestQuery.ifNotBlack(dataSource::setConnectionTestQuery);
+        if(beanFactory != null)
+            beanFactory.registerSingleton(datasourceBeanName,dataSource);
         return dataSource;
     }
 

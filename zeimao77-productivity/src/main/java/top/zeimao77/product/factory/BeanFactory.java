@@ -68,6 +68,15 @@ public class BeanFactory {
     }
 
     /**
+     * 是否已经注册了这个Bean名称
+     * @param beanName Bean名称
+     * @return 是否已经注册了这个Bean名称
+     */
+    public boolean hasBean(String beanName) {
+        return singletonObjects.containsKey(beanName) || prototypesFactory.containsKey(beanName);
+    }
+
+    /**
      * 获取一个BEAN对象 优先单例获取
      * @param beanName BEAN名称
      * @param requiredType BEAN类型
