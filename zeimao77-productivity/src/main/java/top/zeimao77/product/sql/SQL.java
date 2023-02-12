@@ -522,7 +522,7 @@ public class SQL implements StatementParamResolver, IWhere {
         sqlBuilder.append("?");
         if(AssertUtil.isNotEmpty(valSetPost))
             sqlBuilder.append(valSetPost);
-        addJdbcParam(columnName,null,null,value);
+        addJdbcParam(columnName,valSetPre,valSetPost,value);
         return this;
     }
 

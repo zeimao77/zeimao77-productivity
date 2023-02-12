@@ -34,6 +34,8 @@ import static top.zeimao77.product.exception.ExceptionCodeDefinition.WRONG_ACTIO
 public class ComponentFactory {
 
     public static final String AUTOBEAN_DATASOURCE_PREFIX = "$_datasource_";
+    public static final String AUTOBEAN_SQLTEMPLATE = "$_sqltemplate_";
+    public static final String AUTOBEAN_SQLCLIENT = "$_sqlclient_";
 
     /**
      * 配置参考:
@@ -42,12 +44,12 @@ public class ComponentFactory {
      * @return SQL客户端工厂对象
      */
     public static SimpleSqlTemplate initSimpleSqlTemplate(String prefx,BeanFactory beanFactory) {
-        if(beanFactory.hasBean(prefx))
+        if(beanFactory != null && beanFactory.hasBean(prefx))
             throw new BaseServiceRunException(WRONG_ACTION,prefx+" Bean已经被定义！");
         DataSource dataSource = createDataSource(prefx,beanFactory);
         SimpleSqlTemplate simpleSqlFacroty = new SimpleSqlTemplate(dataSource);
         if(beanFactory != null)
-            beanFactory.registerSingleton(prefx,simpleSqlFacroty);
+            beanFactory.registerSingleton(AUTOBEAN_SQLTEMPLATE + prefx,simpleSqlFacroty);
         return simpleSqlFacroty;
     }
 
@@ -58,14 +60,14 @@ public class ComponentFactory {
      * @return SQL客户端
      */
     public static SimpleSqlClient initSimpleSqlClient(String prefx,BeanFactory beanFactory) {
-        if(beanFactory.hasBean(prefx))
+        if(beanFactory != null && beanFactory.hasBean(prefx))
             throw new BaseServiceRunException(WRONG_ACTION,prefx+" Bean已经被定义！");
         DataSource dataSource = createDataSource(prefx,beanFactory);
         DataSourceTransactionFactory dataSourceTransactionFactory = new DataSourceTransactionFactory(dataSource);
         SimpleSqlClient simpleSqlClient = new SimpleSqlClient(dataSourceTransactionFactory
                 , DefaultPreparedStatementSetter.INSTANCE, DefaultResultSetResolve.INSTANCE);
         if(beanFactory != null)
-            beanFactory.registerSingleton(prefx,simpleSqlClient);
+            beanFactory.registerSingleton(AUTOBEAN_SQLCLIENT + prefx,simpleSqlClient);
         return simpleSqlClient;
     }
 
@@ -87,7 +89,7 @@ public class ComponentFactory {
         String datasourceBeanName = null;
         if(beanFactory != null) {
             datasourceBeanName = AUTOBEAN_DATASOURCE_PREFIX+prefx;
-            if(beanFactory.hasBean(prefx))
+            if(beanFactory.hasBean(datasourceBeanName))
                 return beanFactory.getBean(datasourceBeanName,DataSource.class);
         }
         StringOptional url = LocalContext.getString(prefx + "_url");

@@ -1,6 +1,7 @@
 package top.zeimao77.product.sql;
 
 import org.junit.jupiter.api.Test;
+import top.zeimao77.product.factory.BeanFactory;
 import top.zeimao77.product.factory.ComponentFactory;
 import top.zeimao77.product.main.BaseMain;
 import top.zeimao77.product.model.ImmutablePair;
@@ -25,7 +26,7 @@ class SimpleSqlClientTest extends BaseMain {
     @Test
     void test() {
         // 取客户端
-        SimpleSqlClient simpleSqlClient = ComponentFactory.initSimpleSqlClient(MYSQL,null);
+        SimpleSqlClient simpleSqlClient = ComponentFactory.initSimpleSqlClient(MYSQL, BeanFactory.DEFAULT);
         // 静态SQL 用法1
         simpleSqlClient.update("DELETE FROM demo WHERE demo_id = ?",new Object[]{22309205499183107L});
         simpleSqlClient.update("insert into demo(demo_id,demo_name,ch,bo,de) values ('22309205499183107','demo0',2,2,32.456)", null);
@@ -80,7 +81,7 @@ class SimpleSqlClientTest extends BaseMain {
         }
 
         // 事务
-        SimpleSqlTemplate simpleSqlTemplate = ComponentFactory.initSimpleSqlTemplate(MYSQL, null);
+        SimpleSqlTemplate simpleSqlTemplate = ComponentFactory.initSimpleSqlTemplate(MYSQL, BeanFactory.DEFAULT);
         simpleSqlTemplate.execute(o -> {
             o.update("UPDATE demo SET demo_name = 'demo4' WHERE demo_id = 22309205499183107");
             o.update("UPDATE demo SET demo_namea = 'demo4' WHERE demo_id = 22309205499183107");
@@ -91,7 +92,7 @@ class SimpleSqlClientTest extends BaseMain {
         client.close();
         demoName = simpleSqlClient.selectString("SELECT demo_name AS result FROM demo WHERE demo_id = '22309205499183107'", null);
         logger.info(demoName);
-
+        BeanFactory.DEFAULT.destory();
 
     }
 
