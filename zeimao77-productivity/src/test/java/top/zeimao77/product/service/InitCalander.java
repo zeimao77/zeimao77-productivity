@@ -19,7 +19,7 @@ public class InitCalander extends BaseMain {
     private static final String MYSQL="mysql_top_zeimao77";
 
     public static void main(String[] args) {
-        LocalDate localStart = LocalDate.of(2023,8,1);
+        LocalDate localStart = LocalDate.of(2023,10,2);
         SimpleSqlClient simpleSqlClient = ComponentFactory.initSimpleSqlClient(MYSQL,null);
 
         String urlt = "https://apis.tianapi.com/lunar/index?key=25c7d257ac3b2a94d1ee2004da3994b1&date=%s";
@@ -27,7 +27,7 @@ public class InitCalander extends BaseMain {
         HashMap<String, String> headers = new HashMap<>();
         headers.put("Content-Type","application/x-www-form-urlencoded");
 
-        for (int i = 0; i < 31; i++) {
+        for (int i = 0; i < 70; i++) {
             LocalDate handlerDate = localStart.plusDays(i);
             DayOfWeek dayOfWeek = handlerDate.getDayOfWeek();
             int workingDay = dayOfWeek == DayOfWeek.SUNDAY || dayOfWeek == DayOfWeek.SATURDAY ? 0 : 1;
