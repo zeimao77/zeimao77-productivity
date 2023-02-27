@@ -128,11 +128,13 @@ public class BaseMain {
     /**
      * 打印一个Banner
      */
-    public static void showBanner() {
+    public static void showBanner(String version) {
         logger.info("           /\\_/\\");
         logger.info("     _____/ o o \\");
         logger.info("   /~_____  =-= /");
         logger.info("  (__zm77__)_m_m)");
+        if(version != null)
+            logger.info("  app-version:{}",version);
     }
 
 }
