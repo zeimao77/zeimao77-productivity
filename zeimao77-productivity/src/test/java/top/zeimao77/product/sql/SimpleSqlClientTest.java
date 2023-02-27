@@ -26,7 +26,8 @@ class SimpleSqlClientTest extends BaseMain {
     @Test
     void test() {
         // 取客户端
-        SimpleSqlClient simpleSqlClient = ComponentFactory.initSimpleSqlClient(MYSQL, BeanFactory.DEFAULT);
+        SimpleSqlClient simpleSqlClient = BeanFactory.DEFAULT.getBean(ComponentFactory.AUTOBEAN_SQLCLIENT+MYSQL,SimpleSqlClient.class);
+
         // 静态SQL 用法1
         simpleSqlClient.update("DELETE FROM demo WHERE demo_id = ?",new Object[]{22309205499183107L});
         simpleSqlClient.update("insert into demo(demo_id,demo_name,ch,bo,de) values ('22309205499183107','demo0',2,2,32.456)", null);

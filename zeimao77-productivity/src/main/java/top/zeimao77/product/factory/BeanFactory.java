@@ -2,8 +2,14 @@ package top.zeimao77.product.factory;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisCluster;
+import top.zeimao77.product.email.SimpleEmailSender;
 import top.zeimao77.product.exception.BaseServiceRunException;
 import static top.zeimao77.product.exception.ExceptionCodeDefinition.WRONG_ACTION;
+
+import top.zeimao77.product.sql.SimpleSqlClient;
+import top.zeimao77.product.sql.SimpleSqlTemplate;
 import top.zeimao77.product.util.AssertUtil;
 
 import java.util.Map;
@@ -92,6 +98,26 @@ public class BeanFactory {
         Supplier<?> supplier = prototypesFactory.get(beanName);
         if(supplier != null)
             return (T)supplier.get();
+        if(requiredType == SimpleSqlClient.class && beanName.startsWith(ComponentFactory.AUTOBEAN_SQLCLIENT)) {
+            SimpleSqlClient client = ComponentFactory.initSimpleSqlClient(beanName, null);
+            registerSingleton(beanName,client);
+            return (T) client;
+        }
+        if(requiredType == SimpleSqlTemplate.class && beanName.startsWith(ComponentFactory.AUTOBEAN_SQLTEMPLATE)) {
+            SimpleSqlTemplate client = ComponentFactory.initSimpleSqlTemplate(beanName, null);
+            registerSingleton(beanName,client);
+            return (T) client;
+        }
+        if(requiredType == Jedis.class) {
+            return (T) ComponentFactory.initJedis(beanName,this);
+        }
+        if(requiredType == JedisCluster.class) {
+            return (T) ComponentFactory.initJedisCluster(beanName,this);
+        }
+        if(requiredType == SimpleEmailSender.class) {
+            SimpleEmailSender simpleEmailSender = ComponentFactory.initSimpleEmailSender(beanName, this);
+            return (T) simpleEmailSender;
+        }
         throw new BaseServiceRunException(WRONG_ACTION,"没有这样的BEAN实例:"+beanName);
     }
 

@@ -1,6 +1,5 @@
 package top.zeimao77.product.util;
 
-
 import top.zeimao77.product.main.BaseMain;
 
 import java.io.*;
@@ -45,6 +44,12 @@ public class AssertUtilTest extends BaseMain {
 
         printWriter.close();
         inputStream.close();
+
+        String KEY = "PN9NefS9QeqVM7upuwZ4TL3uCnsyZgYkDBcroXZSw3g=";
+        byte[] bytes = ByteArrayCoDesUtil.base64Decode(KEY);
+        for (byte aByte : bytes) {
+            System.out.print(aByte+",");
+        }
 
     }
 

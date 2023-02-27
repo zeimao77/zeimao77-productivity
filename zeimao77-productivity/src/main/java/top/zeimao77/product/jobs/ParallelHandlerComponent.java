@@ -25,7 +25,7 @@ public class ParallelHandlerComponent<T extends IJob> extends JobExecHandler<T> 
     }
 
     public ParallelHandlerComponent() {
-        this.executors = new ThreadPoolExecutor(2,8
+        this.executors = new ThreadPoolExecutor(4,8
                 ,30, TimeUnit.SECONDS,new LinkedBlockingQueue(1024)
         );
     }
