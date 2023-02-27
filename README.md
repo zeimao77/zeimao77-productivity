@@ -8,7 +8,7 @@
 
 ## 快速开始一个jar
 
-1. 新建一个工程，以`app-amin`为例,gradle(7.4.2)文件配置如下;
+1. 新建一个工程，以`app-main`为例,gradle(7.4.2)文件配置如下;
 
 ```groovy
 plugins {
@@ -33,7 +33,7 @@ tasks.withType(JavaCompile) {
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
-    implementation group: 'top.zeimao77',name:'zeimao77-productivity',version: '2.1.5'
+    implementation group: 'top.zeimao77',name:'zeimao77-productivity',version: '2.1.6'
     implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.18.0'
 }
 
