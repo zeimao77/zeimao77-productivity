@@ -12,11 +12,21 @@ class OnlyPrintRepositTest {
 
     @Test
     public void update() {
-        PrintWriter printWriter = StreamUtil.printWriter("C:\\Users\\zeimao77\\Desktop\\demo1.sql");
+        PrintWriter printWriter = new PrintWriter(System.out);
         OnlyPrintReposit onlyPrintReposit = new OnlyPrintReposit(printWriter);
         onlyPrintReposit.update("UPDATE abc set id = ?",new Object[]{"666"});
         printWriter.close();
     }
 
 
+    @Test
+    void selectByResolver() {
+        PrintWriter printWriter = new PrintWriter(System.out);
+        OnlyPrintReposit onlyPrintReposit = new OnlyPrintReposit(printWriter);
+        onlyPrintReposit.updateByResolver(new SQL()
+                .select("abc")
+                .from("tab")
+                .where(SQL.BIND_AND,"c1",SQL.COND_QIS,"1"));
+        printWriter.close();
+    }
 }

@@ -88,31 +88,14 @@ public class OnlyPrintReposit implements  Reposit, Closeable {
     public int update(String sqlt, Object param) {
         DefaultStatementParamResolver defaultStatementParamResolver = new DefaultStatementParamResolver(sqlt, param);
         defaultStatementParamResolver.resolve();
-        String execSql = defaultStatementParamResolver.getExecSql();
-        logger.debug(execSql);
-        if(writer != null) {
-            writer.print(execSql);
-            if(appendEnd)
-                writer.println(";");
-            else
-                writer.println();
-        }
-        return 0;
+        return updateByResolver(defaultStatementParamResolver);
     }
 
     @Override
     public <T> ArrayList<T> selectListObj(String sqlt, Object param, Class<T> clazz) {
         DefaultStatementParamResolver defaultStatementParamResolver = new DefaultStatementParamResolver(sqlt, param);
         defaultStatementParamResolver.resolve();
-        String execSql = defaultStatementParamResolver.getExecSql();
-        logger.debug(execSql);
-        if(writer != null) {
-            writer.print(execSql);
-            if(appendEnd)
-                writer.println(";");
-            else
-                writer.println();
-        }
+        selectByResolver(defaultStatementParamResolver,clazz);
         return new ArrayList<>();
     }
 

@@ -16,7 +16,7 @@ class RsaSignUtilTest extends BaseMain {
      */
     @Test
     void matches() {
-        BaseMain.showBanner();
+        BaseMain.showBanner("0.0.1");
         String msg = "helloworld!!";
         Pair<RSAPublicKey, RSAPrivateKey> key = RsaUtil.getKey(2048);
         RsaSignUtil rsaSignUtil = new RsaSignUtil(key);

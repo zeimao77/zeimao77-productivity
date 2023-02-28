@@ -12,7 +12,7 @@ class ParamValidateUtilTest extends BaseMain {
 
     @Test
     void mapCheck() {
-        showBanner();
+        showBanner("0.0.1");
         HashMap<String, Object> stringObjectHashMap = new HashMap<>();
         HashMap<String, Object> map = new HashMap<>();
         map.put("param1","");

@@ -12,7 +12,7 @@ class SimpleJedisTest extends BaseMain {
 
     @Test
     void getJedis() {
-        BaseMain.showBanner();
+        BaseMain.showBanner("0.0.1");
         Jedis jedis = ComponentFactory.initJedis("redis_top_zeimao77",null);
         String script = """
                 if redis.call('EXISTS',KEYS[1]) == 0 then

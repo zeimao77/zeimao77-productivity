@@ -14,7 +14,7 @@ class NumberUtilTest extends BaseMain {
 
     @Test
     void decimalStr() {
-        showBanner();
+        showBanner("0.0.1");
         NumberUtil numberUtil = new NumberUtil(NumberUtil.CURRENCY,2, RoundingMode.FLOOR);
         Consumer<Number> con = o -> {
             logger.info("{}取舍之后的结果是:{}",o,numberUtil.format(o));
