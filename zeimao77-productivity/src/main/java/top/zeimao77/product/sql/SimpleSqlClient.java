@@ -93,6 +93,7 @@ public class SimpleSqlClient implements Reposit,AutoCloseable {
      */
     @Override
     public int updateByResolver(StatementParamResolver sql) {
+        sql.resolve();
         List<StatementParameter> statementParams = sql.getStatementParams();
         Consumer<PreparedStatement> con = o -> {
             for (StatementParameter statementParam : statementParams) {
@@ -173,15 +174,7 @@ public class SimpleSqlClient implements Reposit,AutoCloseable {
 
     @Override
     public int update(String sqlt,Object params) {
-        DefaultStatementParamResolver defaultStatementParamResolver = new DefaultStatementParamResolver(sqlt, params);
-        defaultStatementParamResolver.resolve();
-        List<StatementParameter> statementParams = defaultStatementParamResolver.getStatementParams();
-        Consumer<PreparedStatement> con = o -> {
-            for (StatementParameter statementParam : statementParams) {
-                setParam(o,statementParam.getIndex(),statementParam.getJavaType(),statementParam.getJdbcType(),statementParam.getValue());
-            }
-        };
-        return update(defaultStatementParamResolver.getSql(),con);
+        return updateByResolver(new DefaultStatementParamResolver(sqlt, params));
     }
 
     public int update(String sql,Consumer<PreparedStatement> statementParamSetter) {
@@ -257,16 +250,7 @@ public class SimpleSqlClient implements Reposit,AutoCloseable {
      * @return 查询结果
      */
     public ArrayList<String> selectListString(String sqlt, Object param) {
-        DefaultStatementParamResolver defaultStatementParamResolver = new DefaultStatementParamResolver(sqlt, param);
-        defaultStatementParamResolver.resolve();
-        List<StatementParameter> statementParams = defaultStatementParamResolver.getStatementParams();
-        Consumer<PreparedStatement> con = o -> {
-            for (StatementParameter statementParam : statementParams) {
-                setParam(o,statementParam.getIndex(),statementParam.getJavaType(),statementParam.getJdbcType()
-                        ,statementParam.getValue());
-            }
-        };
-        List<ResultStr> objects = select(defaultStatementParamResolver.getSql(),con,DefaultResultSetResolve.INSTANCE,ResultStr.class);
+        List<ResultStr> objects = selectByResolver(new DefaultStatementParamResolver(sqlt, param),ResultStr.class);
         ArrayList<String> collect = objects.stream().map(ResultStr::getResult)
                 .collect(ArrayList::new,ArrayList::add,ArrayList::addAll);
         return collect;
@@ -315,6 +299,7 @@ public class SimpleSqlClient implements Reposit,AutoCloseable {
 
     @Override
     public <T> ArrayList<T> selectByResolver(StatementParamResolver sql, Class<T> clazz) {
+        sql.resolve();
         List<StatementParameter> statementParams = sql.getStatementParams();
         Consumer<PreparedStatement> con = o -> {
             for (StatementParameter statementParam : statementParams) {
@@ -334,16 +319,7 @@ public class SimpleSqlClient implements Reposit,AutoCloseable {
      */
     @Override
     public <T> ArrayList<T> selectListObj(String sqlt,Object param, Class<T> clazz) {
-        DefaultStatementParamResolver defaultStatementParamResolver = new DefaultStatementParamResolver(sqlt, param);
-        defaultStatementParamResolver.resolve();
-        List<StatementParameter> statementParams = defaultStatementParamResolver.getStatementParams();
-        Consumer<PreparedStatement> con = o -> {
-            for (StatementParameter statementParam : statementParams) {
-                setParam(o,statementParam.getIndex(),statementParam.getJavaType(),statementParam.getJdbcType()
-                        ,statementParam.getValue());
-            }
-        };
-        return select(defaultStatementParamResolver.getSql(),con,this.resultSetResolvel,clazz);
+        return selectByResolver(new DefaultStatementParamResolver(sqlt, param),clazz);
     }
 
     @Override

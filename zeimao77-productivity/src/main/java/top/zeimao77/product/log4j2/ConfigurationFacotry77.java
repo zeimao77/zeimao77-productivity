@@ -11,6 +11,8 @@ import org.apache.logging.log4j.core.config.builder.api.*;
 import org.apache.logging.log4j.core.config.builder.impl.BuiltConfiguration;
 import org.apache.logging.log4j.core.config.plugins.Plugin;
 
+import java.util.Locale;
+
 /**
  * 提供一个可以直接使用的默认的日志配置插件以覆盖日志框架提供的默认配置
  * 如果对该配置不满意 可以提供一个log4j2.xml文件以供日志环境初始化;
