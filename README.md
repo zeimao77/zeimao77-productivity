@@ -77,7 +77,7 @@ import top.zeimao77.product.util.LongIdGenerator;
 public class Main extends BaseMain {
 
     public static void main(String[] args) {
-        BaseMain.showBanner();
+        BaseMain.showBanner("0.0.1");
         logger.trace(LongIdGenerator.INSTANCE.generate());
         logger.debug(LongIdGenerator.INSTANCE.generate());
         logger.info(LongIdGenerator.INSTANCE.generate());
