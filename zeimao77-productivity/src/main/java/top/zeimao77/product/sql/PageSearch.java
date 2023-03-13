@@ -68,6 +68,10 @@ public class PageSearch extends BaseSearch {
         return total;
     }
 
+    public Long calcTotalPage() {
+        return  total % pageSize > 0 ? (total / pageSize + 1) : total / pageSize;
+    }
+
     public void setTotal(Long total) {
         this.total = total;
     }

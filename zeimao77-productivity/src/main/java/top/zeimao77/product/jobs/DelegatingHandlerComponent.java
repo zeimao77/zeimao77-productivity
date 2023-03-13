@@ -12,9 +12,9 @@ import java.util.Map;
  * 对于一个任务，将使用处理器顺序处理该任务
  * @param <T>
  */
-public class SequentialHandlerComponent<T extends IJob> extends JobExecHandler<T> {
+public class DelegatingHandlerComponent<T extends IJob> extends JobExecHandler<T> {
 
-    private static Logger logger = LogManager.getLogger(SequentialHandlerComponent.class);
+    private static Logger logger = LogManager.getLogger(DelegatingHandlerComponent.class);
     private List<JobExecHandler<T>> jobExecHandlerList = new ArrayList<>();
 
     @Override
