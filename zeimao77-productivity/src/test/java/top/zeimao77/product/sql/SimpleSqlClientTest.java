@@ -129,7 +129,7 @@ class SimpleSqlClientTest extends BaseMain {
                 .limit(0,30)
             , DemoModel.class);
         for (DemoModel demoModel : demoList) {
-            logger.info(demoModel);
+            logger.info(demoModel.toString());
         }
     }
 
@@ -203,7 +203,7 @@ class SimpleSqlClientTest extends BaseMain {
         SimpleSqlClient simpleSqlClient = ComponentFactory.initSimpleSqlClient(MYSQL,null);
         ArrayList<DemoModel> demoList = simpleSqlClient.selectListObj("SELECT demo_id AS demoId,demo_name,de,bo AS demoName FROM demo LIMIT 0,10",null, DemoModel.class);
         for (DemoModel demoModel : demoList) {
-            logger.info(demoModel);
+            logger.info(demoModel.toString());
         }
     }
 
@@ -211,7 +211,7 @@ class SimpleSqlClientTest extends BaseMain {
     void selectFirstObj() {
         SimpleSqlClient simpleSqlClient = ComponentFactory.initSimpleSqlClient(MYSQL,null);
         DemoModel demoModel = simpleSqlClient.selectFirstObj("SELECT demo_id AS demoId,demo_name,de,bo AS demoName FROM demo LIMIT 0,1",null, DemoModel.class);
-        logger.info(demoModel);
+        logger.info(demoModel.toString());
     }
 
     /**

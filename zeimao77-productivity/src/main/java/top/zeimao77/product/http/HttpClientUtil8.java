@@ -1,7 +1,7 @@
 package top.zeimao77.product.http;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import top.zeimao77.product.exception.BaseServiceRunException;
 import static top.zeimao77.product.exception.ExceptionCodeDefinition.*;
 import top.zeimao77.product.util.StreamUtil;
@@ -16,7 +16,7 @@ import java.util.Map;
 
 public class HttpClientUtil8 implements IHttpClient {
 
-    private static Logger logger = LogManager.getLogger(HttpClientUtil8.class);
+    private static Logger logger = LoggerFactory.getLogger(HttpClientUtil8.class);
     public static final HttpClientUtil8 INSTANCE = new HttpClientUtil8();
 
     @Override

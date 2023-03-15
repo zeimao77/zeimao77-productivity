@@ -1,8 +1,9 @@
 package top.zeimao77.product.main;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
 import org.apache.logging.log4j.core.config.plugins.util.PluginManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import top.zeimao77.product.config.LocalContext;
 import top.zeimao77.product.exception.BaseServiceRunException;
 
@@ -24,7 +25,7 @@ public class BaseMain {
 
     static {
         initLoggerConfig();
-        logger = LogManager.getLogger(BaseMain.class);
+        logger = LoggerFactory.getLogger(BaseMain.class);
         initLocalContext();
     }
 

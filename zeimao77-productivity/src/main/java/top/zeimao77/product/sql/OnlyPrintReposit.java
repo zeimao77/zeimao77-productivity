@@ -1,7 +1,7 @@
 package top.zeimao77.product.sql;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
 import java.io.PrintWriter;
@@ -15,7 +15,7 @@ import java.util.function.BiConsumer;
  */
 public class OnlyPrintReposit implements  Reposit, Closeable {
 
-    private static Logger logger = LogManager.getLogger(OnlyPrintReposit.class);
+    private static Logger logger = LoggerFactory.getLogger(OnlyPrintReposit.class);
 
     private boolean appendEnd = true;
     PrintWriter writer;

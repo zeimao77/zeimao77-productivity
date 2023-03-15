@@ -1,11 +1,11 @@
 package top.zeimao77.product.fileio.iexcel;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFFormulaEvaluator;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import top.zeimao77.product.exception.BaseServiceRunException;
 import top.zeimao77.product.exception.ExceptionCodeDefinition;
 import top.zeimao77.product.model.Orderd;
@@ -20,7 +20,7 @@ import java.util.*;
 
 public class ExcelXlsxDocumentResolve<T> {
 
-    private static Logger logger = LogManager.getLogger(ExcelXlsxDocumentResolve.class);
+    private static Logger logger = LoggerFactory.getLogger(ExcelXlsxDocumentResolve.class);
 
     private List<CellFiledTypeResover> resovers;
     private boolean sorted;

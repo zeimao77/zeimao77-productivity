@@ -29,7 +29,7 @@ class NumberUtilTest extends BaseMain {
     @Test
     void parse() {
         NumberUtil numberUtil = new NumberUtil(NumberUtil.DECIMAL,2, RoundingMode.FLOOR);
-        logger.info(numberUtil.parse("20.067889").longValue());
+        logger.info("{}",numberUtil.parse("20.067889").longValue());
     }
 
     @Test

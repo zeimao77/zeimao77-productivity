@@ -1,7 +1,8 @@
 package top.zeimao77.product.jobs;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import static top.zeimao77.product.exception.ExceptionCodeDefinition.TRY_AGAIN_LATER;
 
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ import java.util.concurrent.*;
  */
 public class ParallelHandlerComponent<T extends IJob> extends JobExecHandler<T> {
 
-    private static Logger logger = LogManager.getLogger(ParallelHandlerComponent.class);
+    private static Logger logger = LoggerFactory.getLogger(ParallelHandlerComponent.class);
     ExecutorService executors;
     private List<JobExecHandler<T>> jobExecHandlerList = new ArrayList<>();
 

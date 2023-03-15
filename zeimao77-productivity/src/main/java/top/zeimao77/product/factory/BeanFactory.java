@@ -1,7 +1,7 @@
 package top.zeimao77.product.factory;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisCluster;
 import top.zeimao77.product.email.SimpleEmailSender;
@@ -22,7 +22,7 @@ import java.util.function.Supplier;
  */
 public class BeanFactory {
 
-    private static Logger logger = LogManager.getLogger(BeanFactory.class);
+    private static Logger logger = LoggerFactory.getLogger(BeanFactory.class);
     /**
      * 默认的BEAN工厂实现
      */

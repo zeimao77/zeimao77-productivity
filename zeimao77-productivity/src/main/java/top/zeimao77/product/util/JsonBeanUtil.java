@@ -9,8 +9,8 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -19,7 +19,7 @@ import java.time.LocalTime;
 
 public class JsonBeanUtil {
 
-    private static Logger logger = LogManager.getLogger(JsonBeanUtil.class);
+    private static Logger logger = LoggerFactory.getLogger(JsonBeanUtil.class);
     public static final JsonBeanUtil DEFAULT = new JsonBeanUtil();
 
     public ObjectMapper objectMapper;

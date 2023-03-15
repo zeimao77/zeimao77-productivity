@@ -1,7 +1,7 @@
 package top.zeimao77.product.jobs;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +14,7 @@ import java.util.Map;
  */
 public class DelegatingHandlerComponent<T extends IJob> extends JobExecHandler<T> {
 
-    private static Logger logger = LogManager.getLogger(DelegatingHandlerComponent.class);
+    private static Logger logger = LoggerFactory.getLogger(DelegatingHandlerComponent.class);
     private List<JobExecHandler<T>> jobExecHandlerList = new ArrayList<>();
 
     @Override

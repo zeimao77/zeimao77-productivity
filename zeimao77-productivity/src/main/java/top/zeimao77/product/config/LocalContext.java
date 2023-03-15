@@ -1,7 +1,7 @@
 package top.zeimao77.product.config;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import top.zeimao77.product.exception.BaseServiceException;
 import top.zeimao77.product.exception.BaseServiceRunException;
 import static top.zeimao77.product.exception.ExceptionCodeDefinition.IOEXCEPTION;
@@ -23,7 +23,7 @@ import java.util.Properties;
  */
 public class LocalContext {
 
-    private static Logger logger = LogManager.getLogger(LocalContext.class);
+    private static Logger logger = LoggerFactory.getLogger(LocalContext.class);
 
     private static final HashMap<String,Object> context = new HashMap<>();
 

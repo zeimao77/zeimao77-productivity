@@ -1,9 +1,8 @@
 package top.zeimao77.product.sql;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import top.zeimao77.product.exception.BaseServiceRunException;
-
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -14,7 +13,7 @@ import static top.zeimao77.product.exception.ExceptionCodeDefinition.SQLEXCEPTIO
  */
 public class ConnectionTransactionFactory implements TransactionFactory {
 
-    private static Logger logger = LogManager.getLogger(ConnectionTransactionFactory.class);
+    private static Logger logger = LoggerFactory.getLogger(ConnectionTransactionFactory.class);
 
     private Connection connection;
 

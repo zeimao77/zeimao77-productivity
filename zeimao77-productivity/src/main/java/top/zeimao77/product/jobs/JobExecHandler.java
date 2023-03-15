@@ -1,13 +1,13 @@
 package top.zeimao77.product.jobs;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import top.zeimao77.product.exception.BaseServiceRunException;
 import java.util.Map;
 
 public abstract class JobExecHandler<T extends IJob> implements JobExec{
 
-    private static Logger logger = LogManager.getLogger(JobExecHandler.class);
+    private static Logger logger = LoggerFactory.getLogger(JobExecHandler.class);
 
     /**
      * @param job 任务

@@ -1,7 +1,7 @@
 package top.zeimao77.product.jobs;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class JobExecTemplateBatch<T extends IJob> implements JobExec{
 
-    private static Logger logger = LogManager.getLogger(JobExecTemplateBatch.class);
+    private static Logger logger = LoggerFactory.getLogger(JobExecTemplateBatch.class);
 
     protected ArrayBlockingQueue<T> jobs;
     protected ExecutorService executorService;

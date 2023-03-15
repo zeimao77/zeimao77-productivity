@@ -11,9 +11,9 @@ public class LongIdGeneratorTest extends BaseMain {
     public void testGenerate() {
         BaseMain.showBanner("0.0.1");
         LongIdGenerator instance = LongIdGenerator.INSTANCE;
-        logger.info(instance.generate());
+        logger.info("{}",instance.generate());
         // 指定机器号
-        logger.info(new LongIdGenerator(2).generate());
+        logger.info("{}",new LongIdGenerator(2).generate());
         // uuid
         logger.info(UuidGenerator.INSTANCE.generate());
     }

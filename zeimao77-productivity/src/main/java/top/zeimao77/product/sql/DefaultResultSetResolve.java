@@ -1,14 +1,13 @@
 package top.zeimao77.product.sql;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import top.zeimao77.product.exception.BaseServiceRunException;
 import static top.zeimao77.product.exception.ExceptionCodeDefinition.*;
 import top.zeimao77.product.model.Orderd;
 import top.zeimao77.product.util.CalendarDateUtil;
 import top.zeimao77.product.util.LocalDateTimeUtil;
 import top.zeimao77.product.util.StringOptional;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
@@ -26,7 +25,7 @@ import java.util.Map;
  */
 public class DefaultResultSetResolve implements ResultSetResolve {
 
-    private static Logger logger = LogManager.getLogger(DefaultResultSetResolve.class);
+    private static Logger logger = LoggerFactory.getLogger(DefaultResultSetResolve.class);
     public static final DefaultResultSetResolve INSTANCE = new DefaultResultSetResolve();
     private List<FiledTypeResover> resovers;
     private boolean sorted;

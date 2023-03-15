@@ -1,7 +1,7 @@
 package top.zeimao77.product.http;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import top.zeimao77.product.exception.BaseServiceRunException;
 import static top.zeimao77.product.exception.ExceptionCodeDefinition.*;
 
@@ -21,7 +21,7 @@ import java.util.concurrent.Executors;
  */
 public class HttpClientUtil11 implements AutoCloseable,IHttpClient {
 
-    private static Logger logger = LogManager.getLogger(HttpClientUtil11.class);
+    private static Logger logger = LoggerFactory.getLogger(HttpClientUtil11.class);
 
     private HttpClient client;
     private ExecutorService executor;

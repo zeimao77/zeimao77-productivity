@@ -1,7 +1,7 @@
 package top.zeimao77.product.sql;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import top.zeimao77.product.exception.BaseServiceRunException;
 import top.zeimao77.product.util.AssertUtil;
 
@@ -42,7 +42,7 @@ import static top.zeimao77.product.exception.ExceptionCodeDefinition.*;
  */
 public class SimpleSqlClient implements Reposit,AutoCloseable {
 
-    private static Logger logger = LogManager.getLogger(SimpleSqlClient.class);
+    private static Logger logger = LoggerFactory.getLogger(SimpleSqlClient.class);
 
     protected PreparedStatementSetter preparedStatementSetter;
     protected ResultSetResolve resultSetResolvel;

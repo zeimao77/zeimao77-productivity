@@ -1,7 +1,7 @@
 package top.zeimao77.product.sql;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import top.zeimao77.product.exception.BaseServiceRunException;
 import top.zeimao77.product.factory.BeanFactory;
 import top.zeimao77.product.factory.ComponentFactory;
@@ -23,7 +23,7 @@ import static top.zeimao77.product.exception.ExceptionCodeDefinition.SQLEXCEPTIO
  */
 public class SimpleSqlTemplate {
 
-    private static Logger logger = LogManager.getLogger(SimpleSqlTemplate.class);
+    private static Logger logger = LoggerFactory.getLogger(SimpleSqlTemplate.class);
 
     DataSource dataSource;
 
