@@ -69,11 +69,11 @@ public class TreeUtil {
      * @param node 树节点
      * @param pred 如果返回true节点将会被移除
      */
-    public static boolean trimTree(TreeNode node, Predicate<TreeNode> pred) {
-        List<TreeNode> childs = node.childs();
+    public static <T extends TreeNode> boolean trimTree(T node, Predicate<T> pred) {
+        List<T> childs = node.childs();
         if(childs != null && !childs.isEmpty()) {
-            for(Iterator<TreeNode> iterator = childs.iterator(); iterator.hasNext();) {
-                TreeNode next = iterator.next();
+            for(Iterator<T> iterator = childs.iterator(); iterator.hasNext();) {
+                T next = iterator.next();
                 if(trimTree(next, pred)) {
                     iterator.remove();
                 }

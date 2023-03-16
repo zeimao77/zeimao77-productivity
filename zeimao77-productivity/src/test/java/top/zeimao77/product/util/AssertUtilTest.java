@@ -32,6 +32,11 @@ public class AssertUtilTest extends BaseMain {
             System.out.print(aByte+",");
         }
 
+        for (int i = 0; i < 10; i++) {
+
+            logger.info(UuidGenerator.INSTANCE.generate());
+        }
+
     }
 
 }
