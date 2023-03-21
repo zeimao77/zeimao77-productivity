@@ -8,6 +8,7 @@ import redis.clients.jedis.HostAndPort;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisCluster;
 import top.zeimao77.product.config.LocalContext;
+import top.zeimao77.product.dingding.DingDingRobotClient;
 import top.zeimao77.product.email.SimpleEmailSender;
 import top.zeimao77.product.exception.BaseServiceRunException;
 import top.zeimao77.product.redis.JedisBuilder;
@@ -229,6 +230,33 @@ public class ComponentFactory {
         if(beanFactory != null)
             beanFactory.registerSingleton(prefx,beanFactory);
         return simpleEmailSender;
+    }
+
+    /**
+     * 配置方法:
+     * <pre>
+     * ${prefx}_webhook=https://oapi.dingtalk.com/robot/send
+     * ${prefx}_token=******
+     * ${prefx}_secret=******
+     * </pre>
+     * @param prefx 前缀
+     * @return DingDingRobotClient实例
+     */
+    public static DingDingRobotClient initDingDingRobotClient(String prefx,BeanFactory beanFactory) {
+        StringOptional webhook = LocalContext.getString(prefx+"_webhook");
+        webhook.ifBlackThrow("webhook");
+        StringOptional token = LocalContext.getString(prefx+"_token");
+        StringOptional secret = LocalContext.getString(prefx+"_secret");
+        secret.ifBlackThrow("secret");
+        DingDingRobotClient client = null;
+        if(token.isBlack())
+            client = new DingDingRobotClient(webhook.get(),secret.get());
+        else
+            client = new DingDingRobotClient(webhook.get(),token.get(),secret.get());
+        if(beanFactory != null)
+            beanFactory.registerSingleton(prefx,beanFactory);
+        return client;
+
     }
 
     /**
