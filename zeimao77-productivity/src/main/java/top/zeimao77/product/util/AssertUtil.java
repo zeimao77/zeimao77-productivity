@@ -4,6 +4,7 @@ import top.zeimao77.product.exception.BaseServiceRunException;
 
 import static top.zeimao77.product.exception.ExceptionCodeDefinition.APPERR;
 
+import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
 /**
@@ -60,6 +61,11 @@ public class AssertUtil {
         return obj != null && !"".equals(obj.toString());
     }
 
+    public static <T> void ifNotEmpty(T obj, Consumer<T> con) {
+        if(isNotEmpty(obj))
+            con.accept(obj);
+    }
+
     /**
      * 校验通配 支持?表示一个字符，*表示任意多个字符
      * @param str 匹配的字符串
@@ -90,6 +96,11 @@ public class AssertUtil {
      */
     public static boolean isBlack(CharSequence obj) {
         return obj == null || "".equals(obj.toString().trim());
+    }
+
+    public static <T extends CharSequence> void ifNotBlack(T obj,Consumer<T> con) {
+        if(!isBlack(obj))
+            con.accept(obj);
     }
 
     /**
