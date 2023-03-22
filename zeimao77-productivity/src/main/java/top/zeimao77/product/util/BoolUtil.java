@@ -17,7 +17,7 @@ public class BoolUtil {
         }
         try{
             return parseBool(boolStr);
-        } catch (Exception e) {}
+        } catch (BaseServiceException e) {}
         return defaultValue;
     }
 

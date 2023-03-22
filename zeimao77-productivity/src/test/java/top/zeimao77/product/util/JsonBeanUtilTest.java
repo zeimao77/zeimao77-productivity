@@ -1,9 +1,8 @@
 package top.zeimao77.product.util;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.Test;
 import top.zeimao77.product.main.BaseMain;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class JsonBeanUtilTest extends BaseMain {
 
@@ -21,6 +20,34 @@ class JsonBeanUtilTest extends BaseMain {
         logger.info("demoname:{}",demoModel.getDemoName());
 
     }
+
+    @Test
+    void testToJsonString() throws JsonProcessingException {
+        String j = "{\"b1\":\"YES\"}";
+        A a = JsonBeanUtil.DEFAULT.getObjectMapper().readValue(j, A.class);
+        logger.info(a.toString());
+
+    }
+
+    public static class A {
+        private Boolean b1;
+
+        public A() {
+        }
+
+        public A(boolean b1) {
+            this.b1 = b1;
+        }
+
+        public boolean isB1() {
+            return b1;
+        }
+
+        public void setB1(boolean b1) {
+            this.b1 = b1;
+        }
+    }
+
 
     private static class DemoModel {
         private Long demoId;

@@ -1,6 +1,5 @@
 package top.zeimao77.product.main;
 
-
 import org.apache.logging.log4j.core.config.plugins.util.PluginManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -107,9 +106,8 @@ public class BaseMain {
      */
     public static String getPropertyOrEnv(String key,String defaultValue) {
         String value = System.getProperty(key);
-        if(value == null){
+        if(value == null)
             value = System.getenv(key);
-        }
         return value == null ? defaultValue : value;
     }
 

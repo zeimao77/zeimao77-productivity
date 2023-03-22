@@ -14,6 +14,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class DingDingRobotClient {
 
@@ -63,8 +64,7 @@ public class DingDingRobotClient {
         long timestamp = System.currentTimeMillis();
         String url = this.webhook+"&timestamp="+timestamp;
         url += "&sign="+sign(timestamp);
-        HashMap<String, String> headers = new HashMap<>();
-        headers.put("Content-Type","application/json");
+        Map<String, String> headers = Map.of("Content-Type", "application/json");
         HttpClientUtil11 httpClientUtil11 = new HttpClientUtil11();
         String s = httpClientUtil11.sendPost(url, JsonBeanUtil.DEFAULT.toJsonString(message),headers,5);
         logger.debug("robot:{}",s);
@@ -74,9 +74,7 @@ public class DingDingRobotClient {
     public void sendText(String messaage,List<String> atMobiles,List<String> atUserIds,boolean atAll) {
         HashMap<String, Object> param = new HashMap<>();
         param.put("msgtype","text");
-        HashMap<Object, Object> content = new HashMap<>();
-        content.put("content",messaage);
-        param.put("text",content);
+        param.put("text",Map.of("content",messaage));
         send(param,atMobiles,atUserIds,atAll);
     }
 
@@ -87,10 +85,7 @@ public class DingDingRobotClient {
     public void sendMarkdown(String title,String text,List<String> atMobiles,List<String> atUserIds,boolean atAll) {
         HashMap<String, Object> param = new HashMap<>();
         param.put("msgtype","markdown");
-        HashMap<String, Object> markdown = new HashMap<>();
-        markdown.put("title",title);
-        markdown.put("text",text);
-        param.put("markdown",markdown);
+        param.put("markdown",Map.of("title",title,"text",text));
         send(param,atMobiles,atUserIds,atAll);
     }
 

@@ -17,9 +17,8 @@ public class ParamValidateUtil {
      * @param map Map
      */
     public static void mapRemoveEmpty(Map<String, Object> map) {
-        if(map == null) {
+        if(map == null)
             return;
-        }
         Set<String> keys = map.keySet();
         Iterator ite = keys.iterator();
         while(ite.hasNext()) {
@@ -27,9 +26,8 @@ public class ParamValidateUtil {
             Object obj = map.get(key);
             if (obj instanceof Map o) {
                 mapRemoveEmpty(o);
-                if (o.isEmpty()) {
+                if (o.isEmpty())
                     ite.remove();
-                }
             } else if(obj instanceof Collection o) {
                 for (Iterator iterator = o.iterator();iterator.hasNext();) {
                     Object n = iterator.next();
@@ -49,9 +47,8 @@ public class ParamValidateUtil {
     }
 
     public static void mapChecks(Map<String, Object> map,String... checks){
-        for (String check : checks) {
+        for (String check : checks)
             mapCheck(map,check);
-        }
     }
 
     static Pattern paramCheckPattern = Pattern.compile("(\\S+?)\\.(.*)");
@@ -95,9 +92,8 @@ public class ParamValidateUtil {
 
     // map拷贝
     public static <T extends Map> void mapCopy(final T source,T target,String... fields){
-        for (String field : fields) {
+        for (String field : fields)
             target.put(field,source.get(field));
-        }
     }
 
 }
