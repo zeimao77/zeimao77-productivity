@@ -256,25 +256,6 @@ public class SimpleSqlClient implements Reposit,AutoCloseable {
         return collect;
     }
 
-    public String selectString(String sqlt, Object param) {
-        ArrayList<String> strings = selectListString(sqlt, param);
-        return strings.isEmpty() ? null : strings.get(0);
-    }
-
-    /**
-     * 查询一个Long值，调用示例：
-     * <pre>
-     * simpleMysql.selectLong("SELECT COUNT(1) AS result FROM demo WHERE demo_id > ?", new Object[]{1});
-     * </pre>
-     * @param sqlt
-     * @param param
-     * @return
-     */
-    public Long selectLong(String sqlt,Object param) {
-        String s = selectString(sqlt, param);
-        return s == null ? null : Long.valueOf(s);
-    }
-
     public ArrayList<Map<String,Object>> selectListMap(String sql, Consumer<PreparedStatement> statementParamSetter
             , ResultSetResolve resolve) {
         ArrayList<Map<String,Object>> list = new ArrayList<>();
@@ -310,13 +291,7 @@ public class SimpleSqlClient implements Reposit,AutoCloseable {
         return select(sql.getSql(),con,this.resultSetResolvel,clazz);
     }
 
-    /**
-     * @param sqlt SQL语句 使用#{*}点位符替换 如果参数是数组使用?占位
-     * @param param  参数 支持 Map、Bean、数组参数
-     * @param clazz 返回类型类定义
-     * @param <T> 返回泛型
-     * @return 查询结果列表
-     */
+
     @Override
     public <T> ArrayList<T> selectListObj(String sqlt,Object param, Class<T> clazz) {
         return selectByResolver(new DefaultStatementParamResolver(sqlt, param),clazz);
@@ -327,15 +302,7 @@ public class SimpleSqlClient implements Reposit,AutoCloseable {
         return select(sql,null,this.resultSetResolvel,clazz);
     }
 
-    /**
-     * 查询一个MAP,示例：
-     * <pre>
-     * simpleMysql.selectListMap("SELECT a,b,e,g,o,q,s,u,w FROM abc LIMIT 0,10", null);
-     * </pre>
-     * @param sqlt SQL
-     * @param param 参数
-     * @return
-     */
+
     @Override
     public ArrayList<Map<String, Object>> selectListMap(String sqlt, Object param) {
         DefaultStatementParamResolver defaultStatementParamResolver = new DefaultStatementParamResolver(sqlt, param);

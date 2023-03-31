@@ -111,6 +111,12 @@ public class OnlyPrintReposit implements  Reposit, Closeable {
     }
 
     @Override
+    public ArrayList<String> selectListString(String sqlt, Object param) {
+        selectByResolver(new DefaultStatementParamResolver(sqlt, param),ResultStr.class);
+        return new ArrayList<>();
+    }
+
+    @Override
     public void close() {
         if(writer != null) {
             writer.flush();
