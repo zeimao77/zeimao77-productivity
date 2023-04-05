@@ -119,6 +119,10 @@ public class BeanFactory {
         throw new BaseServiceRunException(WRONG_ACTION,"没有这样的BEAN实例:"+beanName);
     }
 
+    public <T> T getBean(String autoBean,String beanName, Class<T> requiredType) {
+        return getBean(autoBean+beanName,requiredType);
+    }
+
     /**
      * 通过类型获取一个单例BEAN对象
      * @param requiredType BEAN类型
