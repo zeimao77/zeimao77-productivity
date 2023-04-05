@@ -2,8 +2,6 @@ package top.zeimao77.product.factory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisCluster;
 import top.zeimao77.product.email.SimpleEmailSender;
 import top.zeimao77.product.exception.BaseServiceRunException;
 import static top.zeimao77.product.exception.ExceptionCodeDefinition.WRONG_ACTION;
@@ -108,10 +106,10 @@ public class BeanFactory {
             registerSingleton(beanName,client);
             return (T) client;
         }
-        if(requiredType == Jedis.class) {
+        if("redis.clients.jedis.Jedis".equals(requiredType.getName())) {
             return (T) ComponentFactory.initJedis(beanName,this);
         }
-        if(requiredType == JedisCluster.class) {
+        if("redis.clients.jedis.JedisCluster".equals(requiredType.getName())) {
             return (T) ComponentFactory.initJedisCluster(beanName,this);
         }
         if(requiredType == SimpleEmailSender.class) {
