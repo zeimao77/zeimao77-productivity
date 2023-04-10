@@ -7,6 +7,7 @@ import org.springframework.web.servlet.view.AbstractView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
@@ -28,7 +29,7 @@ public class DefaultExcelZipStreamingView extends AbstractView {
 
     @Override
     protected void renderMergedOutputModel(Map<String, Object> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        response.setHeader("content-disposition","attachment;filename="+table.getTableName()+".zip");
+        response.setHeader("content-disposition","attachment;filename=" + URLEncoder.encode(table.getTableName()+".zip","UTF-8"));
         ExcelXlsxDocumentBuilder builder = new ExcelXlsxDocumentBuilder(table,dataList,rowNo);
         Workbook workbook = builder.build();
         renderZip(workbook,response);

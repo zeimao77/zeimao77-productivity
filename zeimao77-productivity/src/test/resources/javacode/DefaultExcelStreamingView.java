@@ -6,6 +6,7 @@ import org.springframework.web.servlet.view.document.AbstractXlsxStreamingView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.net.URLEncoder;
 import java.util.List;
 import java.util.Map;
 
@@ -25,7 +26,7 @@ public class DefaultExcelStreamingView extends AbstractXlsxStreamingView {
     protected void buildExcelDocument(Map<String, Object> model, Workbook workbook, HttpServletRequest request, HttpServletResponse response) throws Exception {
         ExcelXlsxDocumentBuilder excelXlsxDocumentBuilder = new ExcelXlsxDocumentBuilder(table, dataList,rowNo);
         excelXlsxDocumentBuilder.build(workbook);
-        response.setHeader("Content-disposition","attachment;filename="+table.getTableName()+".xlsx");
+        response.setHeader("Content-disposition","attachment;filename=" + URLEncoder.encode(table.getTableName()+".xlsx","UTF-8"));
     }
 
     public ModelAndView mav() {
