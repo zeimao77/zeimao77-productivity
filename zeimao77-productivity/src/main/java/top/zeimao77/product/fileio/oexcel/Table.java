@@ -76,7 +76,31 @@ public class Table {
         }
     }
 
+    public static class CodeNameConverter implements Converter{
 
+        private String codeField;
+        private String nameField;
+
+        public CodeNameConverter(String codeField, String nameField) {
+            this.codeField = codeField;
+            this.nameField = nameField;
+        }
+
+        public String getCodeField() {
+            return codeField;
+        }
+
+        public String getNameField() {
+            return nameField;
+        }
+
+        @Override
+        public Object getPrintValue(Column column, Object line) {
+            Object c = BeanUtil.getProperty(line, codeField);
+            Object n = BeanUtil.getProperty(line, nameField);
+            return String.format("[%s]%s",c == null ? "" : c.toString(),n == null ? "" : n.toString());
+        }
+    }
 
     public static class Column {
         private String title;
