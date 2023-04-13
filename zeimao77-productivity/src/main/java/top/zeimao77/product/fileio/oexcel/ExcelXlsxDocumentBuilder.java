@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Consumer;
 
-public class ExcelXlsxDocumentBuilder {
+public class ExcelXlsxDocumentBuilder implements XlsxDocumentBuilder{
 
     protected Workbook workbook;
     protected Sheet sheet;
@@ -62,6 +62,7 @@ public class ExcelXlsxDocumentBuilder {
      * 默认构造xlsx文件
      * @return 07版本
      */
+    @Override
     public Workbook build() {
         build(new SXSSFWorkbook());
         return this.workbook;
@@ -82,6 +83,7 @@ public class ExcelXlsxDocumentBuilder {
      * </pre>
      * @param workbook 工作簿
      */
+    @Override
     public void build(Workbook workbook) {
         this.workbook = workbook;
         this.sheet = workbook.createSheet(table.getTableName());
