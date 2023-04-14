@@ -41,14 +41,14 @@ public interface Reposit {
      * @param params 参数
      * @return 更新行数
      */
-    public int update(String sqlt,Object params);
+    int update(String sqlt,Object params);
 
     /**
      * @param sqlt SQL语句 使用#{*}点位符替换 如果参数是数组使用?占位
      * @param param  参数 支持 Map、Bean、数组参数
      * @param clazz 返回类型类定义
      * @param <T> 返回泛型
-     * @return 查询结果列表 如果没有数据 它不应该返回null 而应该是new ArrayList<T>()
+     * @return 查询结果列表,如果没有数据,它不应该返回null,而应该是new ArrayList()
      */
     <T> ArrayList<T> selectListObj(String sqlt,Object param, Class<T> clazz);
 
@@ -61,7 +61,7 @@ public interface Reposit {
      * </pre>
      * @param sqlt SQL
      * @param param 参数
-     * @return
+     * @return 查询结果
      */
     ArrayList<Map<String,Object>> selectListMap(String sqlt, Object param);
 
@@ -76,9 +76,9 @@ public interface Reposit {
      * <pre>
      * simpleMysql.selectLong("SELECT COUNT(1) AS result FROM demo WHERE demo_id > ?", new Object[]{1});
      * </pre>
-     * @param sqlt
+     * @param sqlt SQL
      * @param param
-     * @return
+     * @return 查询结果
      */
     default Long selectLong(String sqlt,Object param) {
         String s = selectString(sqlt, param);
