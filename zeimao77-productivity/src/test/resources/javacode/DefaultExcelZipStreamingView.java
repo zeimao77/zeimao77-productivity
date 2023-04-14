@@ -41,6 +41,7 @@ public class DefaultExcelZipStreamingView extends AbstractView {
         response.setHeader("content-disposition","attachment;filename=" + URLEncoder.encode(this.fileName+".zip","UTF-8"));
         Workbook workbook = this.xlsxDocumentBuilder.build();
         renderZip(workbook,response);
+        workbook.close();
     }
 
     protected void renderZip(Workbook workbook,HttpServletResponse response) throws IOException {
