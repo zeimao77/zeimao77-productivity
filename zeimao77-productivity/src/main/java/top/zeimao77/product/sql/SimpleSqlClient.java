@@ -314,7 +314,7 @@ public class SimpleSqlClient implements Reposit,AutoCloseable {
                         ,statementParam.getValue());
             }
         };
-        return selectListMap(sqlt,con,this.resultSetResolvel);
+        return selectListMap(defaultStatementParamResolver.getSql(),con,this.resultSetResolvel);
     }
 
     public <T> T selectFirstObj(String sqlt,Object param,Class<T> clazz) {

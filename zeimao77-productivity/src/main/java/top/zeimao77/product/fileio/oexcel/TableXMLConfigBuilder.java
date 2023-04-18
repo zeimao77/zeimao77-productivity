@@ -41,7 +41,6 @@ public class TableXMLConfigBuilder extends AbstractXmlBuiler<Table> {
         super(path);
     }
 
-
     @Override
     public Table build() {
         Table table = new Table();
