@@ -46,7 +46,7 @@ public class SimpleSqlClient implements Reposit,AutoCloseable {
 
     protected PreparedStatementSetter preparedStatementSetter;
     protected ResultSetResolve resultSetResolvel;
-    protected int queryTimeout = 10;
+    protected int queryTimeout = 30;
 
     protected TransactionFactory connectFacotry;
 
@@ -263,6 +263,7 @@ public class SimpleSqlClient implements Reposit,AutoCloseable {
         try{
             logger.debug("Prepared SQL:{}",sql);
             PreparedStatement preparedStatement = contection.prepareStatement(sql);
+
             statementParamSetter.accept(preparedStatement);
             preparedStatement.setQueryTimeout(queryTimeout);
             long start = System.currentTimeMillis();
