@@ -33,8 +33,8 @@ public class MutablePair<L, R> implements Pair<L, R> {
 
     @Override
     public boolean equals(Object obj) {
-        if(obj instanceof ImmutablePair) {
-            ImmutablePair<?, ?> key = (ImmutablePair<?, ?>) obj;
+        if(obj instanceof MutablePair) {
+            MutablePair<?, ?> key = (MutablePair<?, ?>) obj;
             if(obj == this) return true;
             if(key.getLeft() != null && key.getLeft().equals(this.left)) {
             } else if(key.getLeft() == null && this.left == null) {

@@ -10,7 +10,6 @@ import java.net.URLEncoder;
 import java.util.List;
 import java.util.Map;
 
-
 public class DefaultExcelStreamingView extends AbstractXlsxStreamingView {
 
     private XlsxDocumentBuilder xlsxDocumentBuilder;

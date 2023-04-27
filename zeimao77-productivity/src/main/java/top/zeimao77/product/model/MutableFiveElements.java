@@ -39,8 +39,8 @@ public class MutableFiveElements<G,W,A,F,S> implements FiveElements<G,W,A,F,S> {
             }
             return true;
         };
-        if(obj instanceof ImmutableFiveElements) {
-            ImmutableFiveElements<?, ?, ?, ?, ?> key = (ImmutableFiveElements<?, ?, ?, ?, ?>) obj;
+        if(obj instanceof MutableFiveElements<?,?,?,?,?>) {
+            MutableFiveElements<?, ?, ?, ?, ?> key = (MutableFiveElements<?, ?, ?, ?, ?>) obj;
             if(obj == this) return true;
             if(!pre.test(key.getGold(),this.gold)){return false;}
             if(!pre.test(key.getWood(),this.wood)){return false;}
