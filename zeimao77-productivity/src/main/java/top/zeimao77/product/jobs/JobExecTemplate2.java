@@ -44,16 +44,28 @@ public class JobExecTemplate2<T extends IJob> implements JobExec{
             });
             return true;
         } catch (RejectedExecutionException e) {
-            logger.error("任务队列满");
+            logger.debug("任务队列满");
             return false;
         }
     }
 
-    public void start(int nThreads) {
-        if(executorService == null) {
-            this.executorService = new ThreadPoolExecutor(nThreads,4 * nThreads,30,TimeUnit.SECONDS
-                    ,new LinkedBlockingQueue(nMaxJobs));
+    /**
+     * 如果线程池满 则休息一会继续尝试
+     * @param t 任务
+     * @param sleetStrategy 睡眠策略
+     * @return true
+     */
+    public boolean addJob(T t, TokenBucket.SleetStrategy sleetStrategy) {
+        while (!this.addJob(t)) {
+            sleetStrategy.sleep();
         }
+        return true;
+    }
+
+    public void start(int nThreads) {
+        if(executorService == null)
+            this.executorService = new ThreadPoolExecutor(nThreads,4 * nThreads,30
+                    ,TimeUnit.SECONDS,new LinkedBlockingQueue(nMaxJobs));
         setStatus(2);
     }
 
@@ -94,4 +106,7 @@ public class JobExecTemplate2<T extends IJob> implements JobExec{
         setStatus(4);
     }
 
+    public ExecutorService getExecutorService() {
+        return executorService;
+    }
 }
