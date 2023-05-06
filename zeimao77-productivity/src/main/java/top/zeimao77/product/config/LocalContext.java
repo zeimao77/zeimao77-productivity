@@ -79,7 +79,7 @@ public class LocalContext {
         try {
             Boolean result = BoolUtil.parseBool(o.toString());
             return Optional.of(result);
-        }catch (BaseServiceException e) {
+        }catch (BaseServiceRunException e) {
             logger.error(e.getMessage(),e);
         }
         return Optional.empty();

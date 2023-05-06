@@ -68,6 +68,28 @@ public class StringOptional {
         return optional.get();
     }
 
+    public Integer getInteger() {
+        if(optional.get().startsWith("0x")) {
+            Long.valueOf(optional.get().substring(2),16);
+        }
+        return Integer.valueOf(optional.get());
+    }
+
+    public boolean getBool() {
+        return BoolUtil.parseBool(optional.get());
+    }
+
+    public Double getDouble() {
+        return Double.parseDouble(optional.get());
+    }
+
+    public Long getLong() {
+        if(optional.get().startsWith("0x")) {
+            Long.valueOf(optional.get().substring(2),16);
+        }
+        return Long.valueOf(optional.get());
+    }
+
     @Override
     public String toString() {
         return optional.isEmpty() ? null : optional.get();
