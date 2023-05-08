@@ -1,11 +1,14 @@
 package top.zeimao77.product.cmd;
 
+import top.zeimao77.product.exception.BaseServiceRunException;
+
 public interface MenuStarter {
 
     String name();
 
     /**
      * 返回1表示鉴权通过;
+     * 鉴权失败通过 throw new BaseServiceRunException(BaseServiceRunException.NO_PERMISSION,"没有权限") 返回错误;
      * @return
      */
     default Integer authentication() { return 1; }
