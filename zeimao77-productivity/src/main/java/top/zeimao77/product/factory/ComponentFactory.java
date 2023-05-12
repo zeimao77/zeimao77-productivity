@@ -24,6 +24,7 @@ import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.Scanner;
 
 import static top.zeimao77.product.exception.ExceptionCodeDefinition.WRONG_ACTION;
 
@@ -37,6 +38,13 @@ public class ComponentFactory {
     public static final String AUTOBEAN_DATASOURCE_PREFIX = "$_datasource_";
     public static final String AUTOBEAN_SQLTEMPLATE = "$_sqltemplate_";
     public static final String AUTOBEAN_SQLCLIENT = "$_sqlclient_";
+    public static final String AUTOBEAN_SYSINSCANNER = "$_systemin_scanner";
+
+    public static synchronized Scanner initSystemInScanner(BeanFactory beanFactory){
+        if(beanFactory.getBean(AUTOBEAN_SYSINSCANNER,Scanner.class) == null)
+            beanFactory.registerSingleton(AUTOBEAN_SYSINSCANNER,new Scanner(System.in));
+        return beanFactory.getBean(AUTOBEAN_SYSINSCANNER,Scanner.class);
+    }
 
     /**
      * 配置参考:

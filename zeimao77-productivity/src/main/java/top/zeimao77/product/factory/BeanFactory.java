@@ -2,12 +2,9 @@ package top.zeimao77.product.factory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import top.zeimao77.product.email.SimpleEmailSender;
 import top.zeimao77.product.exception.BaseServiceRunException;
 import static top.zeimao77.product.exception.ExceptionCodeDefinition.WRONG_ACTION;
 
-import top.zeimao77.product.sql.SimpleSqlClient;
-import top.zeimao77.product.sql.SimpleSqlTemplate;
 import top.zeimao77.product.util.AssertUtil;
 
 import java.util.Map;
@@ -28,7 +25,6 @@ public class BeanFactory {
 
     private final Map<String, Object> singletonObjects;
     private final Map<String, Supplier<?>> prototypesFactory;
-
 
     public BeanFactory() {
         this(64,16);

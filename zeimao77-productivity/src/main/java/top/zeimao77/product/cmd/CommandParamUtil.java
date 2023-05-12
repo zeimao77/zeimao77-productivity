@@ -1,5 +1,7 @@
 package top.zeimao77.product.cmd;
 
+import top.zeimao77.product.factory.BeanFactory;
+import top.zeimao77.product.factory.ComponentFactory;
 import top.zeimao77.product.util.BoolUtil;
 import top.zeimao77.product.util.StringOptional;
 
@@ -11,9 +13,8 @@ public class CommandParamUtil {
 
     public static StringOptional getParamFromSystemIn(String msg){
         System.out.print(msg);
-        Scanner scanner = new Scanner(System.in);
+        Scanner scanner = BeanFactory.DEFAULT.getBean(ComponentFactory.AUTOBEAN_SYSINSCANNER, Scanner.class);
         String s = scanner.nextLine();
-        scanner.close();
         return new StringOptional(s);
     }
 
