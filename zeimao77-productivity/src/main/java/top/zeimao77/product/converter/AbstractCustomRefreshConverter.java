@@ -83,6 +83,7 @@ public abstract class AbstractCustomRefreshConverter<K> implements IConverter<K>
             try {
                 between = ChronoUnit.SECONDS.between(LocalDateTime.now(), expiryTime);
                 if(ruleRepository.isEmpty() || between <= 0) {
+                    clear();
                     refresh();
                     refreshExpiryTime();
                 }
