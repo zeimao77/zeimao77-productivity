@@ -41,8 +41,11 @@ public class ComponentFactory {
     public static final String AUTOBEAN_SYSINSCANNER = "$_systemin_scanner";
 
     public static synchronized Scanner initSystemInScanner(BeanFactory beanFactory){
-        if(beanFactory.getBean(AUTOBEAN_SYSINSCANNER,Scanner.class) == null)
+        try {
+            return beanFactory.getBean(AUTOBEAN_SYSINSCANNER,Scanner.class);
+        }catch (BaseServiceRunException e) {
             beanFactory.registerSingleton(AUTOBEAN_SYSINSCANNER,new Scanner(System.in));
+        }
         return beanFactory.getBean(AUTOBEAN_SYSINSCANNER,Scanner.class);
     }
 

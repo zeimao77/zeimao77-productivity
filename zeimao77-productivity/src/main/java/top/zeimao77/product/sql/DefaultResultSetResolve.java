@@ -400,7 +400,7 @@ public class DefaultResultSetResolve implements ResultSetResolve {
                     fieldValue = StringOptional.empty();
                 field.set(obj,fieldValue);
             } catch (NoSuchFieldException e) {
-                logger.warn("字段未找到:{}",columnLabel);
+                logger.debug("字段未找到:{}",columnLabel);
             } catch (IllegalAccessException e) {
                 throw new BaseServiceRunException("参数错误",e);
             }

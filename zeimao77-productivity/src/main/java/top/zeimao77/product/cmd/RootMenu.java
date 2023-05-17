@@ -1,17 +1,22 @@
 package top.zeimao77.product.cmd;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import top.zeimao77.product.exception.BaseServiceRunException;
 import top.zeimao77.product.util.StringOptional;
 
 import java.util.ArrayList;
 
 public class RootMenu implements MenuStarter {
 
+    private static Logger logger = LoggerFactory.getLogger(RootMenu.class);
+
     ArrayList<MenuStarter> menuList = new ArrayList<>();
     private String banner = """
-                       /\\_/\\\n
-                 _____/ o o \\\n
-               /~_____  =-= /\n
-              (__zm77__)_m_m)\n             
+                       /\\_/\\
+                 _____/ o o \\
+               /~_____  =-= /
+              (__zm77__)_m_m)         
             """;
 
     public RootMenu() {}
@@ -53,7 +58,11 @@ public class RootMenu implements MenuStarter {
                         menuList.get(selectMenu-1).start(args);
                     }
                 }
-            }catch (NumberFormatException e) {}
+            }catch (NumberFormatException e) {
+
+            }catch (BaseServiceRunException e) {
+                logger.error("错误:",e);
+            }
         }
     }
 

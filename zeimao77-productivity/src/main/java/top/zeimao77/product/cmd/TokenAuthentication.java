@@ -16,7 +16,7 @@ public class TokenAuthentication {
 
     public Integer authentication(Integer maxTry) {
         for (int i = 0; i < maxTry; i++) {
-            System.out.println(i == 0 ? "请输入口令:" : "口令错误,请输入口令:");
+            System.out.println(i == 0 ? "请输入口令:" : String.format("口令错误,请输入口令[%d/%d]:",i,maxTry));
             String s = BeanFactory.DEFAULT.getBean(ComponentFactory.AUTOBEAN_SYSINSCANNER,Scanner.class).nextLine();
             if(token.equals(s)) {
                 return 1;

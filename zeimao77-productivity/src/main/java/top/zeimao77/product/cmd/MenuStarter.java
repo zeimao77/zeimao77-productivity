@@ -1,7 +1,5 @@
 package top.zeimao77.product.cmd;
 
-import top.zeimao77.product.exception.BaseServiceRunException;
-
 public interface MenuStarter {
 
     String name();
