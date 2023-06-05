@@ -66,10 +66,8 @@ public abstract class AbstractCustomRefreshConverter<K> implements IConverter<K>
     @Override
     public Object get(K key) {
         refreshRule();
-        Object resultValue = defaultName(key);
-        if (this.ruleRepository.containsKey(key))
-            resultValue = this.ruleRepository.get(key);
-        return resultValue;
+        Object resultValue = this.ruleRepository.get(key);
+        return resultValue == null ? defaultName(key) : resultValue;
     }
 
     /**

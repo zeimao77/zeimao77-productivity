@@ -5,6 +5,8 @@ import org.slf4j.LoggerFactory;
 import top.zeimao77.product.main.BaseMain;
 
 import java.io.*;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,14 +16,8 @@ public class AssertUtilTest extends BaseMain {
 
     public static void main(String[] args) throws IOException, NoSuchFieldException, IllegalAccessException, InterruptedException {
         BaseMain.showBanner("1.0.1");
-        String s = "omni:paymentmethodref:005:3318";
-        Pattern pattern = Pattern.compile("omni:paymentmethodref:(\\S+):(\\S+)");
-        Matcher matcher = pattern.matcher(s);
-        if(matcher.matches()) {
-            String erpCode = matcher.group(1);
-            String payCode = matcher.group(2);
-            logger.info("{},{}",erpCode,payCode);
-        }
+
+        logger.info(String.format("%s", new NumberUtil(NumberUtil.DECIMAL,2, RoundingMode.HALF_UP).format(BigDecimal.valueOf(3345.2324D))));
 
     }
 
