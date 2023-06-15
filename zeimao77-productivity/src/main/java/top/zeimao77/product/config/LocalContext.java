@@ -2,7 +2,6 @@ package top.zeimao77.product.config;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import top.zeimao77.product.exception.BaseServiceException;
 import top.zeimao77.product.exception.BaseServiceRunException;
 import static top.zeimao77.product.exception.ExceptionCodeDefinition.IOEXCEPTION;
 import top.zeimao77.product.util.AssertUtil;
