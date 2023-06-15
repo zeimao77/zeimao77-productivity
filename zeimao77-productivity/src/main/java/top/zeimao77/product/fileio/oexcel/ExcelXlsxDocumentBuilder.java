@@ -87,7 +87,8 @@ public class ExcelXlsxDocumentBuilder implements XlsxDocumentBuilder{
     public void build(Workbook workbook) {
         this.workbook = workbook;
         this.sheet = workbook.createSheet(table.getTableName());
-        this.cellStyleFactory = new CellStyleFactory(workbook);
+        if(this.cellStyleFactory == null)
+            this.cellStyleFactory = new CellStyleFactory(workbook);
         if(before != null){before.accept(this);}
         setHead();
         setWidth();
@@ -191,5 +192,13 @@ public class ExcelXlsxDocumentBuilder implements XlsxDocumentBuilder{
 
     public void setRowNum(int rowNum) {
         this.rowNum = rowNum;
+    }
+
+    public CellStyleFactory getCellStyleFactory() {
+        return cellStyleFactory;
+    }
+
+    public void setCellStyleFactory(CellStyleFactory cellStyleFactory) {
+        this.cellStyleFactory = cellStyleFactory;
     }
 }

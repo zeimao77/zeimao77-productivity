@@ -23,7 +23,7 @@ public class CalendarDateUtil {
 
     private CalendarDateUtil(){}
 
-    public static Date parseDateTime(String text) {
+    public synchronized static Date parseDateTime(String text) {
         try {
             return STANDARDDATETIMEFORMATTER.parse(text);
         } catch (ParseException e) {
@@ -35,7 +35,7 @@ public class CalendarDateUtil {
      * @param text 日期字符串文本
      * @return Date对象
      */
-    public static Date parseDate(String text) {
+    public synchronized static Date parseDate(String text) {
         try {
             return STANDARDDATEFORMATTER.parse(text);
         } catch (ParseException e) {
@@ -47,7 +47,7 @@ public class CalendarDateUtil {
      * @param text 日间字符串文
      * @return Date对象 缺省日期: 1970-01-01
      */
-    public static Date parseTime(String text) {
+    public synchronized static Date parseTime(String text) {
         try {
             return STANDARDTIMEFORMATTER.parse(text);
         } catch (ParseException e) {
@@ -59,15 +59,15 @@ public class CalendarDateUtil {
      * @param date 日期对象
      * @return 格式化后的字符串
      */
-    public static String toDateTime(Date date) {
+    public synchronized static String toDateTime(Date date) {
         return date == null ? null : STANDARDDATETIMEFORMATTER.format(date);
     }
 
-    public static String toDate(Date date) {
+    public synchronized static String toDate(Date date) {
         return date == null ? null : STANDARDDATEFORMATTER.format(date);
     }
 
-    public static String toTime(Date date) {
+    public synchronized static String toTime(Date date) {
         return date == null ? null : STANDARDTIMEFORMATTER.format(date);
     }
 
