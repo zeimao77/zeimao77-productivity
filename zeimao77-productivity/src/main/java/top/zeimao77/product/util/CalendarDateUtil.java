@@ -23,9 +23,11 @@ public class CalendarDateUtil {
 
     private CalendarDateUtil(){}
 
-    public synchronized static Date parseDateTime(String text) {
+    public static Date parseDateTime(String text) {
         try {
-            return STANDARDDATETIMEFORMATTER.parse(text);
+            synchronized (STANDARDDATETIMEFORMATTER) {
+                return STANDARDDATETIMEFORMATTER.parse(text);
+            }
         } catch (ParseException e) {
             throw new BaseServiceRunException(APPERR,"日期时间格式化错误",e);
         }
@@ -35,9 +37,11 @@ public class CalendarDateUtil {
      * @param text 日期字符串文本
      * @return Date对象
      */
-    public synchronized static Date parseDate(String text) {
+    public static Date parseDate(String text) {
         try {
-            return STANDARDDATEFORMATTER.parse(text);
+            synchronized (STANDARDDATEFORMATTER) {
+                return STANDARDDATEFORMATTER.parse(text);
+            }
         } catch (ParseException e) {
             throw new BaseServiceRunException(APPERR,"日期格式化错误",e);
         }
@@ -47,9 +51,11 @@ public class CalendarDateUtil {
      * @param text 日间字符串文
      * @return Date对象 缺省日期: 1970-01-01
      */
-    public synchronized static Date parseTime(String text) {
+    public static Date parseTime(String text) {
         try {
-            return STANDARDTIMEFORMATTER.parse(text);
+            synchronized (STANDARDTIMEFORMATTER) {
+                return STANDARDTIMEFORMATTER.parse(text);
+            }
         } catch (ParseException e) {
             throw new BaseServiceRunException(APPERR,"时间格式化错误",e);
         }
@@ -59,16 +65,28 @@ public class CalendarDateUtil {
      * @param date 日期对象
      * @return 格式化后的字符串
      */
-    public synchronized static String toDateTime(Date date) {
-        return date == null ? null : STANDARDDATETIMEFORMATTER.format(date);
+    public static String toDateTime(Date date) {
+        if(date == null)
+            return null;
+        synchronized (STANDARDDATETIMEFORMATTER) {
+            return STANDARDDATETIMEFORMATTER.format(date);
+        }
     }
 
-    public synchronized static String toDate(Date date) {
-        return date == null ? null : STANDARDDATEFORMATTER.format(date);
+    public static String toDate(Date date) {
+        if(date == null)
+            return null;
+        synchronized (STANDARDDATEFORMATTER) {
+            return STANDARDDATEFORMATTER.format(date);
+        }
     }
 
-    public synchronized static String toTime(Date date) {
-        return date == null ? null : STANDARDTIMEFORMATTER.format(date);
+    public static String toTime(Date date) {
+        if(date == null)
+            return null;
+        synchronized (STANDARDTIMEFORMATTER) {
+            return STANDARDTIMEFORMATTER.format(date);
+        }
     }
 
     public static Date nowDate() {
