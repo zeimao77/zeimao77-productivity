@@ -117,13 +117,20 @@ public class ExcelXlsxDocumentBuilder implements XlsxDocumentBuilder{
         }
         if(cellRangeValueList != null && !cellRangeValueList.isEmpty()) {
             for (CellRangeValue cellRangeValue : cellRangeValueList) {
-                CellRangeAddress cellRangeAddress = new CellRangeAddress(cellRangeValue.getStartRow()
-                        , cellRangeValue.getEndRow(), cellRangeValue.getStartColumn(), cellRangeValue.getEndColumn());
-                sheet.addMergedRegion(cellRangeAddress);
-                Row row = sheet.getRow(cellRangeValue.getStartRow());
-                row = row == null ? sheet.createRow(cellRangeValue.getStartRow()) : row;
-                Cell cell = row.createCell(cellRangeValue.getStartColumn());
-                setCellValue(cell,-1,cellRangeValue.getFormat(),cellRangeValue.getValue());
+                if(cellRangeValue.isMerge()) {
+                    CellRangeAddress cellRangeAddress = new CellRangeAddress(cellRangeValue.getStartRow()
+                            , cellRangeValue.getEndRow(), cellRangeValue.getStartColumn(), cellRangeValue.getEndColumn());
+                    sheet.addMergedRegion(cellRangeAddress);
+                    Row row = sheet.getRow(cellRangeValue.getStartRow());
+                    row = row == null ? sheet.createRow(cellRangeValue.getStartRow()) : row;
+                    Cell cell = row.createCell(cellRangeValue.getStartColumn());
+                    setCellValue(cell,-1,cellRangeValue.getFormat(),cellRangeValue.getValue());
+                } else {
+                    Row row = sheet.getRow(cellRangeValue.getStartRow());
+                    row = row == null ? sheet.createRow(cellRangeValue.getStartRow()) : row;
+                    Cell cell = row.createCell(cellRangeValue.getStartColumn());
+                    setCellValue(cell,-1,cellRangeValue.getFormat(),cellRangeValue.getValue());
+                }
             }
         }
     }

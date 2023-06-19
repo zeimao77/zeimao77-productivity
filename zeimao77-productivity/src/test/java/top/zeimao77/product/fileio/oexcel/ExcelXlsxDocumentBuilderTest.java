@@ -26,7 +26,7 @@ class ExcelXlsxDocumentBuilderTest extends BaseMain {
          * @see TableXMLConfigBuilder
          */
         Table table = TableCodeConfigBuilder.create("123","uuid")
-                .cellRangeValue(0,0,0,2,"@","总共40条;")
+                .cellRangeValue(0,0,0,3,"@","总共40条;")
                 .column(0,"ID","id",20)
                 .column(1,"uuid","uuid",36)
                 .column(2,"随机串","rstr",24)
@@ -54,7 +54,7 @@ class ExcelXlsxDocumentBuilderTest extends BaseMain {
         File file = new File("C:\\Users\\zeimao77\\Desktop\\test.xlsx");
         FileOutputStream fos = new FileOutputStream(file);
         SXSSFWorkbook workbook = new SXSSFWorkbook();
-        ExcelXlsxDocumentBuilder excelXlsxDocumentBuilder = new ExcelXlsxDocumentBuilder(table, dataList);
+        ExcelXlsxDocumentBuilder excelXlsxDocumentBuilder = new ExcelXlsxDocumentBuilder(table, dataList,1);
         excelXlsxDocumentBuilder.build(workbook);
         workbook.write(fos);
         workbook.close();

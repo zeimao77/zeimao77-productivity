@@ -8,6 +8,8 @@ public class StringUtil {
     public static final String EMPTY_SUFFIX = "";
     public static final String DEFAULT_SUFFIX = "...";
 
+    private StringUtil() {}
+
     /**
      * 截取字符串
      * @param str 原字符中
