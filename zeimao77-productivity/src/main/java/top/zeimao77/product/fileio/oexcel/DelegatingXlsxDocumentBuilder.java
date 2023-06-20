@@ -9,23 +9,23 @@ import java.util.List;
 public class DelegatingXlsxDocumentBuilder implements XlsxDocumentBuilder{
 
     private Workbook workbook;
-    private List<ExcelXlsxDocumentBuilder> builderList;
+    private List<XlsxDocumentBuilder> builderList;
 
-    public DelegatingXlsxDocumentBuilder(ExcelXlsxDocumentBuilder... builders) {
+    public DelegatingXlsxDocumentBuilder(XlsxDocumentBuilder... builders) {
         builderList = List.of(builders);
     }
 
-    public DelegatingXlsxDocumentBuilder(List<ExcelXlsxDocumentBuilder> builderList) {
+    public DelegatingXlsxDocumentBuilder(List<XlsxDocumentBuilder> builderList) {
         this.builderList = builderList;
     }
 
-    public boolean register(ExcelXlsxDocumentBuilder jobExecHandler) {
+    public boolean register(XlsxDocumentBuilder jobExecHandler) {
         if(builderList == null)
             builderList = new ArrayList<>();
         return this.builderList.add(jobExecHandler);
     }
 
-    public boolean unregister(ExcelXlsxDocumentBuilder jobExecHandler) {
+    public boolean unregister(XlsxDocumentBuilder jobExecHandler) {
         return this.builderList.remove(jobExecHandler);
     }
 
@@ -38,7 +38,7 @@ public class DelegatingXlsxDocumentBuilder implements XlsxDocumentBuilder{
     @Override
     public void build(Workbook workbook) {
         this.workbook = workbook;
-        for (ExcelXlsxDocumentBuilder excelXlsxDocumentBuilder : builderList) {
+        for (XlsxDocumentBuilder excelXlsxDocumentBuilder : builderList) {
             excelXlsxDocumentBuilder.build(this.workbook);
         }
     }
