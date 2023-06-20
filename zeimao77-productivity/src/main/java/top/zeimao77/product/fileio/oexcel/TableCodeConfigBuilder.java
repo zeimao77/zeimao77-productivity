@@ -106,6 +106,11 @@ public class TableCodeConfigBuilder{
         return this;
     }
 
+    public TableCodeConfigBuilder cellRangeValue(int startRow, int startColumn,String format, Object value) {
+        this.cellRangeValueList.add(new CellRangeValue(startRow,startColumn,startRow,startColumn,format,value));
+        return this;
+    }
+
     public TableCodeConfigBuilder cellRangeValue(int startRow, int startColumn, int endRow, int endColumn,String format, Object value) {
         this.cellRangeValueList.add(new CellRangeValue(startRow,startColumn,endRow,endColumn,format,value));
         return this;
