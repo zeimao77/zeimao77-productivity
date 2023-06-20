@@ -25,7 +25,7 @@ public class DefaultExcelZipStreamingView extends AbstractView {
         this.xlsxDocumentBuilder = xlsxDocumentBuilder;
     }
 
-    public DefaultExcelZipStreamingView(String fileName,ExcelXlsxDocumentBuilder... xlsxDocumentBuilders) {
+    public DefaultExcelZipStreamingView(String fileName,XlsxDocumentBuilder... xlsxDocumentBuilders) {
         this.fileName = fileName;
         this.xlsxDocumentBuilder = new DelegatingXlsxDocumentBuilder(xlsxDocumentBuilders);
     }

@@ -30,7 +30,7 @@ public class DefaultExcelStreamingView extends AbstractXlsxStreamingView {
      * @param fileName
      * @param xlsxDocumentBuilders
      */
-    public DefaultExcelStreamingView(String fileName,ExcelXlsxDocumentBuilder... xlsxDocumentBuilders) {
+    public DefaultExcelStreamingView(String fileName,XlsxDocumentBuilder... xlsxDocumentBuilders) {
         this.fileName = fileName;
         this.xlsxDocumentBuilder = new DelegatingXlsxDocumentBuilder(xlsxDocumentBuilders);
     }
