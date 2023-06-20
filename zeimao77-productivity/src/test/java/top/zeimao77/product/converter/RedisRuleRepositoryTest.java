@@ -6,8 +6,6 @@ import top.zeimao77.product.factory.BeanFactory;
 import top.zeimao77.product.factory.ComponentFactory;
 import top.zeimao77.product.main.BaseMain;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class RedisRuleRepositoryTest extends BaseMain {
 
     public static final String REDIS = "redis_zeimao77_top";

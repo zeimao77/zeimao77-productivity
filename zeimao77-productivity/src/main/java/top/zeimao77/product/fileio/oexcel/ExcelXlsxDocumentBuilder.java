@@ -160,7 +160,7 @@ public class ExcelXlsxDocumentBuilder implements XlsxDocumentBuilder{
             cell.setCellValue(p);
         } else if(v instanceof Date p) {
             cell.setCellValue(p);
-        }else {
+        } else {
             cell.setCellValue(String.valueOf(v));
         }
     }
@@ -208,4 +208,26 @@ public class ExcelXlsxDocumentBuilder implements XlsxDocumentBuilder{
     public void setCellStyleFactory(CellStyleFactory cellStyleFactory) {
         this.cellStyleFactory = cellStyleFactory;
     }
+
+    public Workbook getWorkbook() {
+        return workbook;
+    }
+
+    public Sheet getSheet() {
+        return sheet;
+    }
+
+    public Table getTable() {
+        return table;
+    }
+
+    public List<?> getDataList() {
+        return dataList;
+    }
+
+    public Map<Table.Column, IConverter> getConverterMap() {
+        return converterMap;
+    }
+
+
 }
