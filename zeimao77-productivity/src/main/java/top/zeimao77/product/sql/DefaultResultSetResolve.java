@@ -4,6 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import top.zeimao77.product.exception.BaseServiceRunException;
 import static top.zeimao77.product.exception.ExceptionCodeDefinition.*;
+
+import top.zeimao77.product.json.Ijson;
 import top.zeimao77.product.model.Orderd;
 import top.zeimao77.product.util.CalendarDateUtil;
 import top.zeimao77.product.util.LocalDateTimeUtil;
@@ -324,6 +326,17 @@ public class DefaultResultSetResolve implements ResultSetResolve {
             @Override
             public int orderd() {
                 return 2500;
+            }
+        });
+        resovers.add(new FiledTypeResover<Ijson>() {
+            @Override
+            public Ijson resove(Object obj) {
+                return Ijson.parse(obj.toString());
+            }
+
+            @Override
+            public int orderd() {
+                return 2600;
             }
         });
         resovers.add(new FiledTypeResover<Object>() {

@@ -74,6 +74,11 @@ public class SQL implements StatementParamResolver, IWhere {
         }
     }
 
+    public SQL selectJsonVal(String columnName,String key,String alias) {
+        String labelName = String.format("JSON_EXTRACT(%s,'%s') AS %s",columnName,key,alias);
+        return select(labelName);
+    }
+
     public SQL from(String tableName) {
         sqlBuilder.append(" FROM ").append(tableName);
         return this;
@@ -523,6 +528,52 @@ public class SQL implements StatementParamResolver, IWhere {
         if(AssertUtil.isNotEmpty(valSetPost))
             sqlBuilder.append(valSetPost);
         addJdbcParam(columnName,valSetPre,valSetPost,value);
+        return this;
+    }
+
+    public SQL jsonSet(boolean expression,String columnName,String key,Object value) {
+        if(!expression)
+            return this;
+        if((whereOrSetFlag & FLAG_SET) == 0) {
+            sqlBuilder.append(" SET ");
+            whereOrSetFlag |= FLAG_SET;
+        } else {
+            sqlBuilder.append(",");
+        }
+        sqlBuilder.append(columnName).append(" = JSON_SET(");
+        sqlBuilder.append(columnName).append(",'").append(key);
+        sqlBuilder.append("',?").append(")");
+        addJdbcParam(columnName,null,null,value);
+        return this;
+    }
+
+    public SQL jsonInsert(boolean expression,String columnName,String key,Object value) {
+        if(!expression)
+            return this;
+        if((whereOrSetFlag & FLAG_SET) == 0) {
+            sqlBuilder.append(" SET ");
+            whereOrSetFlag |= FLAG_SET;
+        } else {
+            sqlBuilder.append(",");
+        }
+        sqlBuilder.append(columnName).append(" = JSON_INSERT(");
+        sqlBuilder.append(columnName).append(",'").append(key);
+        sqlBuilder.append("',?").append(")");
+        addJdbcParam(columnName,null,null,value);
+        return this;
+    }
+
+    public SQL jsonRemove(boolean expression,String columnName,String key) {
+        if(!expression)
+            return this;
+        if((whereOrSetFlag & FLAG_SET) == 0) {
+            sqlBuilder.append(" SET ");
+            whereOrSetFlag |= FLAG_SET;
+        } else {
+            sqlBuilder.append(",");
+        }
+        sqlBuilder.append(columnName).append(" = json_remove(");
+        sqlBuilder.append(columnName).append(",'").append(key).append("')");
         return this;
     }
 

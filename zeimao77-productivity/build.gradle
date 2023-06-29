@@ -73,7 +73,7 @@ signing {
 dependencies {
     testImplementation(platform('org.junit:junit-bom:5.8.2'))
     testImplementation('org.junit.jupiter:junit-jupiter')
-    testImplementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.29'
+    testImplementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.33'
     compileOnly group: 'com.zaxxer', name:'HikariCP', version: '5.0.1'
     testImplementation group: 'com.zaxxer', name:'HikariCP', version: '5.0.1'
     compileOnly group: 'redis.clients', name:'jedis', version: '4.2.3'

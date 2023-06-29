@@ -225,5 +225,19 @@ class SimpleSqlClientTest extends BaseMain {
         simpleSqlClient.call("CALL delete_demo(#{id,javaType=Integer,jdbcType=INT,mode=IN})",param,null);
     }
 
+    @Test
+    void jsonTest() {
+        SimpleSqlClient simpleSqlClient = ComponentFactory.initSimpleSqlClient(MYSQL,null);
+        simpleSqlClient.updateByResolver(new SQL().update("json_test")
+                .jsonSet(true,"text","$.abc",666)
+        );
+        ArrayList<ResultStr> objects = simpleSqlClient.selectByResolver(new SQL()
+                .selectJsonVal("text", "$.abc", "result")
+                .from("json_test"), ResultStr.class);
+        for (ResultStr object : objects) {
+            logger.info(object.getResult());
+        }
+
+    }
 
 }

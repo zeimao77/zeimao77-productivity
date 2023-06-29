@@ -3,10 +3,6 @@ package com.zeimao77;
 import top.zeimao77.product.config.LocalContext;
 import top.zeimao77.product.main.BaseMain;
 import top.zeimao77.product.util.LongIdGenerator;
-import top.zeimao77.product.util.NumberUtil;
-import top.zeimao77.product.util.UuidGenerator;
-
-import java.math.RoundingMode;
 
 public class Main extends BaseMain {
 
@@ -18,9 +14,7 @@ public class Main extends BaseMain {
         logger.info("{}",LongIdGenerator.INSTANCE.generate());
         logger.warn("{}",LongIdGenerator.INSTANCE.generate());
         logger.error("{}",LongIdGenerator.INSTANCE.generate());
-        for (int i = 0; i < 10; i++) {
-            logger.info(UuidGenerator.INSTANCE.generate());
-        }
+
     }
 
 
