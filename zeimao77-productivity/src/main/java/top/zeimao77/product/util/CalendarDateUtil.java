@@ -16,6 +16,7 @@ import java.util.TimeZone;
  */
 public class CalendarDateUtil {
 
+    public static final SimpleDateFormat UTCSTANDARDDATETIMEFORMATTER = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
     public static final SimpleDateFormat STANDARDDATETIMEFORMATTER = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     public static final SimpleDateFormat STANDARDDATEFORMATTER = new SimpleDateFormat("yyyy-MM-dd");
     public static final SimpleDateFormat NUMBERDATEFORMATTER = new SimpleDateFormat("yyyyMMdd");

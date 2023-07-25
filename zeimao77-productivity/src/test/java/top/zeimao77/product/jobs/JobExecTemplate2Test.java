@@ -32,9 +32,11 @@ class JobExecTemplate2Test extends BaseMain {
         });
         jobExecTemplate2.start(1);
         TokenBucket.SleetStrategy sleetStrategy = new TokenBucket.SleetStrategy(1,TimeUnit.SECONDS);
-        for (int i = 0; i < 10; i++)
-            jobExecTemplate2.addJob(new JobExecTemplateTest.Job(),sleetStrategy);
+        for (int i = 0; i < 10; i++) {
+            JobExecTemplateTest.Job job = new JobExecTemplateTest.Job();
+            logger.info("添加任务{}:{}",job.jobId(),jobExecTemplate2.addJob(job, sleetStrategy));
 
+        }
         jobExecTemplate2.over();
     }
 }

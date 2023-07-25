@@ -265,7 +265,7 @@ public class ComponentFactory {
         else
             client = new DingDingRobotClient(webhook.get(),token.get(),secret.get());
         if(beanFactory != null)
-            beanFactory.registerSingleton(prefx,beanFactory);
+            beanFactory.registerSingleton(prefx,client);
         return client;
 
     }

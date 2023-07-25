@@ -7,8 +7,9 @@ import top.zeimao77.product.main.BaseMain;
 import java.io.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Date;
+import java.util.Random;
+import java.util.TimeZone;
 
 public class AssertUtilTest extends BaseMain {
 
@@ -16,8 +17,16 @@ public class AssertUtilTest extends BaseMain {
 
     public static void main(String[] args) throws IOException, NoSuchFieldException, IllegalAccessException, InterruptedException {
         BaseMain.showBanner("1.0.1");
+        Random random = new Random();
+        logger.info( CalendarDateUtil.STANDARDDATETIMEFORMATTER.format(new Date(Long.MAX_VALUE)));
+        for (int i = 0; i < 60; i++) {
+            new Thread(() -> {
+                Date date = new Date(random.nextLong());
+                String format = CalendarDateUtil.STANDARDDATETIMEFORMATTER.format(date);
+                logger.info(format);
+            }).start();
 
-        logger.info(String.format("%s", new NumberUtil(NumberUtil.DECIMAL,2, RoundingMode.HALF_UP).format(BigDecimal.valueOf(3345.2324D))));
+        }
 
     }
 

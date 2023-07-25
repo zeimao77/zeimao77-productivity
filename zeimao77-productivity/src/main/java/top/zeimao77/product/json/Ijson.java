@@ -34,6 +34,7 @@ public class Ijson {
     }
 
     public static Ijson parse(String json) {
+
         return parse(JsonBeanUtil.DEFAULT.getObjectMapper(),json);
     }
 

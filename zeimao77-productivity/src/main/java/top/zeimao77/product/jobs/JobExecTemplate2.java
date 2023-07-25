@@ -40,7 +40,9 @@ public class JobExecTemplate2<T extends IJob> implements JobExec{
             return false;
         try {
             executorService.execute(()->{
-                this.jobExecHandler.handle(t,jobParam);
+                if(this.jobExecHandler.support(t,jobParam)) {
+                    this.jobExecHandler.handle(t,jobParam);
+                }
             });
             return true;
         } catch (RejectedExecutionException e) {
@@ -62,11 +64,15 @@ public class JobExecTemplate2<T extends IJob> implements JobExec{
         return true;
     }
 
-    public void start(int nThreads) {
+    public void start(int nThreads,int maximumPoolSize) {
         if(executorService == null)
-            this.executorService = new ThreadPoolExecutor(nThreads,4 * nThreads,30
+            this.executorService = new ThreadPoolExecutor(nThreads,maximumPoolSize,30
                     ,TimeUnit.SECONDS,new LinkedBlockingQueue(nMaxJobs));
         setStatus(2);
+    }
+
+    public void start(int nThreads) {
+        start(nThreads,2 * nThreads);
     }
 
     public JobExecHandler<T> getJobExecHandler() {
@@ -100,9 +106,20 @@ public class JobExecTemplate2<T extends IJob> implements JobExec{
         this.status = status;
     }
 
-    protected void over(){
+    public void over(){
+        over(240,TimeUnit.HOURS);
+    }
+
+    public void over(long timeout, TimeUnit unit){
         setStatus(5);
         this.executorService.shutdown();
+        try {
+            this.executorService.awaitTermination(timeout,unit);
+        } catch (InterruptedException e) {
+            logger.error("线程中断退出阻塞",e);
+            executorService.shutdownNow();
+            Thread.currentThread().interrupt();
+        }
         setStatus(4);
     }
 
