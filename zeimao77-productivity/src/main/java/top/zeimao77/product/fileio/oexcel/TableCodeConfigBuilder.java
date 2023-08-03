@@ -64,6 +64,16 @@ public class TableCodeConfigBuilder{
         return this;
     }
 
+    public TableCodeConfigBuilder column(int index,String title,Table.Converter converter,int width,String format) {
+        Table.Column column = new Table.Column();
+        column.setIndex(index);
+        column.setTitle(title);
+        column.setWidth(width);
+        column.setFormat(format);
+        column.setConverter(converter);
+        return this;
+    }
+
     public TableCodeConfigBuilder converter(int index, Table.Converter converter) {
         for (Table.Column column : this.columnList) {
             if(index == column.getIndex()) {
@@ -93,6 +103,11 @@ public class TableCodeConfigBuilder{
                 break;
             }
         }
+        return this;
+    }
+
+    public TableCodeConfigBuilder cellRangeValue(int startRow, int startColumn,String format, Object value) {
+        this.cellRangeValueList.add(new CellRangeValue(startRow,startColumn,startRow,startColumn,format,value));
         return this;
     }
 

@@ -25,6 +25,10 @@ public class CellRangeValue {
         this.value = value;
     }
 
+    public boolean isMerge() {
+        return startRow < endRow || startColumn < endColumn;
+    }
+
     public int getStartRow() {
         return startRow;
     }

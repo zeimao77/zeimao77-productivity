@@ -1,8 +1,7 @@
 package top.zeimao77.product.util;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.*;
+import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
@@ -10,15 +9,17 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 public class JsonBeanUtil {
 
-    private static Logger logger = LogManager.getLogger(JsonBeanUtil.class);
+    private static Logger logger = LoggerFactory.getLogger(JsonBeanUtil.class);
     public static final JsonBeanUtil DEFAULT = new JsonBeanUtil();
 
     public ObjectMapper objectMapper;
@@ -36,6 +37,21 @@ public class JsonBeanUtil {
         javaTimeModule.addDeserializer(LocalDate.class,new LocalDateDeserializer(LocalDateTimeUtil.STANDARDDATEFORMATTER));
         javaTimeModule.addSerializer(LocalTime.class,new LocalTimeSerializer(LocalDateTimeUtil.STANDARDTIMEFORMATTER));
         javaTimeModule.addDeserializer(LocalTime.class,new LocalTimeDeserializer(LocalDateTimeUtil.STANDARDTIMEFORMATTER));
+        javaTimeModule.addSerializer(StringOptional.class,new JsonSerializer<StringOptional>() {
+            @Override
+            public void serialize(StringOptional value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+                gen.writeString(value.isBlack() ? null : value.get());
+            }
+        });
+        javaTimeModule.addDeserializer(StringOptional.class,new JsonDeserializer<StringOptional>() {
+            @Override
+            public StringOptional deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+                if (p.hasToken(JsonToken.VALUE_STRING)) {
+                    return new StringOptional(p.getText());
+                }
+                return StringOptional.empty();
+            }
+        });
         objectMapper.registerModule(javaTimeModule);
     }
 
@@ -85,5 +101,8 @@ public class JsonBeanUtil {
     public ObjectMapper getObjectMapper() {
         return objectMapper;
     }
+
+
+
 
 }

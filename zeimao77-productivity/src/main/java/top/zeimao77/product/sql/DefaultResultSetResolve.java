@@ -4,10 +4,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import top.zeimao77.product.exception.BaseServiceRunException;
 import static top.zeimao77.product.exception.ExceptionCodeDefinition.*;
+
+import top.zeimao77.product.json.Ijson;
 import top.zeimao77.product.model.Orderd;
 import top.zeimao77.product.util.CalendarDateUtil;
 import top.zeimao77.product.util.LocalDateTimeUtil;
-
+import top.zeimao77.product.util.StringOptional;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
@@ -362,6 +364,30 @@ public class DefaultResultSetResolve implements ResultSetResolve {
                 return 2400;
             }
         });
+        resovers.add(new FiledTypeResover<StringOptional>() {
+
+            @Override
+            public StringOptional resove(Object obj) {
+                if(obj == null) return StringOptional.empty();
+                return new StringOptional(obj.toString());
+            }
+
+            @Override
+            public int orderd() {
+                return 2500;
+            }
+        });
+        resovers.add(new FiledTypeResover<Ijson>() {
+            @Override
+            public Ijson resove(Object obj) {
+                return Ijson.parse(obj.toString());
+            }
+
+            @Override
+            public int orderd() {
+                return 2600;
+            }
+        });
         resovers.add(new FiledTypeResover<Object>() {
             @Override
             public Object resove(Object obj) {
@@ -432,9 +458,11 @@ public class DefaultResultSetResolve implements ResultSetResolve {
                     fieldValue = resolve(value,field.getType());
                 }
                 field.setAccessible(true);
+                if(fieldValue == null && field.getType() == StringOptional.class)
+                    fieldValue = StringOptional.empty();
                 field.set(obj,fieldValue);
             } catch (NoSuchFieldException e) {
-                logger.warn("字段未找到:{}",columnLabel);
+                logger.debug("字段未找到:{}",columnLabel);
             } catch (IllegalAccessException e) {
                 throw new BaseServiceRunException("参数错误",e);
             }

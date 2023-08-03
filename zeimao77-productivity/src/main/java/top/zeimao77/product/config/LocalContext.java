@@ -1,8 +1,7 @@
 package top.zeimao77.product.config;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import top.zeimao77.product.exception.BaseServiceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import top.zeimao77.product.exception.BaseServiceRunException;
 import static top.zeimao77.product.exception.ExceptionCodeDefinition.IOEXCEPTION;
 import top.zeimao77.product.util.AssertUtil;
@@ -19,7 +18,7 @@ import java.util.Properties;
  */
 public class LocalContext {
 
-    private static Logger logger = LogManager.getLogger(LocalContext.class);
+    private static Logger logger = LoggerFactory.getLogger(LocalContext.class);
 
     private static final HashMap<String,Object> context = new HashMap<>();
 
@@ -56,7 +55,7 @@ public class LocalContext {
         Boolean result = null;
         try {
             result = BoolUtil.parseBool(o.toString());
-        }catch (BaseServiceException e) {
+        }catch (BaseServiceRunException e) {
             logger.error(e.getMessage(),e);
         }
         return result;
@@ -81,6 +80,8 @@ public class LocalContext {
             Object value = LocalContext.get(key);
             if(AssertUtil.isNotEmpty(value)) {
                 resultList.add(value.toString());
+            } else {
+                break;
             }
         }
         return resultList;

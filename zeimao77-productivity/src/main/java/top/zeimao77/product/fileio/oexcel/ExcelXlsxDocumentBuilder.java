@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Consumer;
 
-public class ExcelXlsxDocumentBuilder {
+public class ExcelXlsxDocumentBuilder implements XlsxDocumentBuilder{
 
     protected Workbook workbook;
     protected Sheet sheet;
@@ -62,6 +62,7 @@ public class ExcelXlsxDocumentBuilder {
      * 默认构造xlsx文件
      * @return 07版本
      */
+    @Override
     public Workbook build() {
         build(new SXSSFWorkbook());
         return this.workbook;
@@ -82,10 +83,12 @@ public class ExcelXlsxDocumentBuilder {
      * </pre>
      * @param workbook 工作簿
      */
+    @Override
     public void build(Workbook workbook) {
         this.workbook = workbook;
         this.sheet = workbook.createSheet(table.getTableName());
-        this.cellStyleFactory = new CellStyleFactory(workbook);
+        if(this.cellStyleFactory == null)
+            this.cellStyleFactory = new CellStyleFactory(workbook);
         if(before != null){before.accept(this);}
         setHead();
         setWidth();
@@ -114,13 +117,20 @@ public class ExcelXlsxDocumentBuilder {
         }
         if(cellRangeValueList != null && !cellRangeValueList.isEmpty()) {
             for (CellRangeValue cellRangeValue : cellRangeValueList) {
-                CellRangeAddress cellRangeAddress = new CellRangeAddress(cellRangeValue.getStartRow()
-                        , cellRangeValue.getEndRow(), cellRangeValue.getStartColumn(), cellRangeValue.getEndColumn());
-                sheet.addMergedRegion(cellRangeAddress);
-                Row row = sheet.getRow(cellRangeValue.getStartRow());
-                row = row == null ? sheet.createRow(cellRangeValue.getStartRow()) : row;
-                Cell cell = row.createCell(cellRangeValue.getStartColumn());
-                setCellValue(cell,-1,cellRangeValue.getFormat(),cellRangeValue.getValue());
+                if(cellRangeValue.isMerge()) {
+                    CellRangeAddress cellRangeAddress = new CellRangeAddress(cellRangeValue.getStartRow()
+                            , cellRangeValue.getEndRow(), cellRangeValue.getStartColumn(), cellRangeValue.getEndColumn());
+                    sheet.addMergedRegion(cellRangeAddress);
+                    Row row = sheet.getRow(cellRangeValue.getStartRow());
+                    row = row == null ? sheet.createRow(cellRangeValue.getStartRow()) : row;
+                    Cell cell = row.createCell(cellRangeValue.getStartColumn());
+                    setCellValue(cell,-1,cellRangeValue.getFormat(),cellRangeValue.getValue());
+                } else {
+                    Row row = sheet.getRow(cellRangeValue.getStartRow());
+                    row = row == null ? sheet.createRow(cellRangeValue.getStartRow()) : row;
+                    Cell cell = row.createCell(cellRangeValue.getStartColumn());
+                    setCellValue(cell,-1,cellRangeValue.getFormat(),cellRangeValue.getValue());
+                }
             }
         }
     }
@@ -197,4 +207,34 @@ public class ExcelXlsxDocumentBuilder {
     public void setRowNum(int rowNum) {
         this.rowNum = rowNum;
     }
+
+    public CellStyleFactory getCellStyleFactory() {
+        return cellStyleFactory;
+    }
+
+    public void setCellStyleFactory(CellStyleFactory cellStyleFactory) {
+        this.cellStyleFactory = cellStyleFactory;
+    }
+
+    public Workbook getWorkbook() {
+        return workbook;
+    }
+
+    public Sheet getSheet() {
+        return sheet;
+    }
+
+    public Table getTable() {
+        return table;
+    }
+
+    public List<?> getDataList() {
+        return dataList;
+    }
+
+    public Map<Table.Column, IConverter> getConverterMap() {
+        return converterMap;
+    }
+
+
 }

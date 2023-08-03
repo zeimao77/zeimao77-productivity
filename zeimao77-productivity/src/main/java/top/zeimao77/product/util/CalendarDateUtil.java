@@ -16,6 +16,7 @@ import java.util.TimeZone;
  */
 public class CalendarDateUtil {
 
+    public static final SimpleDateFormat UTCSTANDARDDATETIMEFORMATTER = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
     public static final SimpleDateFormat STANDARDDATETIMEFORMATTER = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     public static final SimpleDateFormat STANDARDDATEFORMATTER = new SimpleDateFormat("yyyy-MM-dd");
     public static final SimpleDateFormat NUMBERDATEFORMATTER = new SimpleDateFormat("yyyyMMdd");
@@ -25,7 +26,9 @@ public class CalendarDateUtil {
 
     public static Date parseDateTime(String text) {
         try {
-            return STANDARDDATETIMEFORMATTER.parse(text);
+            synchronized (STANDARDDATETIMEFORMATTER) {
+                return STANDARDDATETIMEFORMATTER.parse(text);
+            }
         } catch (ParseException e) {
             throw new BaseServiceRunException(APPERR,"日期时间格式化错误",e);
         }
@@ -37,7 +40,9 @@ public class CalendarDateUtil {
      */
     public static Date parseDate(String text) {
         try {
-            return STANDARDDATEFORMATTER.parse(text);
+            synchronized (STANDARDDATEFORMATTER) {
+                return STANDARDDATEFORMATTER.parse(text);
+            }
         } catch (ParseException e) {
             throw new BaseServiceRunException(APPERR,"日期格式化错误",e);
         }
@@ -49,7 +54,9 @@ public class CalendarDateUtil {
      */
     public static Date parseTime(String text) {
         try {
-            return STANDARDTIMEFORMATTER.parse(text);
+            synchronized (STANDARDTIMEFORMATTER) {
+                return STANDARDTIMEFORMATTER.parse(text);
+            }
         } catch (ParseException e) {
             throw new BaseServiceRunException(APPERR,"时间格式化错误",e);
         }
@@ -60,15 +67,27 @@ public class CalendarDateUtil {
      * @return 格式化后的字符串
      */
     public static String toDateTime(Date date) {
-        return date == null ? null : STANDARDDATETIMEFORMATTER.format(date);
+        if(date == null)
+            return null;
+        synchronized (STANDARDDATETIMEFORMATTER) {
+            return STANDARDDATETIMEFORMATTER.format(date);
+        }
     }
 
     public static String toDate(Date date) {
-        return date == null ? null : STANDARDDATEFORMATTER.format(date);
+        if(date == null)
+            return null;
+        synchronized (STANDARDDATEFORMATTER) {
+            return STANDARDDATEFORMATTER.format(date);
+        }
     }
 
     public static String toTime(Date date) {
-        return date == null ? null : STANDARDTIMEFORMATTER.format(date);
+        if(date == null)
+            return null;
+        synchronized (STANDARDTIMEFORMATTER) {
+            return STANDARDTIMEFORMATTER.format(date);
+        }
     }
 
     public static Date nowDate() {

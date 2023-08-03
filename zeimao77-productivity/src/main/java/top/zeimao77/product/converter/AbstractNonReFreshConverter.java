@@ -42,12 +42,9 @@ public abstract class AbstractNonReFreshConverter<K> implements IConverter<K> {
 
     @Override
     public Object get(K key) {
-        this.refreshRule();
-        Object result = defaultName(key);
-        if(convRuleMap.containsKey(key)) {
-            result = convRuleMap.get(key);
-        }
-        return result;
+        refreshRule();
+        Object resultValue = this.convRuleMap.get(key);
+        return resultValue == null ? defaultName(key) : resultValue;
     }
 
     /**

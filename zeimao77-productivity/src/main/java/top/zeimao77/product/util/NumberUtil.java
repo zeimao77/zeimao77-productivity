@@ -84,5 +84,8 @@ public class NumberUtil {
         return numberFormat.format(number);
     }
 
+    public void setGroupingUsed(boolean newValue) {
+        this.numberFormat.setGroupingUsed(newValue);
+    }
 
 }

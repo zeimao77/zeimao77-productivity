@@ -1,7 +1,8 @@
 package top.zeimao77.product.jobs;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import static top.zeimao77.product.exception.ExceptionCodeDefinition.TRY_AGAIN_LATER;
 
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ import java.util.concurrent.*;
  */
 public class ParallelHandlerComponent<T extends IJob> extends JobExecHandler<T> {
 
-    private static Logger logger = LogManager.getLogger(ParallelHandlerComponent.class);
+    private static Logger logger = LoggerFactory.getLogger(ParallelHandlerComponent.class);
     ExecutorService executors;
     private List<JobExecHandler<T>> jobExecHandlerList = new ArrayList<>();
 
@@ -25,7 +26,7 @@ public class ParallelHandlerComponent<T extends IJob> extends JobExecHandler<T> 
     }
 
     public ParallelHandlerComponent() {
-        this.executors = new ThreadPoolExecutor(2,8
+        this.executors = new ThreadPoolExecutor(4,8
                 ,30, TimeUnit.SECONDS,new LinkedBlockingQueue(1024)
         );
     }
@@ -70,6 +71,14 @@ public class ParallelHandlerComponent<T extends IJob> extends JobExecHandler<T> 
 
     public ExecutorService getExecutors() {
         return executors;
+    }
+
+    public void shutdown() {
+        this.executors.shutdown();
+    }
+
+    public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
+        return this.executors.awaitTermination(timeout,unit);
     }
 
     @Override

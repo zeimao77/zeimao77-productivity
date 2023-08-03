@@ -69,9 +69,17 @@ public class TableXMLConfigBuilder extends AbstractXmlBuiler<Table> {
             if(converter.getLength() > 0) {
                 Element converterElement = (Element)converter.item(0);
                 String converterId = parseProperty(converterElement, "converterId");
-                Table.Converter converter1;
+                String converterClass = parseProperty(converterElement, "converterClass");
+
+                Table.Converter converter1 = null;
                 if(converterId != null) {
                     converter1 = BeanFactory.DEFAULT.getBean(converterId,Table.Converter.class);
+                } else if(converterClass != null) {
+                    if("top.zeimao77.product.fileio.oexcel.Table.CodeNameConverter".equals(converterClass)) {
+                        String codeField = parseProperty(converterElement, "codeField");
+                        String nameField = parseProperty(converterElement, "nameField");
+                        converter1 = new Table.CodeNameConverter(codeField,nameField);
+                    }
                 } else {
                     NodeList ruleList = converterElement.getElementsByTagName("rule");
                     HashMap<String, Object> stringStringHashMap = parseMap(ruleList);
@@ -80,7 +88,6 @@ public class TableXMLConfigBuilder extends AbstractXmlBuiler<Table> {
                         AbstractNonReFreshConverter<String> objectAbstractNonReFreshConverter = new AbstractNonReFreshConverter<String>(stringStringHashMap) {
                             @Override
                             protected void refresh() {}
-
                             @Override
                             public Object defaultName(String key) {
                                 return parseProperty(converterElement,"defaultValue");

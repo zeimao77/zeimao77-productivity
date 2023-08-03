@@ -147,11 +147,11 @@ public class TokenBucket {
          * @param period 时间周期
          * @param timeUnit 时间单位
          */
-        private SleetStrategy(long period, TimeUnit timeUnit) {
+        public SleetStrategy(long period, TimeUnit timeUnit) {
             this.periodInNanos = timeUnit.toNanos(period);
         }
 
-        private void sleep() {
+        public void sleep() {
             try {
                 TimeUnit.NANOSECONDS.sleep(periodInNanos);
             } catch (InterruptedException e) {
