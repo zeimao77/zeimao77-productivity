@@ -1,9 +1,10 @@
 package top.zeimao77.product.factory;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import top.zeimao77.product.exception.BaseServiceRunException;
 import static top.zeimao77.product.exception.ExceptionCodeDefinition.WRONG_ACTION;
+
 import top.zeimao77.product.util.AssertUtil;
 
 import java.util.Map;
@@ -16,7 +17,7 @@ import java.util.function.Supplier;
  */
 public class BeanFactory {
 
-    private static Logger logger = LogManager.getLogger(BeanFactory.class);
+    private static Logger logger = LoggerFactory.getLogger(BeanFactory.class);
     /**
      * 默认的BEAN工厂实现
      */
@@ -24,7 +25,6 @@ public class BeanFactory {
 
     private final Map<String, Object> singletonObjects;
     private final Map<String, Supplier<?>> prototypesFactory;
-
 
     public BeanFactory() {
         this(64,16);
@@ -68,6 +68,15 @@ public class BeanFactory {
     }
 
     /**
+     * 是否已经注册了这个Bean名称
+     * @param beanName Bean名称
+     * @return 是否已经注册了这个Bean名称
+     */
+    public boolean hasBean(String beanName) {
+        return singletonObjects.containsKey(beanName) || prototypesFactory.containsKey(beanName);
+    }
+
+    /**
      * 获取一个BEAN对象 优先单例获取
      * @param beanName BEAN名称
      * @param requiredType BEAN类型
@@ -84,6 +93,10 @@ public class BeanFactory {
         if(supplier != null)
             return (T)supplier.get();
         throw new BaseServiceRunException(WRONG_ACTION,"没有这样的BEAN实例:"+beanName);
+    }
+
+    public <T> T getBean(String autoBean,String beanName, Class<T> requiredType) {
+        return getBean(autoBean+beanName,requiredType);
     }
 
     /**

@@ -8,17 +8,25 @@ import redis.clients.jedis.HostAndPort;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisCluster;
 import top.zeimao77.product.config.LocalContext;
+import top.zeimao77.product.dingding.DingDingRobotClient;
 import top.zeimao77.product.email.SimpleEmailSender;
+import top.zeimao77.product.exception.BaseServiceRunException;
 import top.zeimao77.product.redis.JedisBuilder;
 import top.zeimao77.product.redis.JedisClusterBuilder;
 import top.zeimao77.product.sql.*;
 import top.zeimao77.product.util.AssertUtil;
 import top.zeimao77.product.util.StreamUtil;
+import top.zeimao77.product.util.StringOptional;
 
 import javax.sql.DataSource;
 import java.io.PrintWriter;
 import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Optional;
+import java.util.Scanner;
+
+import static top.zeimao77.product.exception.ExceptionCodeDefinition.WRONG_ACTION;
 
 /**
  * 辅助初始化部分组件
@@ -27,7 +35,19 @@ import java.util.ArrayList;
  */
 public class ComponentFactory {
 
-    public static final String AUTOBEAN_PREFIX = "$_";
+    public static final String AUTOBEAN_DATASOURCE_PREFIX = "$_datasource_";
+    public static final String AUTOBEAN_SQLTEMPLATE = "$_sqltemplate_";
+    public static final String AUTOBEAN_SQLCLIENT = "$_sqlclient_";
+    public static final String AUTOBEAN_SYSINSCANNER = "$_systemin_scanner";
+
+    public static synchronized Scanner initSystemInScanner(BeanFactory beanFactory){
+        try {
+            return beanFactory.getBean(AUTOBEAN_SYSINSCANNER,Scanner.class);
+        }catch (BaseServiceRunException e) {
+            beanFactory.registerSingleton(AUTOBEAN_SYSINSCANNER,new Scanner(System.in));
+        }
+        return beanFactory.getBean(AUTOBEAN_SYSINSCANNER,Scanner.class);
+    }
 
     /**
      * 配置参考:
@@ -36,12 +56,12 @@ public class ComponentFactory {
      * @return SQL客户端工厂对象
      */
     public static SimpleSqlTemplate initSimpleSqlTemplate(String prefx,BeanFactory beanFactory) {
-        DataSource dataSource = createDataSource(prefx);
-        if(beanFactory != null)
-            beanFactory.registerSingleton(AUTOBEAN_PREFIX+"datasource_"+prefx,dataSource);
+        if(beanFactory != null && beanFactory.hasBean(prefx))
+            throw new BaseServiceRunException(WRONG_ACTION,prefx+" Bean已经被定义！");
+        DataSource dataSource = createDataSource(prefx,beanFactory);
         SimpleSqlTemplate simpleSqlFacroty = new SimpleSqlTemplate(dataSource);
         if(beanFactory != null)
-            beanFactory.registerSingleton(prefx,simpleSqlFacroty);
+            beanFactory.registerSingleton(AUTOBEAN_SQLTEMPLATE + prefx,simpleSqlFacroty);
         return simpleSqlFacroty;
     }
 
@@ -52,14 +72,14 @@ public class ComponentFactory {
      * @return SQL客户端
      */
     public static SimpleSqlClient initSimpleSqlClient(String prefx,BeanFactory beanFactory) {
-        DataSource dataSource = createDataSource(prefx);
+        if(beanFactory != null && beanFactory.hasBean(prefx))
+            throw new BaseServiceRunException(WRONG_ACTION,prefx+" Bean已经被定义！");
+        DataSource dataSource = createDataSource(prefx,beanFactory);
         DataSourceTransactionFactory dataSourceTransactionFactory = new DataSourceTransactionFactory(dataSource);
-        if(beanFactory != null)
-            beanFactory.registerSingleton(AUTOBEAN_PREFIX+"transactionFactory_"+prefx,dataSourceTransactionFactory);
         SimpleSqlClient simpleSqlClient = new SimpleSqlClient(dataSourceTransactionFactory
                 , DefaultPreparedStatementSetter.INSTANCE, DefaultResultSetResolve.INSTANCE);
         if(beanFactory != null)
-            beanFactory.registerSingleton(prefx,simpleSqlClient);
+            beanFactory.registerSingleton(AUTOBEAN_SQLCLIENT + prefx,simpleSqlClient);
         return simpleSqlClient;
     }
 
@@ -76,49 +96,52 @@ public class ComponentFactory {
      * @param prefx 前缀
      * @return SimpleMysql实例
      */
-    public static DataSource createDataSource(String prefx) {
-        String url = LocalContext.getString(prefx + "_url");
-        String username = LocalContext.getString(prefx + "_username");
-        String password = LocalContext.getString(prefx + "_password");
-        String driverClassName = LocalContext.getString(prefx + "_driverClassName");
-        String maxLifetime = LocalContext.getString(prefx + "_maxLifetime");
-        String connectionTestQuery = LocalContext.getString(prefx + "_connectionTestQuery");
-        String connectionTimeout = LocalContext.getString(prefx + "_connectionTimeout");
-        String poolName = LocalContext.getString(prefx + "_poolName");
-        String maximumPoolSize = LocalContext.getString(prefx + "_maximumPoolSize");
-        String minimumIdea = LocalContext.getString(prefx + "_minimumIdle");
-        String idleTimeout = LocalContext.getString(prefx + "_idleTimeout");
-        String keepaliveTime = LocalContext.getString(prefx + "_keepaliveTime");
+    public static DataSource createDataSource(String prefx,BeanFactory beanFactory) {
+        String datasourceBeanName = null;
+        if(beanFactory != null) {
+            datasourceBeanName = AUTOBEAN_DATASOURCE_PREFIX+prefx;
+            if(beanFactory.hasBean(datasourceBeanName))
+                return beanFactory.getBean(datasourceBeanName,DataSource.class);
+        }
+        StringOptional url = LocalContext.getString(prefx + "_url");
+        url.ifBlackThrow(prefx+"_url");
+        StringOptional username = LocalContext.getString(prefx + "_username");
+        username.ifBlackThrow(prefx+"_username");
+        StringOptional password = LocalContext.getString(prefx + "_password");
+        password.ifBlackThrow(prefx+"_password");
+
+        StringOptional driverClassName = LocalContext.getString(prefx + "_driverClassName");
+        StringOptional maxLifetime = LocalContext.getString(prefx + "_maxLifetime");
+        StringOptional connectionTestQuery = LocalContext.getString(prefx + "_connectionTestQuery");
+        StringOptional connectionTimeout = LocalContext.getString(prefx + "_connectionTimeout");
+        StringOptional poolName = LocalContext.getString(prefx + "_poolName");
+        StringOptional maximumPoolSize = LocalContext.getString(prefx + "_maximumPoolSize");
+        StringOptional minimumIdea = LocalContext.getString(prefx + "_minimumIdle");
+        StringOptional idleTimeout = LocalContext.getString(prefx + "_idleTimeout");
+        StringOptional keepaliveTime = LocalContext.getString(prefx + "_keepaliveTime");
         HikariDataSource dataSource = new HikariDataSource();
-        dataSource.setJdbcUrl(url);
-        dataSource.setUsername(username);
-        dataSource.setPassword(password);
-        if(AssertUtil.isNotEmpty(driverClassName))
-            dataSource.setDriverClassName(driverClassName);
-        if(AssertUtil.isNotEmpty(poolName))
-            dataSource.setPoolName(poolName);
+        dataSource.setJdbcUrl(url.get());
+        dataSource.setUsername(username.get());
+        dataSource.setPassword(password.get());
+        driverClassName.ifNotBlack(dataSource::setDriverClassName);
+        poolName.ifNotBlack(dataSource::setPoolName);
         // 客户端等待来自池的连接的最大毫秒数，超时将SQLException 最少 250; 默认 30000（30秒）
-        if(AssertUtil.isNotEmpty(connectionTimeout))
-            dataSource.setConnectionTimeout(Long.valueOf(connectionTimeout));
+        connectionTimeout.ifNotBlack(o -> dataSource.setConnectionTimeout(Long.valueOf(o)));
         // 连接的最大生命周期 最小 30000; 默认值：1800000（30 分钟）
-        if(AssertUtil.isNotEmpty(maxLifetime))
-            dataSource.setMaxLifetime(Long.valueOf(maxLifetime));
+        maxLifetime.ifNotBlack(o -> dataSource.setMaxLifetime(Long.valueOf(o)));
         // 允许达到的连接的最大数量 默认值：10
-        if(AssertUtil.isNotEmpty(maximumPoolSize))
-            dataSource.setMaximumPoolSize(Integer.valueOf(maximumPoolSize));
+        maximumPoolSize.ifNotBlack(o -> dataSource.setMaximumPoolSize(Integer.valueOf(o)));
         // 维护的最小空闲连接数 默认值 与 maximumPoolSize 相同
-        if(AssertUtil.isNotEmpty(minimumIdea))
-            dataSource.setMinimumIdle(Integer.valueOf(minimumIdea));
+        minimumIdea.ifNotBlack(o -> dataSource.setMinimumIdle(Integer.valueOf(o)));
         // 允许连接在池中空闲的最长时间 超时淘汰 0:永不淘汰
         // 允许的最小值为 10000; 默认值：600000（10 分钟）
-        if(AssertUtil.isNotEmpty(idleTimeout))
-            dataSource.setIdleTimeout(Long.valueOf(idleTimeout));
+        idleTimeout.ifNotBlack(o -> dataSource.setIdleTimeout(Long.valueOf(o)));
         // 尝试保持连接活动的频率 最小值为 30000（30 秒）， 默认值：0（禁用）
-        if(AssertUtil.isNotEmpty(keepaliveTime))
-            dataSource.setKeepaliveTime(Long.valueOf(keepaliveTime));
+        keepaliveTime.ifNotBlack(o -> dataSource.setKeepaliveTime(Long.valueOf(o)));
         // 存在Connection.isValid() API时不建议设置此值
-        if(AssertUtil.isNotEmpty(connectionTestQuery))
-            dataSource.setConnectionTestQuery(connectionTestQuery);
+        connectionTestQuery.ifNotBlack(dataSource::setConnectionTestQuery);
+        if(beanFactory != null)
+            beanFactory.registerSingleton(datasourceBeanName,dataSource);
         return dataSource;
     }
 
@@ -134,38 +157,28 @@ public class ComponentFactory {
      */
 
     public static JedisCluster initJedisCluster(String prefx,BeanFactory beanFactory) {
-        ArrayList<String> hps = LocalContext.get(prefx+"_host[%d]",6);
-        String passoword = LocalContext.getString(prefx+"_passoword");
-        String maxIdle = LocalContext.getString(prefx + "_maxIdle");
-        String minIdle = LocalContext.getString(prefx + "_minIdle");
-        String maxTotal = LocalContext.getString(prefx + "_maxTotal");
-        String maxWait = LocalContext.getString(prefx + "_maxWait");
-        Boolean testOnBorrow = LocalContext.getBoolean(prefx + "_testOnBorrow");
-        Boolean testOnReturn = LocalContext.getBoolean(prefx + "_testOnReturn");
-        Boolean testOnCreate = LocalContext.getBoolean(prefx + "_testOnCreate");
-        String timeBetweenEvictionRuns = LocalContext.getString(prefx + "_timeBetweenEvictionRuns");
-        String numTestsPerEvictionRun = LocalContext.getString(prefx + "_numTestsPerEvictionRun");
+        ArrayList<String> hps = LocalContext.get(prefx+"_host[%d]",32);
+        AssertUtil.assertTrue(!hps.isEmpty(),prefx + "_host[]参数必需;");
+        StringOptional passoword = LocalContext.getString(prefx+"_passoword");
+        Optional<Integer> maxIdle = LocalContext.getInteger(prefx + "_maxIdle");
+        Optional<Integer> minIdle = LocalContext.getInteger(prefx + "_minIdle");
+        Optional<Integer> maxTotal = LocalContext.getInteger(prefx + "_maxTotal");
+        Optional<Duration> maxWait = LocalContext.getDuration(prefx + "_maxWait", ChronoUnit.MILLIS);
+        Optional<Boolean> testOnBorrow = LocalContext.getBoolean(prefx + "_testOnBorrow");
+        Optional<Boolean> testOnReturn = LocalContext.getBoolean(prefx + "_testOnReturn");
+        Optional<Boolean> testOnCreate = LocalContext.getBoolean(prefx + "_testOnCreate");
+        Optional<Duration> timeBetweenEvictionRuns = LocalContext.getDuration(prefx + "_timeBetweenEvictionRuns",ChronoUnit.MILLIS);
+        Optional<Integer> numTestsPerEvictionRun = LocalContext.getInteger(prefx+"_numTestsPerEvictionRun");
         GenericObjectPoolConfig<Connection> poolConfig = new GenericObjectPoolConfig<>();
-        poolConfig.setMaxIdle(AssertUtil.isNotEmpty(maxIdle)?Integer.valueOf(maxIdle).intValue()
-                :GenericObjectPoolConfig.DEFAULT_MAX_IDLE);
-        poolConfig.setMinIdle(AssertUtil.isNotEmpty(minIdle)?Integer.valueOf(minIdle).intValue()
-                :GenericObjectPoolConfig.DEFAULT_MIN_IDLE);
-        poolConfig.setMaxTotal(AssertUtil.isNotEmpty(maxTotal)?Integer.valueOf(maxTotal).intValue()
-                :GenericObjectPoolConfig.DEFAULT_MAX_TOTAL);
-        poolConfig.setMaxWait(AssertUtil.isNotEmpty(maxWait)?Duration.ofMillis(Long.valueOf(maxWait))
-                :GenericObjectPoolConfig.DEFAULT_MAX_WAIT);
-        poolConfig.setTimeBetweenEvictionRuns(AssertUtil.isNotEmpty(timeBetweenEvictionRuns)
-                ?Duration.ofMillis(Long.valueOf(timeBetweenEvictionRuns))
-                :GenericObjectPoolConfig.DEFAULT_TIME_BETWEEN_EVICTION_RUNS);
-        poolConfig.setNumTestsPerEvictionRun(AssertUtil.isNotEmpty(numTestsPerEvictionRun)
-                ?Integer.valueOf(numTestsPerEvictionRun)
-                :GenericObjectPoolConfig.DEFAULT_NUM_TESTS_PER_EVICTION_RUN);
-        poolConfig.setTestOnBorrow(testOnBorrow != null ? testOnBorrow
-                :GenericObjectPoolConfig.DEFAULT_TEST_ON_BORROW);
-        poolConfig.setTestOnReturn(testOnReturn != null?testOnReturn
-                :GenericObjectPoolConfig.DEFAULT_TEST_ON_RETURN);
-        poolConfig.setTestOnCreate(testOnCreate != null?testOnCreate
-                :GenericObjectPoolConfig.DEFAULT_TEST_ON_CREATE);
+        poolConfig.setMaxIdle(maxIdle.orElseGet(() -> GenericObjectPoolConfig.DEFAULT_MAX_IDLE));
+        poolConfig.setMinIdle(minIdle.orElseGet(() -> GenericObjectPoolConfig.DEFAULT_MIN_IDLE));
+        poolConfig.setMaxTotal(maxTotal.orElseGet(() -> GenericObjectPoolConfig.DEFAULT_MAX_TOTAL));
+        poolConfig.setMaxWait(maxWait.orElseGet(() -> GenericObjectPoolConfig.DEFAULT_MAX_WAIT));
+        poolConfig.setTimeBetweenEvictionRuns(timeBetweenEvictionRuns.orElseGet(() -> GenericObjectPoolConfig.DEFAULT_TIME_BETWEEN_EVICTION_RUNS));
+        poolConfig.setNumTestsPerEvictionRun(numTestsPerEvictionRun.orElseGet(() -> GenericObjectPoolConfig.DEFAULT_NUM_TESTS_PER_EVICTION_RUN));
+        poolConfig.setTestOnBorrow(testOnBorrow.orElseGet(() -> GenericObjectPoolConfig.DEFAULT_TEST_ON_BORROW));
+        poolConfig.setTestOnReturn(testOnReturn.orElseGet(() -> GenericObjectPoolConfig.DEFAULT_TEST_ON_RETURN));
+        poolConfig.setTestOnCreate(testOnCreate.orElseGet(() -> GenericObjectPoolConfig.DEFAULT_TEST_ON_CREATE));
         poolConfig.setMinEvictableIdleTime(Duration.ofSeconds(30));
         poolConfig.setSoftMinEvictableIdleTime(BaseObjectPoolConfig.DEFAULT_SOFT_MIN_EVICTABLE_IDLE_DURATION);
         poolConfig.setEvictionPolicyClassName(BaseObjectPoolConfig.DEFAULT_EVICTION_POLICY_CLASS_NAME);
@@ -174,7 +187,7 @@ public class ComponentFactory {
         for (String hp : hps) {
             jedisClusterBuilder.addNode(HostAndPort.from(hp));
         }
-        jedisClusterBuilder.password(passoword);
+        jedisClusterBuilder.password(passoword.get());
         JedisCluster cluster = jedisClusterBuilder.build(poolConfig);
         if(beanFactory != null)
             beanFactory.registerSingleton(prefx,cluster);
@@ -191,10 +204,11 @@ public class ComponentFactory {
      * @return Jedis实例
      */
     public static Jedis initJedis(String prefx,BeanFactory beanFactory) {
-        String host = LocalContext.getString(prefx + "_host");
-        String password = LocalContext.getString(prefx + "_password");
-        Jedis jedis = JedisBuilder.create().host(HostAndPort.from(host))
-                .password(password)
+        StringOptional host = LocalContext.getString(prefx + "_host");
+        host.ifBlackThrow(prefx + "_host");
+        StringOptional password = LocalContext.getString(prefx + "_password");
+        Jedis jedis = JedisBuilder.create().host(HostAndPort.from(host.get()))
+                .password(password.get())
                 .build();
         if(jedis != null)
             beanFactory.registerSingleton(prefx,jedis);
@@ -213,15 +227,46 @@ public class ComponentFactory {
      * @return SimpleEmailSender实例
      */
     public static SimpleEmailSender initSimpleEmailSender(String prefx,BeanFactory beanFactory) {
-        String smtpHost = LocalContext.getString(prefx+"_smtpHost");
-        String from = LocalContext.getString(prefx+"_from");
-        String username = LocalContext.getString(prefx + "_username");
-        String password = LocalContext.getString(prefx + "_password");
-        SimpleEmailSender simpleEmailSender = new SimpleEmailSender(smtpHost, from);
-        simpleEmailSender.authenticator(username,password);
+        StringOptional smtpHost = LocalContext.getString(prefx+"_smtpHost");
+        smtpHost.ifBlackThrow(prefx+"_smtpHost");
+        StringOptional from = LocalContext.getString(prefx+"_from");
+        smtpHost.ifBlackThrow(prefx+"_from");
+        StringOptional username = LocalContext.getString(prefx + "_username");
+        smtpHost.ifBlackThrow(prefx+"_username");
+        StringOptional password = LocalContext.getString(prefx + "_password");
+        smtpHost.ifBlackThrow(prefx+"_password");
+        SimpleEmailSender simpleEmailSender = new SimpleEmailSender(smtpHost.get(), from.get());
+        simpleEmailSender.authenticator(username.get(),password.get());
         if(beanFactory != null)
             beanFactory.registerSingleton(prefx,beanFactory);
         return simpleEmailSender;
+    }
+
+    /**
+     * 配置方法:
+     * <pre>
+     * ${prefx}_webhook=https://oapi.dingtalk.com/robot/send
+     * ${prefx}_token=******
+     * ${prefx}_secret=******
+     * </pre>
+     * @param prefx 前缀
+     * @return DingDingRobotClient实例
+     */
+    public static DingDingRobotClient initDingDingRobotClient(String prefx,BeanFactory beanFactory) {
+        StringOptional webhook = LocalContext.getString(prefx+"_webhook");
+        webhook.ifBlackThrow("webhook");
+        StringOptional token = LocalContext.getString(prefx+"_token");
+        StringOptional secret = LocalContext.getString(prefx+"_secret");
+        secret.ifBlackThrow("secret");
+        DingDingRobotClient client = null;
+        if(token.isBlack())
+            client = new DingDingRobotClient(webhook.get(),secret.get());
+        else
+            client = new DingDingRobotClient(webhook.get(),token.get(),secret.get());
+        if(beanFactory != null)
+            beanFactory.registerSingleton(prefx,client);
+        return client;
+
     }
 
     /**
@@ -230,7 +275,9 @@ public class ComponentFactory {
     public static final String APP_DEFAULT_PRINTWRITER_PATH = "app_default_printwriter_path";
 
     public static PrintWriter createPrintWriter(String key) {
-        PrintWriter printStream = StreamUtil.printWriter(LocalContext.getString(key));
+        StringOptional writerPath = LocalContext.getString(key);
+        writerPath.ifBlackThrow(key);
+        PrintWriter printStream = StreamUtil.printWriter(writerPath.get());
         return printStream;
     }
 

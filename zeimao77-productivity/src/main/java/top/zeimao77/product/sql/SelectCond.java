@@ -16,6 +16,10 @@ public class SelectCond extends PageSearch {
         return new SelectCond();
     }
 
+    private SelectCond(Integer pageNo, Integer pageSize) {
+        super(pageNo, pageSize);
+    }
+
     public static SelectCond select(List<String> queryFields) {
         SelectCond selectCond = new SelectCond();
         selectCond.setQueryFields(queryFields);
@@ -33,6 +37,12 @@ public class SelectCond extends PageSearch {
      */
     public SelectCond noPage(){
         set_paging(false);
+        return this;
+    }
+
+    public SelectCond page(Integer pageNo, Integer pageSize) {
+        setPageNo(pageNo);
+        setPageSize(pageSize);
         return this;
     }
 

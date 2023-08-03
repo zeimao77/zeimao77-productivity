@@ -27,11 +27,10 @@ public class ParamValidateUtil {
             if (obj instanceof Map) {
                 Map o = ((Map) obj);
                 mapRemoveEmpty(o);
-                if (o.isEmpty()) {
+                if (o.isEmpty())
                     ite.remove();
-                }
             } else if(obj instanceof Collection) {
-                Collection o = ((Collection) obj);
+                Collection o = (Collection) obj;
                 for (Iterator iterator = o.iterator();iterator.hasNext();) {
                     Object n = iterator.next();
                     if(n instanceof Map) {
@@ -51,9 +50,8 @@ public class ParamValidateUtil {
     }
 
     public static void mapChecks(Map<String, Object> map,String... checks){
-        for (String check : checks) {
+        for (String check : checks)
             mapCheck(map,check);
-        }
     }
 
     static Pattern paramCheckPattern = Pattern.compile("(\\S+?)\\.(.*)");
@@ -69,9 +67,8 @@ public class ParamValidateUtil {
             String c1 = matcher.group(1);
             String c2 = matcher.group(2);
             Object o = map.get(c1);
-            AssertUtil.assertTrue(!AssertUtil.isEmpty(o),String.format("参数 %s 空或是无效参数,该参数必需",c1));
             if(o instanceof Map){
-                Map m = ((Map) o);
+                Map m = (Map)o;
                 AssertUtil.assertTrue(!m.isEmpty(),APPERR,"参数 %s 空或是无效参数,该参数必需",c1);
                 mapCheck(m,c2);
             } else if(o instanceof Collection ) {

@@ -1,7 +1,7 @@
 package top.zeimao77.product.sql;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
 import java.io.PrintWriter;
@@ -15,21 +15,15 @@ import java.util.function.BiConsumer;
  */
 public class OnlyPrintReposit implements  Reposit, Closeable {
 
-    private static Logger logger = LogManager.getLogger(OnlyPrintReposit.class);
+    private static Logger logger = LoggerFactory.getLogger(OnlyPrintReposit.class);
 
-    private Boolean appendEnd;
-    private PrintWriter writer;
+    private boolean appendEnd = true;
+    PrintWriter writer;
 
     /**
      * @param writer SQL输出位置
      */
     public OnlyPrintReposit(PrintWriter writer){
-        this.writer = writer;
-        this.appendEnd = true;
-    }
-
-    public OnlyPrintReposit(PrintWriter writer,Boolean appendEnd) {
-        this.appendEnd = appendEnd;
         this.writer = writer;
     }
 
@@ -38,28 +32,28 @@ public class OnlyPrintReposit implements  Reposit, Closeable {
         this.writer = writer;
     }
 
-    @Override
-    public <T> ArrayList<T> selectByResolver(StatementParamResolver sql, Class<T> clazz) {
+    private void printByResolver(StatementParamResolver sql) {
+        sql.resolve();
         String execSql = sql.getExecSql();
         logger.debug(execSql);
         if(writer != null) {
-            writer.println(execSql);
+            writer.print(execSql);
             if(appendEnd)
                 writer.println(";");
+            else
+                writer.println();
         }
+    }
+
+    @Override
+    public <T> ArrayList<T> selectByResolver(StatementParamResolver sql, Class<T> clazz) {
+        printByResolver(sql);
         return new ArrayList<>();
     }
 
     @Override
     public int updateByResolver(StatementParamResolver sql) {
-        String execSql = sql.getExecSql();
-        logger.debug(execSql);
-        if(writer != null) {
-            writer.println(execSql);
-            if(appendEnd) {
-                writer.println(";");
-            }
-        }
+        printByResolver(sql);
         return 0;
     }
 
@@ -77,37 +71,23 @@ public class OnlyPrintReposit implements  Reposit, Closeable {
     public int update(String sql) {
         logger.debug(sql);
         if(writer != null) {
-            writer.println(sql);
+            writer.print(sql);
             if(appendEnd)
                 writer.println(";");
+            else
+                writer.println();
         }
         return 0;
     }
 
     @Override
     public int update(String sqlt, Object param) {
-        DefaultStatementParamResolver defaultStatementParamResolver = new DefaultStatementParamResolver(sqlt, param);
-        String execSql = defaultStatementParamResolver.getExecSql();
-        logger.debug(execSql);
-        if(writer != null) {
-            writer.println(execSql);
-            if(appendEnd)
-                writer.println(";");
-        }
-        return 0;
+        return updateByResolver(new DefaultStatementParamResolver(sqlt, param));
     }
 
     @Override
     public <T> ArrayList<T> selectListObj(String sqlt, Object param, Class<T> clazz) {
-        DefaultStatementParamResolver defaultStatementParamResolver = new DefaultStatementParamResolver(sqlt, param);
-        String execSql = defaultStatementParamResolver.getExecSql();
-        logger.debug(execSql);
-        if(writer != null) {
-            writer.println(execSql);
-            if(appendEnd) {
-                writer.println(";");
-            }
-        }
+        selectByResolver(new DefaultStatementParamResolver(sqlt, param),clazz);
         return new ArrayList<>();
     }
 
@@ -115,23 +95,24 @@ public class OnlyPrintReposit implements  Reposit, Closeable {
     public <T> ArrayList<T> selectListObj(String sql, Class<T> clazz) {
         logger.debug(sql);
         if(writer != null) {
-            writer.println(sql);
+            writer.print(sql);
             if(appendEnd)
                 writer.println(";");
+            else
+                writer.println();
         }
         return new ArrayList<>();
     }
 
     @Override
     public ArrayList<Map<String, Object>> selectListMap(String sqlt, Object param) {
-        DefaultStatementParamResolver defaultStatementParamResolver = new DefaultStatementParamResolver(sqlt, param);
-        String execSql = defaultStatementParamResolver.getExecSql();
-        logger.debug(execSql);
-        if(writer != null) {
-            writer.println(execSql);
-            if(appendEnd)
-                writer.println(";");
-        }
+        printByResolver(new DefaultStatementParamResolver(sqlt, param));
+        return new ArrayList<>();
+    }
+
+    @Override
+    public ArrayList<String> selectListString(String sqlt, Object param) {
+        selectByResolver(new DefaultStatementParamResolver(sqlt, param),ResultStr.class);
         return new ArrayList<>();
     }
 

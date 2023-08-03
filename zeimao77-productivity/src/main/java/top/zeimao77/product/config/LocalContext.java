@@ -6,10 +6,14 @@ import top.zeimao77.product.exception.BaseServiceRunException;
 import static top.zeimao77.product.exception.ExceptionCodeDefinition.IOEXCEPTION;
 import top.zeimao77.product.util.AssertUtil;
 import top.zeimao77.product.util.BoolUtil;
+import top.zeimao77.product.util.StringOptional;
 
 import java.io.*;
+import java.time.Duration;
+import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.Properties;
 
 /**
@@ -30,35 +34,65 @@ public class LocalContext {
         return context.get(key);
     }
 
-    public static String getString(String key) {
-        Object o = get(key);
-        return o != null ? o.toString() : null;
+    public static Optional<Object> getObject(String key) {
+        Object o = context.get(key);
+        return o == null ? Optional.empty() : Optional.of(o);
     }
 
-    public static Long getLong(String key) {
+    public static StringOptional getString(String key) {
         Object o = get(key);
-        return AssertUtil.isBlack(o.toString()) ? null : Long.valueOf(o.toString());
+        return o == null ? StringOptional.empty() : new StringOptional(o.toString());
     }
 
-    public static Integer getInteger(String key) {
+    public static Optional<Long> getLong(String key) {
         Object o = get(key);
-        return AssertUtil.isBlack(o.toString()) ? null : Integer.valueOf(o.toString());
+        if (o == null)
+            return Optional.empty();
+        if(o instanceof Long) {
+            Long t = (Long) o;
+            return Optional.of(t);
+        }
+        return AssertUtil.isBlack(o.toString()) ? Optional.empty() : Optional.of(Long.valueOf(o.toString()));
     }
 
-    public static Double getDouble(String key) {
+    public static Optional<Integer> getInteger(String key) {
         Object o = get(key);
-        return AssertUtil.isBlack(o.toString()) ? null : Double.valueOf(o.toString());
+        if(o == null)
+            return Optional.empty();
+        if(o instanceof Integer) {
+            Integer t = (Integer) o;
+            return Optional.of(t);
+        }
+        return AssertUtil.isBlack(o.toString()) ? Optional.empty() : Optional.of(Integer.valueOf(o.toString()));
     }
 
-    public static Boolean getBoolean(String key) {
+    public static Optional<Double> getDouble(String key) {
         Object o = get(key);
-        Boolean result = null;
+        if(o == null)
+            return Optional.empty();
+        if(o instanceof Double) {
+            Double t = (Double) o;
+            return Optional.of(t);
+        }
+        return AssertUtil.isBlack(o.toString()) ? Optional.empty() : Optional.of(Double.valueOf(o.toString()));
+    }
+
+    public static Optional<Boolean> getBoolean(String key) {
+        Object o = get(key);
+        if(o == null)
+            return Optional.empty();
         try {
-            result = BoolUtil.parseBool(o.toString());
+            Boolean result = BoolUtil.parseBool(o.toString());
+            return Optional.of(result);
         }catch (BaseServiceRunException e) {
             logger.error(e.getMessage(),e);
         }
-        return result;
+        return Optional.empty();
+    }
+
+    public static Optional<Duration> getDuration(String key, TemporalUnit unit) {
+        Optional<Long> aLong = getLong(key);
+        return !aLong.isPresent() ? Optional.empty() : Optional.of(Duration.of(aLong.get(),unit));
     }
 
     public static Object remove(String key) {

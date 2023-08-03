@@ -1,13 +1,13 @@
 package top.zeimao77.product.sql;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 public class PageSearch extends BaseSearch {
 
-    private static Logger logger = LogManager.getLogger(PageSearch.class);
+    private static Logger logger = LoggerFactory.getLogger(PageSearch.class);
 
     public static final Integer DEFAULT_PAGENO = 1;
     public static final Integer DEFAULT_PAGESIZE = 50;
@@ -66,6 +66,10 @@ public class PageSearch extends BaseSearch {
 
     public Long getTotal() {
         return total;
+    }
+
+    public Long calcTotalPage() {
+        return  total % pageSize > 0 ? (total / pageSize + 1) : total / pageSize;
     }
 
     public void setTotal(Long total) {

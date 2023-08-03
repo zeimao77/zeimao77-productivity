@@ -27,8 +27,8 @@ public class MutableRow<L,C,R> implements Row<L, C, R> {
             }
             return true;
         };
-        if(obj instanceof ImmutableRow) {
-            ImmutableRow<?,?, ?> key = (ImmutableRow<?,?,?>) obj;
+        if(obj instanceof MutableRow<?,?,?>) {
+            MutableRow<?,?, ?> key = (MutableRow<?,?,?>) obj;
             if(obj == this) return true;
             if(!pre.test(key.getLeft(),this.left)){return false;}
             if(!pre.test(key.getCenter(),this.center)){return false;}
