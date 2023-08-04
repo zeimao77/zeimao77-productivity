@@ -8,6 +8,8 @@
 
 ## 快速开始一个jar
 
+### gradle&jdk17
+
 1. 新建一个工程，以`app-amin`为例,gradle(7.4.2)文件配置如下;
 
 ```groovy
@@ -122,6 +124,92 @@ docker run --rm -it -v /home/docker/app-main/libs:/home/user0 openjdk:17.0.2-jdk
 ## 守护进程执行
 docker run -d -v /home/docker/app-main/libs:/home/user0 -w /home/user0 openjdk:17.0.2-jdk-oraclelinux8\
  java -Dlog.level=INFO -Dlog.file=/home/user0/app.log -jar app-main.jar
+```
+
+### maven&jdk8
+
+````bat
+## mvn依赖
+mvn install:install-file -Dfile=zeimao77-productivity-jdk8-2.1.9.jar -DgroupId=top.zeimao77 -DartifactId=zeimao77-productivity-jdk8 -Dversion=2.1.9 -Dpackaging=jar
+mvn install:install-file -Dfile=zeimao77-productivity-jdk8-2.1.9-sources.jar -DgroupId=top.zeimao77 -DartifactId=zeimao77-productivity-jdk8 -Dversion=2.1.9 -Dclassifier=sources -Dpackaging=jar
+## 设置JAVA_HOME
+set JAVA_HOME=D:\Program Files\Java\jdk1.8.0_351
+## 收集依赖
+mvn dependency:copy-dependencies -DoutputDirectory=libs
+## 打包
+mvn jar:jar
+copy target\app-main-jdk8-1.0.0.jar libs\
+````
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>top.zeimao77</groupId>
+    <artifactId>app-main-jdk8</artifactId>
+    <version>1.0.0</version>
+
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>top.zeimao77</groupId>
+            <artifactId>zeimao77-productivity-jdk8</artifactId>
+            <version>2.1.9</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.17.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j2-impl</artifactId>
+            <version>2.20.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>4.0.3</version>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.29</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <!-- <version>3.2.2</version> -->
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <!-- <classpathPrefix>lib/</classpathPrefix> -->
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                            <mainClass>top.zeimao77.Main</mainClass>
+                        </manifest>
+                        <manifestEntries>
+                            <mode>development</mode>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
 ```
 
 如果您想对它所提供的工具有更详细的了解，请继续;
