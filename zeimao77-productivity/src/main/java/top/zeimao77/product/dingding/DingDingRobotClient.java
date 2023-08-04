@@ -58,7 +58,7 @@ public class DingDingRobotClient {
         if(atMobiles != null && !atMobiles.isEmpty())
             at.put("atMobiles",atMobiles);
         if(atUserIds != null && !atUserIds.isEmpty())
-            at.put("atUserIds",List.of("zeimao77"));
+            at.put("atUserIds",atUserIds);
         at.put("isAtAll",atAll);
         message.put("at",at);
         long timestamp = System.currentTimeMillis();
