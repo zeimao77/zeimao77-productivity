@@ -3,6 +3,7 @@ package top.zeimao77.product.sql;
 import top.zeimao77.product.util.ByteArrayCoDesUtil;
 import top.zeimao77.product.util.CalendarDateUtil;
 import top.zeimao77.product.util.LocalDateTimeUtil;
+import top.zeimao77.product.util.StringOptional;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -102,6 +103,15 @@ public interface StatementParamResolver {
                     execSqlBuilder.append(QUOTATION_MARKS).append(s.replaceAll("'","\\\\'")).append(QUOTATION_MARKS);
                 } else {
                     execSqlBuilder.append(QUOTATION_MARKS).append(value).append(QUOTATION_MARKS);
+                }
+            } else if(StringOptional.class.isAssignableFrom(javaType)) {
+                StringOptional s = (StringOptional) value;
+                if(s.isBlack()) {
+                    execSqlBuilder.append("NULL");
+                } else if(s.get().contains("'")) {
+                    execSqlBuilder.append(QUOTATION_MARKS).append(s.get().replaceAll("'","\\\\'")).append(QUOTATION_MARKS);
+                } else {
+                    execSqlBuilder.append(QUOTATION_MARKS).append(s.get()).append(QUOTATION_MARKS);
                 }
             } else if(Long.class.isAssignableFrom(javaType)){
                 execSqlBuilder.append(value);
