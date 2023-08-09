@@ -3,6 +3,7 @@ package top.zeimao77.product.sql;
 import top.zeimao77.product.exception.BaseServiceRunException;
 import static top.zeimao77.product.exception.ExceptionCodeDefinition.SQLEXCEPTION;
 
+import top.zeimao77.product.json.Ijson;
 import top.zeimao77.product.util.CalendarDateUtil;
 import top.zeimao77.product.util.LocalDateTimeUtil;
 import top.zeimao77.product.util.StringOptional;
@@ -61,6 +62,8 @@ public class DefaultPreparedStatementSetter implements PreparedStatementSetter {
                 preparedStatement.setTime(index,new Time(((java.util.Date) value).getTime()));
             } else if(java.util.Date.class.isAssignableFrom(javaType) && (jdbcType == StatementParameter.DEFAULT_JDBCTYPE || jdbcType == Types.VARCHAR)) {
                 preparedStatement.setString(index, CalendarDateUtil.toDateTime((java.util.Date) value));
+            } else if(Ijson.class.isAssignableFrom(javaType)) {
+                preparedStatement.setString(index, ((Ijson)value).toJsonString(false));
             } else if(ByteBuffer.class.isAssignableFrom(javaType)) {
                 preparedStatement.setBytes(index, ((ByteBuffer) value).array());
             }
