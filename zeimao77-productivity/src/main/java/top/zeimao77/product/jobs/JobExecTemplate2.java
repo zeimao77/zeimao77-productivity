@@ -40,9 +40,7 @@ public class JobExecTemplate2<T extends IJob> implements JobExec{
             return false;
         try {
             executorService.execute(()->{
-                if(this.jobExecHandler.support(t,jobParam)) {
-                    this.jobExecHandler.handle(t,jobParam);
-                }
+                this.jobExecHandler.handle(t,jobParam);
             });
             return true;
         } catch (RejectedExecutionException e) {

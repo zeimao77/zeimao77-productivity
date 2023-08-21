@@ -25,16 +25,7 @@ public class DelegatingHandlerComponent<T extends IJob> extends JobExecHandler<T
     @Override
     public Result doHandle(T job, Map<String, Object> param) {
         for (JobExecHandler<T> tJobExecHandler : jobExecHandlerList) {
-            boolean support = false;
-            try {
-                support = tJobExecHandler.support(job,param);
-            }catch (Exception e) {
-                logger.error("{}支持错误,任务({})可能丢失;",tJobExecHandler,job.jobId());
-                logger.error("错误",e);
-            }
-            if(support) {
-                tJobExecHandler.handle(job,param);
-            }
+            tJobExecHandler.handle(job,param);
         }
         return Result.SUCCESS;
     }
