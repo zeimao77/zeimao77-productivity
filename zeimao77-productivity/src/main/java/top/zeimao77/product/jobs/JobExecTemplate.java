@@ -73,15 +73,6 @@ public abstract class JobExecTemplate<T extends IJob> implements JobExec{
     protected abstract void moreJob(int page);
 
     /**
-     * 处理任务的实现
-     * @param job 任务
-     */
-    public void handle(T job) {
-        if(jobExecHandler.support(job,jobParam))
-            jobExecHandler.handle(job,jobParam);
-    }
-
-    /**
      * 开始任务 默认10天超时时间
      * @param nThread 线程数
      */
@@ -120,7 +111,7 @@ public abstract class JobExecTemplate<T extends IJob> implements JobExec{
                         logger.debug("线程({})没有取到更多任务，即将退出",Thread.currentThread().getName());
                         break;
                     }
-                    handle(job);
+                    jobExecHandler.handle(job,jobParam);
                 }
             });
         }

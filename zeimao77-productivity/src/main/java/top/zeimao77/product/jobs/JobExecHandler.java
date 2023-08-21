@@ -41,11 +41,13 @@ public abstract class JobExecHandler<T extends IJob> implements JobExec{
      */
     public void handle(T job, Map<String,Object> param) {
         try {
-            Result result = doHandle(job,param);
-            if(result.success())
-                successed(job,param,result);
-            else
-                failed(job,param,result);
+            if(support(job,param)) {
+                Result result = doHandle(job,param);
+                if(result.success())
+                    successed(job,param,result);
+                else
+                    failed(job,param,result);
+            }
         } catch (BaseServiceRunException e) {
             logger.error(String.format("[%s]%s",e.getCode(),e.getMessage()),e);
             Result fail = Result.fail(e.getCode(), e.getMessage(), e);

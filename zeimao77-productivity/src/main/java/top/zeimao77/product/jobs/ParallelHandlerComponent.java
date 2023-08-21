@@ -39,19 +39,10 @@ public class ParallelHandlerComponent<T extends IJob> extends JobExecHandler<T> 
     @Override
     protected Result doHandle(T job, Map<String, Object> param) {
         for (JobExecHandler<T> tJobExecHandler : jobExecHandlerList) {
-            boolean support = false;
             try {
-                support = tJobExecHandler.support(job,param);
-            }catch (Exception e) {
-                logger.error("{}支持错误,任务({})可能丢失;",tJobExecHandler,job.jobId());
-                logger.error("错误",e);
-            }
-            if(support) {
-                try {
-                    executors.submit(() -> tJobExecHandler.handle(job,param));
-                }catch (RejectedExecutionException e) {
-                    return Result.fail(TRY_AGAIN_LATER,"线程池拒绝了提交任务",e);
-                }
+                executors.execute(() -> tJobExecHandler.handle(job,param));
+            }catch (RejectedExecutionException e) {
+                return Result.fail(TRY_AGAIN_LATER,"线程池拒绝了提交任务",e);
             }
         }
         return Result.SUCCESS;
