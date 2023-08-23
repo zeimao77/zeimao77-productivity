@@ -1,9 +1,6 @@
 package top.zeimao77.product.fileio.oexcel;
 
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.NumberToTextConverter;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
@@ -14,8 +11,8 @@ import top.zeimao77.product.util.BeanUtil;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
-
 public class ExcelXlsxDocumentBuilder implements XlsxDocumentBuilder{
 
     protected Workbook workbook;
@@ -111,7 +108,7 @@ public class ExcelXlsxDocumentBuilder implements XlsxDocumentBuilder{
                         v = BeanUtil.getProperty(o,column.getField());
                     }
                     Cell cell = row.createCell(column.getIndex());
-                    setCellValue(cell,column.getIndex(),column.getFormat(),v);
+                    setCellValue(cell,column.getIndex(),column.getFormat(),null,v);
                 }
             }
         }
@@ -121,24 +118,20 @@ public class ExcelXlsxDocumentBuilder implements XlsxDocumentBuilder{
                     CellRangeAddress cellRangeAddress = new CellRangeAddress(cellRangeValue.getStartRow()
                             , cellRangeValue.getEndRow(), cellRangeValue.getStartColumn(), cellRangeValue.getEndColumn());
                     sheet.addMergedRegion(cellRangeAddress);
-                    Row row = sheet.getRow(cellRangeValue.getStartRow());
-                    row = row == null ? sheet.createRow(cellRangeValue.getStartRow()) : row;
-                    Cell cell = row.createCell(cellRangeValue.getStartColumn());
-                    setCellValue(cell,-1,cellRangeValue.getFormat(),cellRangeValue.getValue());
-                } else {
-                    Row row = sheet.getRow(cellRangeValue.getStartRow());
-                    row = row == null ? sheet.createRow(cellRangeValue.getStartRow()) : row;
-                    Cell cell = row.createCell(cellRangeValue.getStartColumn());
-                    setCellValue(cell,-1,cellRangeValue.getFormat(),cellRangeValue.getValue());
                 }
+                Row row = sheet.getRow(cellRangeValue.getStartRow());
+                row = row == null ? sheet.createRow(cellRangeValue.getStartRow()) : row;
+                Cell cell = row.createCell(cellRangeValue.getStartColumn());
+                setCellValue(cell,-1,cellRangeValue.getFormat(),cellRangeValue.getFormatFunc(),cellRangeValue.getValue());
             }
         }
     }
 
-    protected void setCellValue(Cell cell,int index,String format,Object value) {
-        if(AssertUtil.isNotEmpty(format)) {
+    protected void setCellValue(Cell cell, int index, String format, BiFunction<Workbook,CellStyleFactory, CellStyle> formatFunc, Object value) {
+        if(formatFunc != null)
+            cell.setCellStyle(formatFunc.apply(this.workbook,this.cellStyleFactory));
+        else if(AssertUtil.isNotEmpty(format))
             cell.setCellStyle(cellStyleFactory.create(format));
-        }
         if(value == null)
             return;
         Object v = value;

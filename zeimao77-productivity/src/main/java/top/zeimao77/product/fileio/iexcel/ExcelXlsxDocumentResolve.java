@@ -21,7 +21,7 @@ import java.util.*;
 public class ExcelXlsxDocumentResolve<T> {
 
     private static Logger logger = LoggerFactory.getLogger(ExcelXlsxDocumentResolve.class);
-    
+
     private List<CellFiledTypeResover> resovers;
     private boolean sorted;
     private boolean stopOnError = true;

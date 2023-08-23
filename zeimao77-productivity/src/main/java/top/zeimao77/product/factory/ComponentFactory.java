@@ -51,7 +51,7 @@ public class ComponentFactory {
 
     /**
      * 配置参考:
-     * @see ComponentFactory#createDataSource(String)
+     * @see ComponentFactory#createDataSource(String, BeanFactory)
      * @param prefx 前缀
      * @return SQL客户端工厂对象
      */
@@ -67,7 +67,7 @@ public class ComponentFactory {
 
     /**
      * 配置参考:
-     * @see ComponentFactory#createDataSource(String)
+     * @see ComponentFactory#createDataSource(String, BeanFactory)
      * @param prefx 前缀
      * @return SQL客户端
      */
@@ -94,6 +94,7 @@ public class ComponentFactory {
      * ${prefx}_keepaliveTime=30000
      * </pre>
      * @param prefx 前缀
+     * @param beanFactory Bean工厂
      * @return SimpleMysql实例
      */
     public static DataSource createDataSource(String prefx,BeanFactory beanFactory) {
