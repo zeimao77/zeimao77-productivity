@@ -1,5 +1,10 @@
 package top.zeimao77.product.fileio.oexcel;
 
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Workbook;
+
+import java.util.function.BiFunction;
+
 public class CellRangeValue {
 
     private int startRow;
@@ -8,6 +13,7 @@ public class CellRangeValue {
     private int endColumn;
     private Object value;
     private String format;
+    private BiFunction<Workbook,CellStyleFactory, CellStyle> formatFunc;
 
     public CellRangeValue(int startRow, int startColumn) {
         this.startRow = startRow;
@@ -22,6 +28,16 @@ public class CellRangeValue {
         this.endRow = endRow;
         this.endColumn = endColumn;
         this.format = format;
+        this.value = value;
+    }
+
+    public CellRangeValue(int startRow, int startColumn, int endRow, int endColumn,String format,BiFunction<Workbook,CellStyleFactory, CellStyle> formatFunc, Object value) {
+        this.startRow = startRow;
+        this.startColumn = startColumn;
+        this.endRow = endRow;
+        this.endColumn = endColumn;
+        this.format = format;
+        this.formatFunc = formatFunc;
         this.value = value;
     }
 
@@ -77,5 +93,11 @@ public class CellRangeValue {
         this.format = format;
     }
 
+    public BiFunction<Workbook, CellStyleFactory, CellStyle> getFormatFunc() {
+        return formatFunc;
+    }
 
+    public void setFormatFunc(BiFunction<Workbook, CellStyleFactory, CellStyle> formatFunc) {
+        this.formatFunc = formatFunc;
+    }
 }

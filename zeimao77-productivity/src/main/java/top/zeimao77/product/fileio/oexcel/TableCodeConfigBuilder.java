@@ -1,11 +1,14 @@
 package top.zeimao77.product.fileio.oexcel;
 
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Workbook;
 import top.zeimao77.product.converter.AbstractNonReFreshConverter;
 import top.zeimao77.product.util.BeanUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiFunction;
 
 /**
  * 通过代码构建一个Table
@@ -113,6 +116,11 @@ public class TableCodeConfigBuilder{
 
     public TableCodeConfigBuilder cellRangeValue(int startRow, int startColumn, int endRow, int endColumn,String format, Object value) {
         this.cellRangeValueList.add(new CellRangeValue(startRow,startColumn,endRow,endColumn,format,value));
+        return this;
+    }
+
+    public TableCodeConfigBuilder cellRangeValue(int startRow, int startColumn, int endRow, int endColumn, String format, BiFunction<Workbook,CellStyleFactory, CellStyle> formatFunc, Object value) {
+        this.cellRangeValueList.add(new CellRangeValue(startRow,startColumn,endRow,endColumn,format,formatFunc,value));
         return this;
     }
 

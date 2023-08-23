@@ -20,6 +20,7 @@ public class AssertUtilTest extends BaseMain {
         BaseMain.showBanner("1.0.1");
         NumberUtil numberUtil = new NumberUtil(NumberUtil.DECIMAL, 4, RoundingMode.HALF_UP);
         logger.info(numberUtil.format(23344432233.23));
+        logger.info("2023-08-21 23:59:59".substring(0,10));
 
     }
 
