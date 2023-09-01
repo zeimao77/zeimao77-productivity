@@ -10,7 +10,7 @@ class BeanUtilTest extends BaseMain {
     @Test
     void getProperty() {
         HashMap<Object, Object> map = new HashMap<>();
-        logger.info(BeanUtil.getProperty(map,"abc"));
+        logger.info(BeanUtil.getProperty(map,"abc").toString());
 
     }
 }

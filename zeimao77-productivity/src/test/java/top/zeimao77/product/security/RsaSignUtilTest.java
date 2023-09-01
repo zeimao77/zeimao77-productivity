@@ -16,12 +16,11 @@ class RsaSignUtilTest extends BaseMain {
      */
     @Test
     void matches() {
-        BaseMain.showBanner();
         String msg = "helloworld!!";
         Pair<RSAPublicKey, RSAPrivateKey> key = RsaUtil.getKey(2048);
         RsaSignUtil rsaSignUtil = new RsaSignUtil(key);
         byte[] sign = rsaSignUtil.sign(msg.getBytes());
-        logger.info(rsaSignUtil.matches(msg.getBytes(),sign));
+        logger.info(rsaSignUtil.matches(msg.getBytes(),sign) ? "TRUE" : "FALSE");
     }
 
 }

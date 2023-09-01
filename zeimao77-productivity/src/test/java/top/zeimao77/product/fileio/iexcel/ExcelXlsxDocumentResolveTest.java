@@ -25,7 +25,7 @@ class ExcelXlsxDocumentResolveTest extends BaseMain {
                 .column(1,"uuid",String.class)
                 .column(2,"rstr",String.class)
                 .build();
-        ExcelXlsxDocumentResolve<Object> objectExcelXlsxDocumentResolve = new ExcelXlsxDocumentResolve<>();
+        ExcelXlsxDocumentResolve<Object> objectExcelXlsxDocumentResolve = new ExcelXlsxDocumentResolve<>(false);
         File file = new File("C:\\Users\\zeimao77\\Desktop\\test.xlsx");
         SXSSFWorkbook workbook = new SXSSFWorkbook(new XSSFWorkbook(file));
 
@@ -43,7 +43,7 @@ class ExcelXlsxDocumentResolveTest extends BaseMain {
          * 解析到Map
          */
         ArrayList<Map<String,Object>> list = new ArrayList<>(64);
-        objectExcelXlsxDocumentResolve.parseMap(workbook,table,list);
+        objectExcelXlsxDocumentResolve.parseMap(workbook,table,list,new ArrayList<>());
         for (Map<String, Object> stringObjectMap : list) {
             logger.info(JsonBeanUtil.DEFAULT.toJsonString(stringObjectMap));
         }

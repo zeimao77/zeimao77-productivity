@@ -25,12 +25,12 @@ public class SimpleEmailSenderTest extends BaseMain {
 
     @Test
     public void sendEmail() throws IOException {
-        String smtpHost = LocalContext.getString("top.zeimao77.product.email.SimpleEmailSenderTest.smtpHost");
-        String from = LocalContext.getString("top.zeimao77.product.email.SimpleEmailSenderTest.from");
-        String username = LocalContext.getString("top.zeimao77.product.email.SimpleEmailSenderTest.username");
-        String password = LocalContext.getString("top.zeimao77.product.email.SimpleEmailSenderTest.password");
-        String toRecipient = LocalContext.getString("top.zeimao77.product.email.SimpleEmailSenderTest.toRecipient");
-        String ccRecipient = LocalContext.getString("top.zeimao77.product.email.SimpleEmailSenderTest.ccRecipient");
+        String smtpHost = LocalContext.getString("top.zeimao77.product.email.SimpleEmailSenderTest.smtpHost").get();
+        String from = LocalContext.getString("top.zeimao77.product.email.SimpleEmailSenderTest.from").get();
+        String username = LocalContext.getString("top.zeimao77.product.email.SimpleEmailSenderTest.username").get();
+        String password = LocalContext.getString("top.zeimao77.product.email.SimpleEmailSenderTest.password").get();
+        String toRecipient = LocalContext.getString("top.zeimao77.product.email.SimpleEmailSenderTest.toRecipient").get();
+        String ccRecipient = LocalContext.getString("top.zeimao77.product.email.SimpleEmailSenderTest.ccRecipient").get();
         SimpleEmailSender sender = new SimpleEmailSender(smtpHost,from);
         Mail mail = null;
         sender.authenticator(username,password);

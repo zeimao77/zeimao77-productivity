@@ -32,7 +32,7 @@ class SimpleSqlClientTest extends BaseMain {
                 .limit(0,30)
             , DemoModel.class);
         for (DemoModel demoModel : demoList) {
-            logger.info(demoModel);
+            logger.info(demoModel.toString());
         }
     }
 
@@ -56,7 +56,7 @@ class SimpleSqlClientTest extends BaseMain {
         List<ImmutablePair<String, Integer>> demoList = List.of(new ImmutablePair<>("demo1234", 2));
         int i = simpleSqlClient.batchUpdate(demoList, (o1, o2) -> {
             o1.insert("demo")
-                    .set(o2.getLeft() != null, "demo_name", o2.left())
+                    .set(o2.getLeft() != null, "demo_name", o2.getLeft())
                     .set(o2.getRight() != null, "demo_id", o2.getRight());
         });
         logger.info("更新了{}行",i);
@@ -106,7 +106,7 @@ class SimpleSqlClientTest extends BaseMain {
         SimpleSqlClient simpleSqlClient = ComponentFactory.initSimpleSqlClient(MYSQL,null);
         ArrayList<DemoModel> demoList = simpleSqlClient.selectListObj("SELECT demo_id AS demoId,demo_name,de,bo AS demoName FROM demo LIMIT 0,10",null, DemoModel.class);
         for (DemoModel demoModel : demoList) {
-            logger.info(demoModel);
+            logger.info(demoModel.toString());
         }
     }
 
@@ -114,7 +114,7 @@ class SimpleSqlClientTest extends BaseMain {
     void selectFirstObj() {
         SimpleSqlClient simpleSqlClient = ComponentFactory.initSimpleSqlClient(MYSQL,null);
         DemoModel demoModel = simpleSqlClient.selectFirstObj("SELECT demo_id AS demoId,demo_name,de,bo AS demoName FROM demo LIMIT 0,1",null, DemoModel.class);
-        logger.info(demoModel);
+        logger.info(demoModel.toString());
     }
 
     /**

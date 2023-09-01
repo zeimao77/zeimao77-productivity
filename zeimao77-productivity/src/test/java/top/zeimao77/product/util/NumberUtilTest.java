@@ -14,7 +14,6 @@ class NumberUtilTest extends BaseMain {
 
     @Test
     void decimalStr() {
-        showBanner();
         NumberUtil numberUtil = new NumberUtil(NumberUtil.CURRENCY,2, RoundingMode.FLOOR);
         Consumer<Number> con = o -> {
             logger.info("{}取舍之后的结果是:{}",o,numberUtil.format(o));
@@ -24,12 +23,6 @@ class NumberUtilTest extends BaseMain {
         con.accept(1.1161D);
         con.accept(-1);
 
-    }
-
-    @Test
-    void parse() {
-        NumberUtil numberUtil = new NumberUtil(NumberUtil.DECIMAL,2, RoundingMode.FLOOR);
-        logger.info(numberUtil.parse("20.067889").longValue());
     }
 
     @Test

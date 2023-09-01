@@ -18,7 +18,6 @@ class RedisRuleRepositoryTest extends BaseMain {
         RedisRuleRepository<String> stringRedisRuleRepository = new RedisRuleRepository<String>(jedis,"rule");
         stringRedisRuleRepository.put("r1","abcdefg");
         Object r1 = stringRedisRuleRepository.get("r1");
-        logger.info(r1);
         stringRedisRuleRepository.clear();
 
     }

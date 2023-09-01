@@ -9,11 +9,10 @@ public class LongIdGeneratorTest extends BaseMain {
     @Test
     @DisplayName("生成LongId")
     public void testGenerate() {
-        BaseMain.showBanner();
         LongIdGenerator instance = LongIdGenerator.INSTANCE;
-        logger.info(instance.generate());
+        logger.info(instance.generate().toString());
         // 指定机器号
-        logger.info(new LongIdGenerator(2).generate());
+        logger.info(new LongIdGenerator(2).generate().toString());
         // uuid
         logger.info(UuidGenerator.INSTANCE.generate());
     }
