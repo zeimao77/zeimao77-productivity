@@ -177,8 +177,11 @@ public class ExcelXlsxDocumentBuilder implements XlsxDocumentBuilder{
     }
 
     private void setHead() {
-        Row row = newRow();
         List<Table.Column> columnList = table.getColumnList();
+        if(columnList == null || columnList.isEmpty()) {
+            return;
+        }
+        Row row = newRow();
         for (Table.Column column : columnList) {
             Cell cell = row.createCell(column.getIndex());
             cell.setCellValue(column.getTitle());
