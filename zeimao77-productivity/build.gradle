@@ -5,7 +5,7 @@ plugins {
 }
 
 group 'top.zeimao77'
-version '2.1.9'
+version '2.2.0'
 description '效率包'
 archivesBaseName = 'zeimao77-productivity-jdk8'
 
@@ -129,7 +129,6 @@ task javadocJar(type:Jar) {
 
 java {
     withSourcesJar()
-    withJavadocJar()
 }
 
 artifacts {
