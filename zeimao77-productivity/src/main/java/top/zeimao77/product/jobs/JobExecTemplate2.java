@@ -56,10 +56,13 @@ public class JobExecTemplate2<T extends IJob> implements JobExec{
      * @return true
      */
     public boolean addJob(T t, TokenBucket.SleetStrategy sleetStrategy) {
-        while (!this.addJob(t)) {
+        if(sleetStrategy == null)
+            return addJob(t);
+        boolean r = false;
+        while (this.status == 2 && !(r = this.addJob(t))) {
             sleetStrategy.sleep();
         }
-        return true;
+        return r;
     }
 
     public void start(int nThreads,int maximumPoolSize) {
