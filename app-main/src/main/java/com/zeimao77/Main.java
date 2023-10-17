@@ -6,6 +6,7 @@ import top.zeimao77.product.util.LongIdGenerator;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 
 public class Main extends BaseMain {
 
@@ -19,10 +20,7 @@ public class Main extends BaseMain {
         logger.warn("{}",LongIdGenerator.INSTANCE.generate());
         logger.error("{}",LongIdGenerator.INSTANCE.generate());
         logger.info(Long.toHexString(System.currentTimeMillis()));
-        String payCode = "3";
-        if(!payCode.isEmpty() && !payCode.equals("4")) {
-            logger.info("6666666");
-        }
+        logger.info(UUID.randomUUID().toString());
     }
 
 

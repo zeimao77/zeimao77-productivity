@@ -11,6 +11,7 @@ import java.text.NumberFormat;
 import java.util.Date;
 import java.util.Random;
 import java.util.TimeZone;
+import java.util.UUID;
 
 public class AssertUtilTest extends BaseMain {
 
@@ -21,6 +22,7 @@ public class AssertUtilTest extends BaseMain {
         NumberUtil numberUtil = new NumberUtil(NumberUtil.DECIMAL, 4, RoundingMode.HALF_UP);
         logger.info(numberUtil.format(23344432233.23));
         logger.info("2023-08-21 23:59:59".substring(0,10));
+        logger.info(UUID.randomUUID().toString());
 
     }
 
