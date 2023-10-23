@@ -44,7 +44,7 @@ public class JobExecTemplate2<T extends IJob> implements JobExec{
             });
             return true;
         } catch (RejectedExecutionException e) {
-            logger.debug("任务队列满");
+            logger.warn("任务队列满,任务添加失败:{}",t.jobId());
             return false;
         }
     }
