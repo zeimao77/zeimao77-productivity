@@ -72,6 +72,10 @@ public class DingDingRobotClient {
     }
 
     public void sendText(String messaage,List<String> atMobiles,List<String> atUserIds,boolean atAll) {
+        if(messaage.length() > 4000) {
+            logger.error("消息过长 发送失败(发了也收不到...);");
+            return;
+        }
         HashMap<String, Object> param = new HashMap<>();
         param.put("msgtype","text");
         param.put("text",Map.of("content",messaage));
@@ -83,6 +87,10 @@ public class DingDingRobotClient {
     }
 
     public void sendMarkdown(String title,String text,List<String> atMobiles,List<String> atUserIds,boolean atAll) {
+        if(text.length() > 4000) {
+            logger.error("消息过长 发送失败(发了也收不到...);");
+            return;
+        }
         HashMap<String, Object> param = new HashMap<>();
         param.put("msgtype","markdown");
         param.put("markdown",Map.of("title",title,"text",text));
