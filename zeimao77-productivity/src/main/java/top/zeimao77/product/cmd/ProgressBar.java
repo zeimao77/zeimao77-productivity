@@ -10,17 +10,27 @@ public class ProgressBar {
     private int cur = 0;
     private static final int LENGTH = 50;
     private String title;
+    private boolean cancel = false;
 
     public void start() {
-        new Thread(() -> {
+        Thread thread = new Thread(() -> {
             TokenBucket.SleetStrategy sleetStrategy = new TokenBucket.SleetStrategy(1, TimeUnit.SECONDS);
             boolean e;
             do {
                 e = cur < cap;
                 System.out.print(bar());
                 sleetStrategy.sleep();
-            }while (e);
-        }).start();
+            } while (e && !cancel);
+            if(cancel) {
+                System.out.println();
+                System.out.println(title+":|cancel;");
+            }
+        });
+        thread.start();
+    }
+
+    public void cancel() {
+        this.cancel = true;
     }
 
     public ProgressBar(int cap) {
@@ -34,6 +44,10 @@ public class ProgressBar {
 
     public int getCur() {
         return cur;
+    }
+
+    public void addCur(int a) {
+        this.cur += a;
     }
 
     public void setCur(int cur) {

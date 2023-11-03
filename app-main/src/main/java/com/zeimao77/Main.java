@@ -1,19 +1,14 @@
 package com.zeimao77;
 
+import top.zeimao77.product.cmd.ProgressBar;
 import top.zeimao77.product.config.LocalContext;
 import top.zeimao77.product.jobs.TokenBucket;
 import top.zeimao77.product.main.BaseMain;
-import top.zeimao77.product.util.CalendarDateUtil;
-import top.zeimao77.product.util.LocalDateTimeUtil;
+
 import top.zeimao77.product.util.LongIdGenerator;
-import top.zeimao77.product.util.UuidGenerator;
 
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.Date;
+
 import java.util.concurrent.TimeUnit;
 
 public class Main extends BaseMain {
@@ -28,14 +23,15 @@ public class Main extends BaseMain {
         logger.warn("{}",LongIdGenerator.INSTANCE.generate());
         logger.error("{}",LongIdGenerator.INSTANCE.generate());
         logger.info(Long.toHexString(System.currentTimeMillis()));
-        LocalDateTime localDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(1698802091254L), ZoneId.systemDefault());
-        logger.info(LocalDateTimeUtil.toDateTime(localDateTime));
-        logger.info( ZoneId.of("+07:00").getId());
-        logger.info(CalendarDateUtil.toDate(new Date()));
+        ProgressBar progressBar = new ProgressBar(100);
+        progressBar.start();
+        TokenBucket.SleetStrategy sleetStrategy = new TokenBucket.SleetStrategy(100, TimeUnit.MILLISECONDS);
+        for (int i = 0; i < 100; i++) {
+            progressBar.addCur(1);
+            sleetStrategy.sleep();
+        }
 
     }
-
-
 
 
 }
