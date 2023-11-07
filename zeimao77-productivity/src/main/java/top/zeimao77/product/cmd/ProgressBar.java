@@ -11,10 +11,10 @@ public class ProgressBar {
     private static final int LENGTH = 50;
     private String title;
     private boolean cancel = false;
+    private TokenBucket.SleetStrategy sleetStrategy;
 
     public void start() {
         Thread thread = new Thread(() -> {
-            TokenBucket.SleetStrategy sleetStrategy = new TokenBucket.SleetStrategy(1, TimeUnit.SECONDS);
             boolean e;
             do {
                 e = cur < cap;
@@ -38,8 +38,13 @@ public class ProgressBar {
     }
 
     public ProgressBar(String title,int cap) {
+        this(title,cap,1,TimeUnit.SECONDS);
+    }
+
+    public ProgressBar(String title,int cap,long period, TimeUnit timeUnit) {
         this.title = title;
         this.cap = cap;
+        sleetStrategy = new TokenBucket.SleetStrategy(period, timeUnit);
     }
 
     public int getCur() {

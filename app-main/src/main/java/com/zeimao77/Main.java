@@ -23,7 +23,8 @@ public class Main extends BaseMain {
         logger.warn("{}",LongIdGenerator.INSTANCE.generate());
         logger.error("{}",LongIdGenerator.INSTANCE.generate());
         logger.info(Long.toHexString(System.currentTimeMillis()));
-        ProgressBar progressBar = new ProgressBar(100);
+        System.out.println();
+        ProgressBar progressBar = new ProgressBar("Progress",100,80,TimeUnit.MILLISECONDS);
         progressBar.start();
         TokenBucket.SleetStrategy sleetStrategy = new TokenBucket.SleetStrategy(100, TimeUnit.MILLISECONDS);
         for (int i = 0; i < 100; i++) {
