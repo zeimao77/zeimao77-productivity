@@ -137,6 +137,7 @@ docker run -d -v /home/docker/app-main/libs:/home/user0 -w /home/user0 openjdk:1
 - `log.level` : 日志级别,缺省为`DEBUG`;
 - `log.file` : 指定日志文件路径以开启文件日志功能;
 - `log.rolling` : TRUE:开启滚动日志，缺省为`FALSE`;
+- `log.stdout.enable` : FALSE 关闭终端log日志输出 缺少为TRUE;
 - `log.rolloverStrategyMax` : 最多保留几个历史日志,缺省值`10`;
 
 
