@@ -3,6 +3,8 @@ package top.zeimao77.product.jobs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import top.zeimao77.product.exception.BaseServiceRunException;
+import top.zeimao77.product.exception.ExceptionCodeDefinition;
+
 import java.util.Map;
 
 public abstract class JobExecHandler<T extends IJob> implements JobExec{

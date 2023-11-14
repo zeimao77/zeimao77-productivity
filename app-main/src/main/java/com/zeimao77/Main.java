@@ -31,6 +31,7 @@ public class Main extends BaseMain {
             progressBar.addCur(1);
             sleetStrategy.sleep();
         }
+        System.out.println(Integer.MAX_VALUE);
 
     }
 

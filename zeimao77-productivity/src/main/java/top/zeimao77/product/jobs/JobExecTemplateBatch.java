@@ -86,7 +86,7 @@ public abstract class JobExecTemplateBatch<T extends IJob> implements JobExec{
         for (int i = 0; i < nThreads; i++) {
             executorService.execute(()->{
                 ArrayList<T> jobList = new ArrayList<>(pageSize);
-                while (status != 5) {
+                while (status != 5 && !Thread.currentThread().isInterrupted()) {
                     synchronized (this) {
                         int q = pageSize < jobs.size() ? pageSize : jobs.size();
                         for (int j = 0; j < q; j++) {

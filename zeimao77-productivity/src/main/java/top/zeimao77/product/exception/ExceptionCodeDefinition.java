@@ -26,6 +26,7 @@ public interface ExceptionCodeDefinition {
     Integer IOEXCEPTION = 0x002001;  // IO错误异常(8193);
     Integer SQLEXCEPTION = 0x002002;  // SQL错误异常(8194);
     Integer SQLICVEXCEPTION = 0x002003;  // SQL数据违反完整性约束(8195);
+    Integer INTERRUPTED = 0x002004;    // 线程中断;
 
     Integer getCode();
 
