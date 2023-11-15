@@ -8,9 +8,13 @@
 
 ## 快速开始一个jar
 
+<<<<<<< HEAD
 ### gradle&jdk17
 
 1. 新建一个工程，以`app-amin`为例,gradle(7.4.2)文件配置如下;
+=======
+1. 新建一个工程，以`app-main`为例,gradle(7.4.2)文件配置如下;
+>>>>>>> main
 
 ```groovy
 plugins {
@@ -35,8 +39,9 @@ tasks.withType(JavaCompile) {
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
-    implementation group: 'top.zeimao77',name:'zeimao77-productivity',version: '2.1.2'
-    implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.18.0'
+    implementation group: 'top.zeimao77',name:'zeimao77-productivity',version: '2.1.8'
+    implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.20.0'
+    implementation 'org.apache.logging.log4j:log4j-slf4j2-impl:2.20.0'
 }
 
 application {
@@ -79,7 +84,7 @@ import top.zeimao77.product.util.LongIdGenerator;
 public class Main extends BaseMain {
 
     public static void main(String[] args) {
-        BaseMain.showBanner();
+        BaseMain.showBanner("0.0.1");
         logger.trace(LongIdGenerator.INSTANCE.generate());
         logger.debug(LongIdGenerator.INSTANCE.generate());
         logger.info(LongIdGenerator.INSTANCE.generate());
@@ -224,6 +229,7 @@ copy target\app-main-jdk8-1.0.0.jar libs\
 - `log.level` : 日志级别,缺省为`DEBUG`;
 - `log.file` : 指定日志文件路径以开启文件日志功能;
 - `log.rolling` : TRUE:开启滚动日志，缺省为`FALSE`;
+- `log.stdout.enable` : FALSE 关闭终端log日志输出 缺少为TRUE;
 - `log.rolloverStrategyMax` : 最多保留几个历史日志,缺省值`10`;
 
 

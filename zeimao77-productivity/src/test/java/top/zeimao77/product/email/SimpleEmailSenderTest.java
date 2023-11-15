@@ -3,6 +3,7 @@ package top.zeimao77.product.email;
 import org.junit.jupiter.api.Test;
 import top.zeimao77.product.config.LocalContext;
 import top.zeimao77.product.main.BaseMain;
+import top.zeimao77.product.util.StringOptional;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -25,6 +26,7 @@ public class SimpleEmailSenderTest extends BaseMain {
 
     @Test
     public void sendEmail() throws IOException {
+<<<<<<< HEAD
         String smtpHost = LocalContext.getString("top.zeimao77.product.email.SimpleEmailSenderTest.smtpHost").get();
         String from = LocalContext.getString("top.zeimao77.product.email.SimpleEmailSenderTest.from").get();
         String username = LocalContext.getString("top.zeimao77.product.email.SimpleEmailSenderTest.username").get();
@@ -32,8 +34,17 @@ public class SimpleEmailSenderTest extends BaseMain {
         String toRecipient = LocalContext.getString("top.zeimao77.product.email.SimpleEmailSenderTest.toRecipient").get();
         String ccRecipient = LocalContext.getString("top.zeimao77.product.email.SimpleEmailSenderTest.ccRecipient").get();
         SimpleEmailSender sender = new SimpleEmailSender(smtpHost,from);
+=======
+        StringOptional smtpHost = LocalContext.getString("top.zeimao77.product.email.SimpleEmailSenderTest.smtpHost");
+        StringOptional from = LocalContext.getString("top.zeimao77.product.email.SimpleEmailSenderTest.from");
+        StringOptional username = LocalContext.getString("top.zeimao77.product.email.SimpleEmailSenderTest.username");
+        StringOptional password = LocalContext.getString("top.zeimao77.product.email.SimpleEmailSenderTest.password");
+        StringOptional toRecipient = LocalContext.getString("top.zeimao77.product.email.SimpleEmailSenderTest.toRecipient");
+        StringOptional ccRecipient = LocalContext.getString("top.zeimao77.product.email.SimpleEmailSenderTest.ccRecipient");
+        SimpleEmailSender sender = new SimpleEmailSender(smtpHost.get(),from.get());
+>>>>>>> main
         Mail mail = null;
-        sender.authenticator(username,password);
+        sender.authenticator(username.get(),password.get());
         /**
         mail = new Mail("测试邮件",(o) -> {
             try {
@@ -67,8 +78,8 @@ public class SimpleEmailSenderTest extends BaseMain {
         out.write((MAIL_BODY).getBytes(StandardCharsets.UTF_8));
         mail.addAttachment("content.txt",out.toByteArray());
         out.close();
-        mail.addToRecipients(toRecipient);
-        mail.addCcRecipients(ccRecipient);
+        mail.addToRecipients(toRecipient.get());
+        mail.addCcRecipients(ccRecipient.get());
         sender.send(mail);
     }
 

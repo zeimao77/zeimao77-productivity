@@ -25,9 +25,16 @@ public class ThresholdVoterComponentTest extends BaseMain {
                         }
                 ), 0.6D
         );
+<<<<<<< HEAD
         logger.info(component.vote(39)+"");
         logger.info(component.vote(29)+"");
         logger.info(component.vote(19)+"");
         logger.info(component.vote(9)+"");
+=======
+        logger.info("{}",component.vote(39));
+        logger.info("{}",component.vote(29));
+        logger.info("{}",component.vote(19));
+        logger.info("{}",component.vote(9));
+>>>>>>> main
     }
 }

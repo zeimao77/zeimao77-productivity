@@ -5,7 +5,7 @@ plugins {
 }
 
 group 'top.zeimao77'
-version '2.2.0'
+version '2.2.1'
 description '效率包'
 archivesBaseName = 'zeimao77-productivity-jdk8'
 
@@ -32,7 +32,7 @@ publishing {
                         email = "zeimao77@foxmail.com"
                     }
                 }
-                licenses {
+               licenses {
                     license {
                         name = "The Apache License, Version 2.0"
                         url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
@@ -91,13 +91,9 @@ dependencies {
     testImplementation 'org.apache.logging.log4j:log4j-slf4j2-impl:2.20.0'
     compileOnly group: 'com.guicedee.services', name: 'commons-beanutils', version: '1.2.2.1'
     testImplementation group: 'com.guicedee.services', name: 'commons-beanutils', version: '1.2.2.1'
-
-
     implementation 'org.slf4j:slf4j-api:2.0.6'
     implementation 'com.fasterxml.jackson.core:jackson-core:2.14.2'
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.14.2'
-
-
 }
 
 jar {
@@ -114,17 +110,6 @@ tasks.withType(JavaCompile) {
 tasks.withType(Javadoc) {
     options.addStringOption("encoding","UTF-8")
     options.addStringOption("charset","UTF-8")
-}
-
-task sourcesJar(type:Jar){
-    dependsOn classes
-    classifier 'sources'
-    from sourceSets.main.allSource
-}
-
-task javadocJar(type:Jar) {
-    from javadoc
-    classifier 'javadoc'
 }
 
 java {

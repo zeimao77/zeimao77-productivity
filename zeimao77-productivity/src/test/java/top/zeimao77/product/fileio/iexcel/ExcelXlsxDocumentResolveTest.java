@@ -5,6 +5,9 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import top.zeimao77.product.exception.BaseServiceRunException;
 import top.zeimao77.product.main.BaseMain;
 import top.zeimao77.product.util.JsonBeanUtil;
 
@@ -15,8 +18,13 @@ import java.util.Map;
 
 class ExcelXlsxDocumentResolveTest extends BaseMain {
 
+    private static Logger logger = LoggerFactory.getLogger(ExcelXlsxDocumentResolveTest.class);
+
     @Test
     void parse() throws IOException, InvalidFormatException {
+        // new BaseMain();
+        logger.info("------------------------------");
+
         /**
          * 构建表格模型
          */
@@ -43,10 +51,23 @@ class ExcelXlsxDocumentResolveTest extends BaseMain {
          * 解析到Map
          */
         ArrayList<Map<String,Object>> list = new ArrayList<>(64);
+<<<<<<< HEAD
         objectExcelXlsxDocumentResolve.parseMap(workbook,table,list,new ArrayList<>());
+=======
+        ArrayList<ErrorMsg> errorMsgs = new ArrayList<>();
+        try {
+            objectExcelXlsxDocumentResolve.parseMap(workbook,table,null,errorMsgs);
+        }catch (BaseServiceRunException e){
+            logger.error("错误:{}",e.getMessage());
+        }
+
+>>>>>>> main
         for (Map<String, Object> stringObjectMap : list) {
             logger.info(JsonBeanUtil.DEFAULT.toJsonString(stringObjectMap));
         }
 
+        for (ErrorMsg errorMsg : errorMsgs) {
+            logger.info(errorMsg.describe());
+        }
     }
 }

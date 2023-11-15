@@ -99,7 +99,6 @@ public abstract class AbstractCustomRefreshConverter<K> implements IConverter<K>
     /**
      * 刷新规则的具体实现;
      * 在该函数中调用
-     * @see AbstractNonReFreshConverter#addConvRule(Object, Object)
      * 来添加规则
      */
     protected abstract void refresh();

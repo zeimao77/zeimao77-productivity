@@ -24,7 +24,11 @@ class TreeUtilTest extends BaseMain {
             // 对树剪枝 如果返回true节点将会被剪掉
             TreeUtil.trimTree(tree,o->"6".equals(o.__getNodeId()));
             // 遍历树
+<<<<<<< HEAD
             TreeUtil.forTree(tree,t -> logger.info(t.toString()));
+=======
+            TreeUtil.forTree(tree,o -> logger.info(o.toString()));
+>>>>>>> main
         }
 
     }

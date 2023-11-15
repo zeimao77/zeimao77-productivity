@@ -35,6 +35,4 @@ public @interface StatementParameterInfo {
      */
     String valSetPost() default "";
 
-
-
 }

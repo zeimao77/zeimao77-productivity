@@ -560,5 +560,4 @@ public class DefaultResultSetResolve implements ResultSetResolve {
         }
         return null;
     }
-
 }

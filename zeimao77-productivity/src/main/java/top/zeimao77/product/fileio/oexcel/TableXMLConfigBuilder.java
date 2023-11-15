@@ -16,7 +16,7 @@ import java.util.List;
  * 示例配置:
  * <pre>
  * &lt;table tableName="table001" id="97628f46ba4143058ad73510af8e4fdb"&gt;
- *   &lt;property name="select"&gt;select * from demo&lt;/property&gt;
+ *   &lt;property name="select"&gt;select * from demo where id &gt; ${id}; &lt;/property&gt;
  *   &lt;columnList&gt;
  *       &lt;column index="0" field="id" title="唯一序号" width="22" format="@" /&gt;
  *       &lt;column index="1" field="name" title="姓名" width="14" format="@" /&gt;
@@ -40,7 +40,6 @@ public class TableXMLConfigBuilder extends AbstractXmlBuiler<Table> {
     public TableXMLConfigBuilder(String path) {
         super(path);
     }
-
 
     @Override
     public Table build() {

@@ -125,4 +125,3 @@ public class PageSearch extends BaseSearch {
         return _offset;
     }
 }
-

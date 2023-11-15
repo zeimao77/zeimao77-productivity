@@ -10,6 +10,7 @@ import org.apache.logging.log4j.core.config.Order;
 import org.apache.logging.log4j.core.config.builder.api.*;
 import org.apache.logging.log4j.core.config.builder.impl.BuiltConfiguration;
 import org.apache.logging.log4j.core.config.plugins.Plugin;
+import top.zeimao77.product.util.BoolUtil;
 
 /**
  * 提供一个可以直接使用的默认的日志配置插件以覆盖日志框架提供的默认配置
@@ -24,6 +25,7 @@ public class ConfigurationFacotry77 extends ConfigurationFactory {
     Level rootLevel;
     String logfile;
     boolean rolling;
+    boolean stdoutEnable;
     int rolloverStrategyMax;
 
     public ConfigurationFacotry77(){
@@ -31,7 +33,9 @@ public class ConfigurationFacotry77 extends ConfigurationFactory {
         this.rootLevel = Level.valueOf(logLevel);
         logfile = getPropertyOrEnv("log.file",null);
         String logRolling = getPropertyOrEnv("log.rolling", "FALSE");
-        this.rolling = "TRUE".equalsIgnoreCase(logRolling) || "1".equals(logRolling) ? true : false;
+        this.rolling = BoolUtil.parseBool(logRolling,false);
+        String aTrue = getPropertyOrEnv("log.stdout.enable", "TRUE");
+        this.stdoutEnable = BoolUtil.parseBool(aTrue,true);
         rolloverStrategyMax = Integer.valueOf(getPropertyOrEnv("log.rolloverStrategyMax", "10"));
     }
 
@@ -61,10 +65,12 @@ public class ConfigurationFacotry77 extends ConfigurationFactory {
      * @param layoutComponentBuilder --
      * @return --
      */
-    private AppenderComponentBuilder console(ConfigurationBuilder<BuiltConfiguration> builder, LayoutComponentBuilder layoutComponentBuilder){
+    private AppenderComponentBuilder console(ConfigurationBuilder<BuiltConfiguration> builder
+            , LayoutComponentBuilder layoutComponentBuilder,RootLoggerComponentBuilder rootLoggerComponentBuilder){
         AppenderComponentBuilder consoleComponentBuilder = builder.newAppender("stdout", "CONSOLE").
                 addAttribute("target", ConsoleAppender.Target.SYSTEM_OUT);
         consoleComponentBuilder.add(layoutComponentBuilder);
+        rootLoggerComponentBuilder.add(builder.newAppenderRef("stdout"));
         return consoleComponentBuilder;
     }
 
@@ -74,10 +80,12 @@ public class ConfigurationFacotry77 extends ConfigurationFactory {
      * @param layoutComponentBuilder --
      * @return --
      */
-    public AppenderComponentBuilder file(ConfigurationBuilder<BuiltConfiguration> builder,LayoutComponentBuilder layoutComponentBuilder){
+    public AppenderComponentBuilder file(ConfigurationBuilder<BuiltConfiguration> builder
+            ,LayoutComponentBuilder layoutComponentBuilder,RootLoggerComponentBuilder rootLoggerComponentBuilder){
         AppenderComponentBuilder fileComponentBuilder = builder.newAppender("file", "FILE")
                 .addAttribute("fileName", logfile);
         fileComponentBuilder.add(layoutComponentBuilder);
+        rootLoggerComponentBuilder.add(builder.newAppenderRef("file"));
         return fileComponentBuilder;
     }
 
@@ -87,7 +95,8 @@ public class ConfigurationFacotry77 extends ConfigurationFactory {
      * @param layoutComponentBuilder --
      * @return --
      */
-    public AppenderComponentBuilder rollingFile(ConfigurationBuilder<BuiltConfiguration> builder,LayoutComponentBuilder layoutComponentBuilder){
+    public AppenderComponentBuilder rollingFile(ConfigurationBuilder<BuiltConfiguration> builder
+            ,LayoutComponentBuilder layoutComponentBuilder,RootLoggerComponentBuilder rootLoggerComponentBuilder){
         ComponentBuilder triggeringPolicy = builder.newComponent("Policies")
                 .addComponent(builder.newComponent("CronTriggeringPolicy").addAttribute("schedule", "0 0 0 * * ?"))
                 // .addComponent(builder.newComponent("TimeBasedTriggeringPolicy").addAttribute("interval",3))  // 每3秒时间间隔滚动日志
@@ -102,6 +111,7 @@ public class ConfigurationFacotry77 extends ConfigurationFactory {
                 .addComponent(triggeringPolicy)
                 .addComponent(rolloverStrategy);
         fileComponentBuilder.add(layoutComponentBuilder);
+        rootLoggerComponentBuilder.add(builder.newAppenderRef("rollingFile"));
         return fileComponentBuilder;
     }
 
@@ -111,17 +121,15 @@ public class ConfigurationFacotry77 extends ConfigurationFactory {
         LayoutComponentBuilder layoutComponentBuilder = builder.newLayout("PatternLayout")
                 .addAttribute("charset","UTF-8")
                 .addAttribute("pattern", "%d [%t] %-5level (%c{1}:%L): %msg%n%throwable");
-        builder.add(console(builder,layoutComponentBuilder));
-
         RootLoggerComponentBuilder rootLoggerComponentBuilder = builder.newRootLogger(rootLevel);
-        rootLoggerComponentBuilder.add(builder.newAppenderRef("stdout"));
+        if(stdoutEnable) {
+            builder.add(console(builder,layoutComponentBuilder,rootLoggerComponentBuilder));
+        }
         if(!rolling && logfile != null) {
-            builder.add(file(builder,layoutComponentBuilder));
-            rootLoggerComponentBuilder.add(builder.newAppenderRef("file"));
+            builder.add(file(builder,layoutComponentBuilder,rootLoggerComponentBuilder));
         }
         if(rolling && logfile != null) {
-            builder.add(rollingFile(builder,layoutComponentBuilder));
-            rootLoggerComponentBuilder.add(builder.newAppenderRef("rollingFile"));
+            builder.add(rollingFile(builder,layoutComponentBuilder,rootLoggerComponentBuilder));
         }
         builder.add(rootLoggerComponentBuilder);
         return builder.build();

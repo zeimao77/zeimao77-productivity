@@ -67,5 +67,4 @@ public class ConnectionTransactionFactory implements TransactionFactory {
         logger.debug("忽略关闭连接:{}",connection);
     }
 
-
 }

@@ -6,7 +6,11 @@ import top.zeimao77.product.main.BaseMain;
 class JedisClusterBuilderTest2 extends BaseMain {
 
     public static void main(String[] args) {
+<<<<<<< HEAD
         BaseMain.showBanner("");
+=======
+        BaseMain.showBanner("0.0.1");
+>>>>>>> main
         JedisCluster cluster = JedisClusterBuilder.create()
                 .addNode("192.168.1.105", 6379)
                 .addNode("192.168.1.105", 6380)

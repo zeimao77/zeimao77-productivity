@@ -14,6 +14,7 @@ public class DemoModel {
     private String demoName;
     @StatementParameterInfo(dbtype = 0x00000002,mode = 1,valSetPre = "to_date(",valSetPost = ",'YYYY-MM-DD')")
     private LocalDateTime createdTime;
+    @StatementParameterInfo
     private Integer ch;
     private Boolean bo;
     private BigDecimal de;

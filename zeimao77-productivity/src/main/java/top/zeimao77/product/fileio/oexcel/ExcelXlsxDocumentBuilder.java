@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+
 public class ExcelXlsxDocumentBuilder implements XlsxDocumentBuilder{
 
     protected Workbook workbook;
@@ -160,7 +161,7 @@ public class ExcelXlsxDocumentBuilder implements XlsxDocumentBuilder{
         } else if(v instanceof Date) {
             Date p = (Date) v;
             cell.setCellValue(p);
-        }else {
+        } else {
             cell.setCellValue(String.valueOf(v));
         }
     }
@@ -231,6 +232,5 @@ public class ExcelXlsxDocumentBuilder implements XlsxDocumentBuilder{
     public Map<Table.Column, IConverter> getConverterMap() {
         return converterMap;
     }
-
 
 }

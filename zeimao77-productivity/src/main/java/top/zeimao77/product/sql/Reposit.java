@@ -85,5 +85,4 @@ public interface Reposit {
         return s == null ? null : Long.valueOf(s);
     }
 
-
 }

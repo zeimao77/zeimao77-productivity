@@ -14,6 +14,10 @@ class NumberUtilTest extends BaseMain {
 
     @Test
     void decimalStr() {
+<<<<<<< HEAD
+=======
+        showBanner("0.0.1");
+>>>>>>> main
         NumberUtil numberUtil = new NumberUtil(NumberUtil.CURRENCY,2, RoundingMode.FLOOR);
         Consumer<Number> con = o -> {
             logger.info("{}取舍之后的结果是:{}",o,numberUtil.format(o));
@@ -26,6 +30,15 @@ class NumberUtilTest extends BaseMain {
     }
 
     @Test
+<<<<<<< HEAD
+=======
+    void parse() {
+        NumberUtil numberUtil = new NumberUtil(NumberUtil.DECIMAL,2, RoundingMode.FLOOR);
+        logger.info("{}",numberUtil.parse("20.067889").longValue());
+    }
+
+    @Test
+>>>>>>> main
     void percent() {
         String percent = NumberUtil.percent(0.32459, 2, RoundingMode.FLOOR);
         logger.info(percent);

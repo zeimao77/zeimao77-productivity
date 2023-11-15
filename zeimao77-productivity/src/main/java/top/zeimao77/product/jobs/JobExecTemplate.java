@@ -97,7 +97,7 @@ public abstract class JobExecTemplate<T extends IJob> implements JobExec{
         AtomicInteger page = new AtomicInteger(1);
         for (int i = 0; i < nThreads; i++) {
             executorService.execute(()->{
-                while (status != 5) {
+                while (status != 5 && !Thread.currentThread().isInterrupted()) {
                     T job =jobs.poll();
                     if(job == null) {
                         synchronized (this) {

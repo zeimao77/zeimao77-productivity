@@ -6,8 +6,6 @@ import top.zeimao77.product.factory.BeanFactory;
 import top.zeimao77.product.factory.ComponentFactory;
 import top.zeimao77.product.main.BaseMain;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class RedisRuleRepositoryTest extends BaseMain {
 
     public static final String REDIS = "redis_zeimao77_top";
@@ -18,6 +16,10 @@ class RedisRuleRepositoryTest extends BaseMain {
         RedisRuleRepository<String> stringRedisRuleRepository = new RedisRuleRepository<String>(jedis,"rule");
         stringRedisRuleRepository.put("r1","abcdefg");
         Object r1 = stringRedisRuleRepository.get("r1");
+<<<<<<< HEAD
+=======
+        logger.info(r1.toString());
+>>>>>>> main
         stringRedisRuleRepository.clear();
 
     }

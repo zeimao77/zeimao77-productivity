@@ -40,7 +40,7 @@ public class DingDingRobotClient {
             Mac hmacSHA256 = Mac.getInstance("HmacSHA256");
             hmacSHA256.init(new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8),"HmacSHA256"));
             byte[] signData = hmacSHA256.doFinal(stringToSign.getBytes(StandardCharsets.UTF_8));
-            String sign = URLEncoder.encode(ByteArrayCoDesUtil.base64Encode(signData),"UTF8");
+            String sign = URLEncoder.encode(ByteArrayCoDesUtil.base64Encode(signData), "UTF-8");
             return sign;
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
@@ -75,9 +75,13 @@ public class DingDingRobotClient {
     }
 
     public void sendText(String messaage,List<String> atMobiles,List<String> atUserIds,boolean atAll) {
+        if(messaage.length() > 4000) {
+            logger.error("消息过长 发送失败(发了也收不到...);");
+            return;
+        }
         HashMap<String, Object> param = new HashMap<>();
         param.put("msgtype","text");
-        HashMap<Object, Object> content = new HashMap<>();
+        HashMap<String, Object> content = new HashMap<>();
         content.put("content",messaage);
         param.put("text",content);
         send(param,atMobiles,atUserIds,atAll);
@@ -88,12 +92,16 @@ public class DingDingRobotClient {
     }
 
     public void sendMarkdown(String title,String text,List<String> atMobiles,List<String> atUserIds,boolean atAll) {
+        if(text.length() > 4000) {
+            logger.error("消息过长 发送失败(发了也收不到...);");
+            return;
+        }
         HashMap<String, Object> param = new HashMap<>();
         param.put("msgtype","markdown");
-        HashMap<Object, Object> tmap = new HashMap<>();
-        tmap.put("title",title);
-        tmap.put("text",text);
-        param.put("markdown",tmap);
+        HashMap<String, Object> content = new HashMap<>();
+        content.put("title",title);
+        content.put("text",text);
+        param.put("markdown",content);
         send(param,atMobiles,atUserIds,atAll);
     }
 

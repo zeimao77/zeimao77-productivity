@@ -1,5 +1,6 @@
 package top.zeimao77.product.sql;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -19,7 +20,10 @@ public class DefaultStatementParamResolver implements StatementParamResolver {
             this.resolver = new MapStatementParamResolver(sqlt,o);
         } else if(params.getClass().isArray()) {
             this.resolver = new ObjectsStatementParamResolver(sqlt,(Object[])params);
-        } else {
+        } else if(params instanceof Collection) {
+            Collection c = (Collection) params;
+            this.resolver = new ObjectsStatementParamResolver(sqlt,c.toArray());
+        }  else {
             this.resolver = new BeanStatementParamResolver(sqlt,params);
         }
     }
