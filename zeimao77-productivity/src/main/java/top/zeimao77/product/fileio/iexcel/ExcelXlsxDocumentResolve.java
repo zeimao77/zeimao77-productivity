@@ -13,6 +13,7 @@ import top.zeimao77.product.util.*;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -342,6 +343,33 @@ public class ExcelXlsxDocumentResolve<T> {
                         return new StringOptional("0X" + ByteArrayCoDesUtil.hexEncode(cell.getErrorCellValue()));
                 }
                 return new StringOptional(cell.getStringCellValue());
+            }
+        });
+        resovers.add(new CellFiledTypeResover<BigInteger>() {
+            @Override
+            public int orderd() {
+                return 2300;
+            }
+
+            @Override
+            public BigInteger resove(Cell cell) {
+                switch (cell.getCellType()) {
+                    case STRING:
+                        return new BigInteger(cell.getStringCellValue());
+                    case NUMERIC:
+                        return BigInteger.valueOf(Math.round(cell.getNumericCellValue()));
+                    case FORMULA:
+                        CellValue evaluate = evaluate(cell);
+                        return BigInteger.valueOf(Math.round(evaluate.getNumberValue()));
+                    case BLANK:
+                    case _NONE:
+                        return null;
+                    case BOOLEAN:
+                        return cell.getBooleanCellValue() ? BigInteger.ONE : BigInteger.ZERO;
+                    case ERROR:
+                        return null;
+                }
+                return BigInteger.valueOf(Math.round(cell.getNumericCellValue()));
             }
         });
         this.sorted = true;
