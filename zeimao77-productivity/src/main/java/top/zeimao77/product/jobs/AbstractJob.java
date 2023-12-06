@@ -15,7 +15,6 @@ public abstract class AbstractJob implements IJob{
     protected int retry = 0;
     private ArrayList<JobExec.Result> errorList = new ArrayList<>();
 
-
     public ArrayList<JobExec.Result> getErrorList() {
         return errorList;
     }

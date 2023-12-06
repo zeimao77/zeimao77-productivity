@@ -112,7 +112,12 @@ public class HttpClientUtil11 implements AutoCloseable,IHttpClient {
      * @return 以字符串方式结果请求结果
      */
     public static String sendPost(HttpClient client,String url,String body,Map<String,String> headers,int titmeout) {
-        String result = null;
+        return sendPost(client,url,body,headers,titmeout,HttpResponse.BodyHandlers.ofString());
+    }
+
+    public static <T> T sendPost(HttpClient client,String url,String body,Map<String,String> headers,int titmeout
+            ,HttpResponse.BodyHandler<T> responseBodyHandler) {
+        T result = null;
         HttpRequest.BodyPublisher requestBody = HttpRequest.BodyPublishers
                 .ofString(body);
         HttpRequest.Builder builder = HttpRequest.newBuilder(URI.create(url))
@@ -126,7 +131,7 @@ public class HttpClientUtil11 implements AutoCloseable,IHttpClient {
         }
         HttpRequest request = builder.build();
         try {
-            HttpResponse<String> response = client.send(request,HttpResponse.BodyHandlers.ofString());
+            HttpResponse<T> response = client.send(request,responseBodyHandler);
             result = response.body();
         } catch (IOException e) {
             throw new BaseServiceRunException(IOEXCEPTION,"POST请求IO异常",e);
@@ -134,7 +139,6 @@ public class HttpClientUtil11 implements AutoCloseable,IHttpClient {
             logger.error("线程中断错误",e);
             Thread.currentThread().interrupt();
         }
-
         return result;
     }
 
