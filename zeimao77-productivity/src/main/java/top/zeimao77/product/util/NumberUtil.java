@@ -31,7 +31,7 @@ public class NumberUtil {
      * @see RoundingMode#HALF_EVEN 整数部分为奇数 则四舍六入 整数部分为偶数 则五舍六入;
      * @see RoundingMode#UNNECESSARY 不能丢失精度的格式化小数;
      */
-    public NumberUtil(final char type,final int fractionDigits,final RoundingMode roundingMode) {
+    public NumberUtil(final char type,final boolean groupingUsed,final int fractionDigits,final RoundingMode roundingMode) {
         switch (type) {
             case PERCENT -> this.numberFormat = NumberFormat.getPercentInstance();
             case CURRENCY -> this.numberFormat = NumberFormat.getCurrencyInstance();
@@ -39,6 +39,7 @@ public class NumberUtil {
         }
         numberFormat.setMaximumFractionDigits(fractionDigits);
         numberFormat.setMinimumFractionDigits(fractionDigits);
+        numberFormat.setGroupingUsed(groupingUsed);
         numberFormat.setRoundingMode(roundingMode);
     }
 
@@ -53,7 +54,9 @@ public class NumberUtil {
     public static String percent(Number number,int fractionDigits, RoundingMode roundingMode) {
         NumberFormat numberFormat = NumberFormat.getPercentInstance();
         numberFormat.setMaximumFractionDigits(fractionDigits);
+        numberFormat.setMinimumIntegerDigits(fractionDigits);
         numberFormat.setRoundingMode(roundingMode);
+        numberFormat.setGroupingUsed(false);
         return numberFormat.format(number);
     }
 
@@ -75,6 +78,7 @@ public class NumberUtil {
         numberFormat.setMaximumFractionDigits(fractionDigits);
         numberFormat.setMinimumFractionDigits(fractionDigits);
         numberFormat.setRoundingMode(roundingMode);
+        numberFormat.setGroupingUsed(false);
         return numberFormat.format(number);
     }
 

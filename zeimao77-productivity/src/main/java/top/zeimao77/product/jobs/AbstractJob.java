@@ -1,8 +1,7 @@
 package top.zeimao77.product.jobs;
 
-import top.zeimao77.product.exception.BaseServiceRunException;
-
 import java.util.ArrayList;
+import java.util.function.BiFunction;
 
 /**
  * 抽象的JOB实现 默认尝试一次
@@ -35,10 +34,10 @@ public abstract class AbstractJob implements IJob{
         this.errorList.clear();
     }
 
-    public void assertOk() {
+    public void assertOk(BiFunction<Integer,String,RuntimeException> fun) {
         JobExec.Result result = firstError();
         if(result != null)
-            throw new BaseServiceRunException(result.getResultCode(),result.getResultMsg());
+            throw fun.apply(result.getResultCode(),result.getResultMsg());
     }
 
     @Override

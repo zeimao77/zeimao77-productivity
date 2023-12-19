@@ -142,6 +142,18 @@ public class HttpClientUtil11 implements AutoCloseable,IHttpClient {
         return result;
     }
 
+    public static <T> T sendForm(HttpClient client,String url,Map<String,String> body,Map<String,String> headers,int titmeout
+            ,HttpResponse.BodyHandler<T> responseBodyHandler) {
+        StringBuilder sBuilder = new StringBuilder();
+        for(Iterator<Map.Entry<String, String>> ite = body.entrySet().iterator();ite.hasNext();) {
+            Map.Entry<String, String> next = ite.next();
+            if(!sBuilder.isEmpty())
+                sBuilder.append("&");
+            sBuilder.append(String.format("%s=%s",next.getKey(),next.getValue()));
+        }
+        return sendPost(client,url,sBuilder.toString(),headers,titmeout,responseBodyHandler);
+    }
+
     /**
      * @return 客户端对象
      */

@@ -17,6 +17,7 @@ public class Main extends BaseMain {
 
     public static void main(String[] args) throws UnsupportedEncodingException {
         BaseMain.showBanner("0.0.1");
+        logger.info(String.format("%d===",null));
 
         logger.info("param:{}", LocalContext.getString("top_zeimao77_test").get());
         logger.trace("{}",LongIdGenerator.INSTANCE.generate());
