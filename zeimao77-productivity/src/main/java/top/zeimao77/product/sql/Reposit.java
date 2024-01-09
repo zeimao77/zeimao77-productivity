@@ -1,15 +1,46 @@
 package top.zeimao77.product.sql;
 
+import top.zeimao77.product.model.ImmutableRow;
+import top.zeimao77.product.util.BeanUtil;
+
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 
 /**
  * 一个SQL执行器的实现 它将以某种形式把SQL消费掉
  */
 public interface Reposit {
 
+
+    /**
+     * @param tablename 表名
+     * @param table 对象数据
+     * @param fun 忽略字段及字段名转换函数扩展
+     * @return 修改的行数
+     */
+    default int insertTable(String tablename, Object table, BiFunction<String,Object, ImmutableRow<Boolean,String,String>> fun) {
+        SQL sql = new SQL();
+        Field[] declaredFields = table.getClass().getDeclaredFields();
+        sql.insert(tablename);
+        for (Field declaredField : declaredFields) {
+            String name = declaredField.getName();
+            Object property = BeanUtil.getProperty(table, name);
+            if(fun != null) {
+                ImmutableRow<Boolean, String, String> apply = fun.apply(name, property);
+                if(apply != null) {
+                    sql.addValues(apply.getLeft(),name,apply.getCenter(),apply.getRight(),property);
+                }
+            } else {
+                sql.addValues(name,property);
+            }
+        }
+        sql.endValues();
+        return updateByResolver(sql);
+    }
     /**
      * @param sql SQL及参数对象封装
      * @param clazz 返回类型
