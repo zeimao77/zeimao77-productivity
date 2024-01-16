@@ -5,6 +5,7 @@ import top.zeimao77.product.util.BeanUtil;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
@@ -14,7 +15,6 @@ import java.util.function.BiFunction;
  * 一个SQL执行器的实现 它将以某种形式把SQL消费掉
  */
 public interface Reposit {
-
 
     /**
      * @param tablename 表名
@@ -26,21 +26,39 @@ public interface Reposit {
         SQL sql = new SQL();
         Field[] declaredFields = table.getClass().getDeclaredFields();
         sql.insert(tablename);
-        for (Field declaredField : declaredFields) {
-            String name = declaredField.getName();
-            Object property = BeanUtil.getProperty(table, name);
-            if(fun != null) {
-                ImmutableRow<Boolean, String, String> apply = fun.apply(name, property);
-                if(apply != null) {
-                    sql.addValues(apply.getLeft(),name,apply.getCenter(),apply.getRight(),property);
+        if(table instanceof Map) {
+            Map<String, Object> tableMap = (Map<String, Object>) table;
+            for(Iterator<Map.Entry<String, Object>> iterator = tableMap.entrySet().iterator();iterator.hasNext();) {
+                Map.Entry<String, Object> next = iterator.next();
+                String name = next.getKey();
+                Object property = next.getValue();
+                if(fun != null) {
+                    ImmutableRow<Boolean, String, String> apply = fun.apply(name, property);
+                    if(apply != null) {
+                        sql.addValues(apply.getLeft(),name,apply.getCenter(),apply.getRight(),property);
+                    }
+                } else {
+                    sql.addValues(name,property);
                 }
-            } else {
-                sql.addValues(name,property);
+            }
+        } else {
+            for (Field declaredField : declaredFields) {
+                String name = declaredField.getName();
+                Object property = BeanUtil.getProperty(table, name);
+                if (fun != null) {
+                    ImmutableRow<Boolean, String, String> apply = fun.apply(name, property);
+                    if (apply != null) {
+                        sql.addValues(apply.getLeft(), name, apply.getCenter(), apply.getRight(), property);
+                    }
+                } else {
+                    sql.addValues(name, property);
+                }
             }
         }
         sql.endValues();
         return updateByResolver(sql);
     }
+
     /**
      * @param sql SQL及参数对象封装
      * @param clazz 返回类型

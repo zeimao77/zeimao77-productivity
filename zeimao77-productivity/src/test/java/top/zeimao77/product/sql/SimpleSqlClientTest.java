@@ -12,8 +12,10 @@ import top.zeimao77.product.util.JsonBeanUtil;
 import top.zeimao77.product.util.StreamUtil;
 import top.zeimao77.product.util.WordUtil;
 
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -240,4 +242,15 @@ class SimpleSqlClientTest extends BaseMain {
 
     }
 
+    @Test
+    void insertTable() {
+        HashMap<String, Object> stringObjectHashMap = new HashMap<>();
+        stringObjectHashMap.put("abc",123);
+        stringObjectHashMap.put("bbc", LocalDateTime.now());
+        OnlyPrintReposit onlyPrintReposit = new OnlyPrintReposit(new PrintWriter(System.out),true);
+        onlyPrintReposit.insertTable("test",stringObjectHashMap,null);
+        DemoModel demoModel = DemoModel.DemoFactory.create();
+        onlyPrintReposit.insertTable("demo",demoModel,null);
+
+    }
 }
