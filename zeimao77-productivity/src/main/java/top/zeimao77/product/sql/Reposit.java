@@ -17,6 +17,7 @@ import java.util.function.BiFunction;
 public interface Reposit {
 
     /**
+     * 通过Bean或者Map的方式插入数据
      * @param tablename 表名
      * @param table 对象数据
      * @param fun 忽略字段及字段名转换函数扩展
