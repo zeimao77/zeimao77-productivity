@@ -29,6 +29,7 @@ public class SimpleSqlTemplate {
 
     protected PreparedStatementSetter preparedStatementSetter = DefaultPreparedStatementSetter.INSTANCE;
     protected ResultSetResolve resultSetResolvel = DefaultResultSetResolve.INSTANCE;
+    private SimpleSqlClient simpleSqlClient;
 
     public SimpleSqlTemplate(DataSource dataSource) {
         this.dataSource = dataSource;
@@ -84,9 +85,11 @@ public class SimpleSqlTemplate {
 
 
     public SimpleSqlClient createClient() {
-        DataSourceTransactionFactory factory = new DataSourceTransactionFactory(this.dataSource);
-        SimpleSqlClient simpleSqlClient = new SimpleSqlClient(factory,preparedStatementSetter,resultSetResolvel);
-        return simpleSqlClient;
+        if(this.simpleSqlClient == null) {
+            DataSourceTransactionFactory factory = new DataSourceTransactionFactory(this.dataSource);
+            this.simpleSqlClient = new SimpleSqlClient(factory,preparedStatementSetter,resultSetResolvel);
+        }
+        return this.simpleSqlClient;
     }
 
     public SimpleSqlClient openSession() {

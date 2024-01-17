@@ -33,8 +33,8 @@ import static top.zeimao77.product.exception.ExceptionCodeDefinition.*;
  *
  * 简单的初始化方法:
  * <pre>
- * SimpleSqlFacroty simpleSqlFacroty= ComponentFactory.initSimpleSqlFacroty("mysql_top_zeimao77");
- * SimpleSqlClient simpleMysql = simpleSqlFacroty.openSession();
+ * SimpleSqlTemplate simpleSqlTemplate= ComponentFactory.initSimpleSqlTemplate("mysql_top_zeimao77");
+ * SimpleSqlClient simpleMysql = simpleSqlTemplate.openSession();
  * simpleMysql.close();
  * </pre>
  * @author zeimao77
