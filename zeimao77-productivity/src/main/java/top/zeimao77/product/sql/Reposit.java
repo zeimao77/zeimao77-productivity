@@ -27,33 +27,28 @@ public interface Reposit {
         SQL sql = new SQL();
         Field[] declaredFields = table.getClass().getDeclaredFields();
         sql.insert(tablename);
+        BiConsumer<String,Object> con = (name,property) -> {
+            if(fun != null) {
+                ImmutableRow<Boolean, String, String> apply = fun.apply(name, property);
+                if(apply != null)
+                    sql.addValues(apply.getLeft(),name,apply.getCenter(),apply.getRight(),property);
+                else
+                    sql.addValues(name,property);
+            } else {
+                sql.addValues(name,property);
+            }
+        };
         if(table instanceof Map) {
             Map<String, Object> tableMap = (Map<String, Object>) table;
             for(Iterator<Map.Entry<String, Object>> iterator = tableMap.entrySet().iterator();iterator.hasNext();) {
                 Map.Entry<String, Object> next = iterator.next();
-                String name = next.getKey();
-                Object property = next.getValue();
-                if(fun != null) {
-                    ImmutableRow<Boolean, String, String> apply = fun.apply(name, property);
-                    if(apply != null) {
-                        sql.addValues(apply.getLeft(),name,apply.getCenter(),apply.getRight(),property);
-                    }
-                } else {
-                    sql.addValues(name,property);
-                }
+                con.accept(next.getKey(),next.getValue());
             }
         } else {
             for (Field declaredField : declaredFields) {
                 String name = declaredField.getName();
                 Object property = BeanUtil.getProperty(table, name);
-                if (fun != null) {
-                    ImmutableRow<Boolean, String, String> apply = fun.apply(name, property);
-                    if (apply != null) {
-                        sql.addValues(apply.getLeft(), name, apply.getCenter(), apply.getRight(), property);
-                    }
-                } else {
-                    sql.addValues(name, property);
-                }
+                con.accept(name,property);
             }
         }
         sql.endValues();
