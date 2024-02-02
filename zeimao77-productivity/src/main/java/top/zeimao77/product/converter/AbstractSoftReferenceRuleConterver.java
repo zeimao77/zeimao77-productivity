@@ -65,7 +65,7 @@ public abstract class AbstractSoftReferenceRuleConterver<K> implements IConverte
                 memoryRuleRepository.clear();
                 refresh();
             } finally {
-                lock.readLock().lock();
+                lock.writeLock().unlock();
             }
         } else {
             refreshRule();
