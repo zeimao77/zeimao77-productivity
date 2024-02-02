@@ -22,12 +22,20 @@ public abstract class AbstractSoftReferenceRuleConterver<K> implements IConverte
     private AtomicInteger refrenceCount = new AtomicInteger(0);
     protected ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
-    public synchronized void lock() {
+    public void lock() {
         if(memoryRuleRepository == null)
             memoryRuleRepository = softReferenceMemoryRuleRepository.get();
         if(memoryRuleRepository == null) {
-            memoryRuleRepository = new MemoryRuleRepository<K>();
-            softReferenceMemoryRuleRepository = new SoftReference<>(memoryRuleRepository);
+            try {
+                lock.writeLock().lock();
+                memoryRuleRepository = softReferenceMemoryRuleRepository.get();
+                if(memoryRuleRepository == null) {
+                    memoryRuleRepository = new MemoryRuleRepository<K>();
+                    softReferenceMemoryRuleRepository = new SoftReference<>(memoryRuleRepository);
+                }
+            } finally {
+                lock.writeLock().unlock();
+            }
         }
         refrenceCount.addAndGet(1);
     }
@@ -59,7 +67,7 @@ public abstract class AbstractSoftReferenceRuleConterver<K> implements IConverte
     }
 
     public void refreshRule(boolean force) {
-        if(force == true) {
+        if(force) {
             try {
                 lock.writeLock().lock();
                 memoryRuleRepository.clear();
