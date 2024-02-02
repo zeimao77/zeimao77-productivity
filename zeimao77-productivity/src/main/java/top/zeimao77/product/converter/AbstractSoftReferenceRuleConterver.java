@@ -5,7 +5,7 @@ import top.zeimao77.product.util.AssertUtil;
 
 import java.lang.ref.SoftReference;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * 这是一个在内存不够时会优先被回收的转换器
@@ -20,7 +20,7 @@ public abstract class AbstractSoftReferenceRuleConterver<K> implements IConverte
     private MemoryRuleRepository<K> memoryRuleRepository;
     private SoftReference<MemoryRuleRepository<K>> softReferenceMemoryRuleRepository = new SoftReference<>(null);
     private AtomicInteger refrenceCount = new AtomicInteger(0);
-    protected ReentrantLock lock = new ReentrantLock();
+    protected ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
     public synchronized void lock() {
         if(memoryRuleRepository == null)
@@ -48,21 +48,40 @@ public abstract class AbstractSoftReferenceRuleConterver<K> implements IConverte
     public void refreshRule() {
         AssertUtil.assertTrue(this.refrenceCount.get() > 0, ExceptionCodeDefinition.WRONG_ACTION,"缓存处于软引用状态，请先上锁");
         if(memoryRuleRepository.isEmpty()) {
-            lock.lock();
+            lock.writeLock().lock();
             try {
                 if(memoryRuleRepository.isEmpty())
                     refresh();
             } finally {
-                lock.unlock();
+                lock.writeLock().unlock();
             }
+        }
+    }
+
+    public void refreshRule(boolean force) {
+        if(force == true) {
+            try {
+                lock.writeLock().lock();
+                memoryRuleRepository.clear();
+                refresh();
+            } finally {
+                lock.readLock().lock();
+            }
+        } else {
+            refreshRule();
         }
     }
 
     @Override
     public Object get(K key) {
         refreshRule();
-        Object resultValue = this.memoryRuleRepository.get(key);
-        return resultValue == null ? defaultName(key) : resultValue;
+        try {
+            lock.readLock().lock();
+            Object resultValue = this.memoryRuleRepository.get(key);
+            return resultValue == null ? defaultName(key) : resultValue;
+        }finally {
+            lock.readLock().unlock();
+        }
     }
 
 }
