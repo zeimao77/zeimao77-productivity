@@ -11,6 +11,9 @@ public class App extends BaseMain {
     {
         BaseMain.showBanner("0.0.1");
         logger.info( "Hello World!" );
+        for (String arg : args) {
+            logger.info(arg);
+        }
     }
 
 }

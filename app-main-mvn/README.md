@@ -14,6 +14,13 @@ OS name: "windows 11", version: "10.0", arch: "amd64", family: "windows"
 ## 常用命令
 
 ```bash
+## 编译
+$ mvn compile
+## 执行
+$ mvn exec:java -Dexec.mainClass="com.zeimao77.App"
+$ mvn exec:java -Dlog.level=INFO -Dexec.mainClass="com.zeimao77.App" -Dexec.args="arg0 arg1 arg2"
+
+## 打包
 $ mvn clean package
 $ mvn -Dmaven.test.skip=true clean package
 $ mvn test
