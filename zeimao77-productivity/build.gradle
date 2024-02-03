@@ -5,7 +5,7 @@ plugins {
 }
 
 group 'top.zeimao77'
-version '2.2.1'
+version '2.2.2'
 description '效率包'
 
 repositories {
