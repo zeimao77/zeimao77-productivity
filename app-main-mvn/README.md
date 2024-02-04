@@ -4,9 +4,9 @@
 
 ```bash
 $ mvn --version
-Apache Maven 3.8.4 (9b656c72d54e5bacbed989b64718c159fe39b537)
-Maven home: D:\MyProgram\apache-maven-3.8.4-bin\apache-maven-3.8.4
-Java version: 21, vendor: Oracle Corporation, runtime: D:\MyProgram\jdk-21_windows-x64_bin\jdk-21
+Apache Maven 3.9.6 (bc0240f3c744dd6b6ec2920b3cd08dcc295161ae)
+Maven home: D:\MyProgramFile\apache-maven-3.9.6-bin\apache-maven-3.9.6
+Java version: 21.0.2, vendor: Oracle Corporation, runtime: D:\MyProgramFile\jdk-21_windows-x64_bin\jdk-21.0.2
 Default locale: zh_CN, platform encoding: UTF-8
 OS name: "windows 11", version: "10.0", arch: "amd64", family: "windows"
 ```
