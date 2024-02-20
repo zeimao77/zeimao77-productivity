@@ -25,16 +25,6 @@ public class Main extends BaseMain {
         logger.warn("{}",LongIdGenerator.INSTANCE.generate());
         logger.error("{}",LongIdGenerator.INSTANCE.generate());
         logger.info(Long.toHexString(System.currentTimeMillis()));
-        System.out.println();
-        ProgressBar progressBar = new ProgressBar("Progress",100,80,TimeUnit.MILLISECONDS);
-        progressBar.start();
-        TokenBucket.SleetStrategy sleetStrategy = new TokenBucket.SleetStrategy(10, TimeUnit.MILLISECONDS);
-        for (int i = 0; i < 100; i++) {
-            progressBar.addCur(1);
-            sleetStrategy.sleep();
-        }
-        System.out.println(Integer.MAX_VALUE);
-        logger.info(BigDecimal.valueOf(2.3426).setScale(3, RoundingMode.HALF_UP).toString());
 
 
     }
