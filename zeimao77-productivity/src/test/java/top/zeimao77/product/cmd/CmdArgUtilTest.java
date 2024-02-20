@@ -13,8 +13,10 @@ class CmdArgUtilTest extends BaseMain {
 
     @Test
     void findOpt() {
-        String[] argv = {"-a","666","--optarg","66"};
+        String[] argv = {"-a","--optarg","66"};
         String opt = CmdArgUtil.findOpt(argv, null, "optarg", true);
+        logger.info("{}",opt);
+        opt = CmdArgUtil.findOpt(argv, "a", null, false);
         logger.info("{}",opt);
     }
 }

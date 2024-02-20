@@ -59,10 +59,12 @@ public class CmdArgUtil {
         for (int i = 0; i < args.length; i++) {
             if(opt != null && args[i].equals("-"+ opt))
                 return hasVal ? args[i+1] : opt;
+            if(opt != null && args[i].startsWith("-"+opt) && args[i].length() > opt.length() + 1)
+                return hasVal ? args[i].substring(opt.length() + 1) : null;
             if(optLong != null && args[i].equals("--" + optLong))
                 return hasVal ? args[i+1] : optLong;
             if(optLong != null && args[i].startsWith("--"+optLong+"=") && args[i].length() > optLong.length() + 2)
-                return hasVal ? args[i].substring(optLong.length() + 3) : optLong;
+                return hasVal ? args[i].substring(optLong.length() + 3) : null;
         }
         return null;
     }
