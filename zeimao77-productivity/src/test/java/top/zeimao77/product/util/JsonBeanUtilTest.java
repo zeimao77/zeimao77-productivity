@@ -2,14 +2,26 @@ package top.zeimao77.product.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.Test;
+import top.zeimao77.product.converter.AbstractNonReFreshConverter;
+import top.zeimao77.product.converter.JacksonConverter;
+import top.zeimao77.product.factory.BeanFactory;
 import top.zeimao77.product.main.BaseMain;
+import top.zeimao77.product.security.JacksonDesensitization;
+import top.zeimao77.product.security.JacksonDesensitizationSerializer;
 
 class JsonBeanUtilTest extends BaseMain {
 
     @Test
     void toJsonString() {
-
-        DemoModel demo12345 = new DemoModel(123L, StringOptional.empty());
+        BeanFactory.DEFAULT.registerSingleton("con", new AbstractNonReFreshConverter<String>() {
+            @Override
+            protected void refresh() {
+                addConvRule("1","满意");
+                addConvRule("2","很满意");
+                addConvRule("3","非常满意");
+            }
+        });
+        DemoModel demo12345 = new DemoModel(123L,new StringOptional("张三"),"17788882222");
         logger.info(JsonBeanUtil.DEFAULT.toJsonString(demo12345));
     }
 
@@ -51,8 +63,12 @@ class JsonBeanUtilTest extends BaseMain {
 
     private static class DemoModel {
         private Long demoId;
+        private String mobile;
         private StringOptional demoName;
+        @JacksonDesensitization(type = JacksonDesensitization.NAME)
         private String dname;
+        @JacksonConverter(converterBean = "con",format = "full")
+        private String ttype;
 
         public DemoModel() {
         }
@@ -60,6 +76,23 @@ class JsonBeanUtilTest extends BaseMain {
         public DemoModel(Long demoId, StringOptional demoName) {
             this.demoId = demoId;
             this.demoName = demoName;
+        }
+
+
+        public DemoModel(Long demoId, StringOptional demoName,String mobile) {
+            this.demoId = demoId;
+            this.demoName = demoName;
+            this.dname = demoName.get();
+            this.mobile = mobile;
+            this.ttype = "1";
+        }
+
+        public String getMobile() {
+            return mobile;
+        }
+
+        public void setMobile(String mobile) {
+            this.mobile = mobile;
         }
 
         public Long getDemoId() {
@@ -84,6 +117,14 @@ class JsonBeanUtilTest extends BaseMain {
 
         public void setDname(String dname) {
             this.dname = dname;
+        }
+
+        public String getTtype() {
+            return ttype;
+        }
+
+        public void setTtype(String ttype) {
+            this.ttype = ttype;
         }
     }
 }
