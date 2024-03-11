@@ -60,7 +60,7 @@
     <dependency>
       <groupId>top.zeimao77</groupId>
       <artifactId>zeimao77-productivity</artifactId>
-      <version>2.2.1</version>
+      <version>2.2.2</version>
     </dependency>
 
     <dependency>

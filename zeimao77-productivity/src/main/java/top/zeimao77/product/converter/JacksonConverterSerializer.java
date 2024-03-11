@@ -14,7 +14,7 @@ import java.io.IOException;
 public class JacksonConverterSerializer extends JsonSerializer<String> implements ContextualSerializer {
 
     private String propertyName;
-    private JacksonConverter dictDesensitization;
+    private JacksonConvertion dictDesensitization;
 
     @Override
     public void serialize(String value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
@@ -38,7 +38,7 @@ public class JacksonConverterSerializer extends JsonSerializer<String> implement
 
         @Override
     public JsonSerializer<?> createContextual(SerializerProvider prov, BeanProperty property) throws JsonMappingException {
-        this.dictDesensitization = property.getAnnotation(JacksonConverter.class);
+        this.dictDesensitization = property.getAnnotation(JacksonConvertion.class);
         if(dictDesensitization != null)
             this.propertyName = property.getName();
         return this.dictDesensitization != null ? this : prov.findNullKeySerializer(property.getType(),property);

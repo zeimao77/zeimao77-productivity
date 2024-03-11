@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @JsonSerialize(using = JacksonConverterSerializer.class)
 @JacksonAnnotationsInside
-public @interface JacksonConverter {
+public @interface JacksonConvertion {
 
       /**
        * 转换器Bean名字

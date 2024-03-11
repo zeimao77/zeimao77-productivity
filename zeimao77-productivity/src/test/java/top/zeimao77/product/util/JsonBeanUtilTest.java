@@ -3,11 +3,10 @@ package top.zeimao77.product.util;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.Test;
 import top.zeimao77.product.converter.AbstractNonReFreshConverter;
-import top.zeimao77.product.converter.JacksonConverter;
+import top.zeimao77.product.converter.JacksonConvertion;
 import top.zeimao77.product.factory.BeanFactory;
 import top.zeimao77.product.main.BaseMain;
 import top.zeimao77.product.security.JacksonDesensitization;
-import top.zeimao77.product.security.JacksonDesensitizationSerializer;
 
 class JsonBeanUtilTest extends BaseMain {
 
@@ -67,7 +66,7 @@ class JsonBeanUtilTest extends BaseMain {
         private StringOptional demoName;
         @JacksonDesensitization(type = JacksonDesensitization.NAME)
         private String dname;
-        @JacksonConverter(converterBean = "con",format = "full")
+        @JacksonConvertion(converterBean = "con",format = "full")
         private String ttype;
 
         public DemoModel() {
