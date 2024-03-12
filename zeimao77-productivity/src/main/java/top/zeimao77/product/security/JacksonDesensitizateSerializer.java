@@ -9,7 +9,7 @@ import com.fasterxml.jackson.databind.ser.ContextualSerializer;
 
 import java.io.IOException;
 
-public class JacksonDesensitizationSerializer extends JsonSerializer<String> implements ContextualSerializer {
+public class JacksonDesensitizateSerializer extends JsonSerializer<String> implements ContextualSerializer {
 
     private JacksonDesensitization jacksonDesensitization;
 

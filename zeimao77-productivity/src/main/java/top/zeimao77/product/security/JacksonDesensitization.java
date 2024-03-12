@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.FIELD,ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-@JsonSerialize(using = JacksonDesensitizationSerializer.class)
+@JsonSerialize(using = JacksonDesensitizateSerializer.class)
 @JacksonAnnotationsInside
 public @interface JacksonDesensitization {
 

@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.FIELD,ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-@JsonSerialize(using = JacksonConverterSerializer.class)
+@JsonSerialize(using = JacksonConvertSerializer.class)
 @JacksonAnnotationsInside
 public @interface JacksonConvertion {
 

@@ -11,7 +11,7 @@ import top.zeimao77.product.factory.BeanFactory;
 
 import java.io.IOException;
 
-public class JacksonConverterSerializer extends JsonSerializer<String> implements ContextualSerializer {
+public class JacksonConvertSerializer extends JsonSerializer<String> implements ContextualSerializer {
 
     private String propertyName;
     private JacksonConvertion dictDesensitization;
