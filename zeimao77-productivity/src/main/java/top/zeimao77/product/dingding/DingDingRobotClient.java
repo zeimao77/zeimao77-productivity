@@ -68,7 +68,6 @@ public class DingDingRobotClient {
         HttpClientUtil11 httpClientUtil11 = new HttpClientUtil11();
         String s = httpClientUtil11.sendPost(url, JsonBeanUtil.DEFAULT.toJsonString(message),headers,5);
         logger.debug("robot:{}",s);
-        httpClientUtil11.close();
     }
 
     public void sendText(String messaage,List<String> atMobiles,List<String> atUserIds,boolean atAll) {

@@ -13,36 +13,27 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * http请求工类
  */
-public class HttpClientUtil11 implements AutoCloseable,IHttpClient {
+public class HttpClientUtil11 implements IHttpClient {
 
     private static Logger logger = LoggerFactory.getLogger(HttpClientUtil11.class);
 
     private HttpClient client;
-    private ExecutorService executor;
 
-    public HttpClientUtil11(){
-        this.client = HttpClient.newBuilder().build();
+    public HttpClientUtil11() {
+        this(5L);
     }
 
     public HttpClientUtil11(HttpClient client) {
         this.client = client;
     }
 
-    /**
-     * 线程数
-     * @param nthreads
-     */
-    public HttpClientUtil11(int nthreads){
-        this.executor = Executors.newFixedThreadPool(nthreads);
+    public HttpClientUtil11(long timeoutSeconds){
         this.client = HttpClient.newBuilder()
-            .connectTimeout(Duration.ofSeconds(5))
-            .executor(this.executor)
+            .connectTimeout(Duration.ofSeconds(timeoutSeconds))
             .build();
     }
 
@@ -132,6 +123,7 @@ public class HttpClientUtil11 implements AutoCloseable,IHttpClient {
         HttpRequest request = builder.build();
         try {
             HttpResponse<T> response = client.send(request,responseBodyHandler);
+            logger.debug("response_code:{}",response.statusCode());
             result = response.body();
         } catch (IOException e) {
             throw new BaseServiceRunException(IOEXCEPTION,"POST请求IO异常",e);
@@ -142,18 +134,6 @@ public class HttpClientUtil11 implements AutoCloseable,IHttpClient {
         return result;
     }
 
-    public static <T> T sendForm(HttpClient client,String url,Map<String,String> body,Map<String,String> headers,int titmeout
-            ,HttpResponse.BodyHandler<T> responseBodyHandler) {
-        StringBuilder sBuilder = new StringBuilder();
-        for(Iterator<Map.Entry<String, String>> ite = body.entrySet().iterator();ite.hasNext();) {
-            Map.Entry<String, String> next = ite.next();
-            if(!sBuilder.isEmpty())
-                sBuilder.append("&");
-            sBuilder.append(String.format("%s=%s",next.getKey(),next.getValue()));
-        }
-        return sendPost(client,url,sBuilder.toString(),headers,titmeout,responseBodyHandler);
-    }
-
     /**
      * @return 客户端对象
      */
@@ -161,17 +141,5 @@ public class HttpClientUtil11 implements AutoCloseable,IHttpClient {
         return client;
     }
 
-    @Override
-    public synchronized void close() {
-        if(this.executor != null && !this.executor.isShutdown()) {
-            this.executor.shutdown();
-        }
-    }
 
-    /**
-     * @return 处理线程池
-     */
-    public ExecutorService getExecutor() {
-        return executor;
-    }
 }
