@@ -24,6 +24,7 @@ public class SQL implements StatementParamResolver, IWhere {
     private static final int FLAG_VALUES = 0x04;
     private static final int FLAG_WHERE = 0x08;
     private static final int FLAG_ON = 0x10;
+    private static final int FLAG_NNOTBIND = 0x20;  // 左括号下一TOKEN不BIND;
     private int whereOrSetFlag = 0;
     private int sqlType = 0; // 1 = SELECT ;2 = DELETE ;3 = UPDATE ;4 INSERT ;5 = UPSERT ;
     private int paramIndex = 0;
@@ -147,13 +148,24 @@ public class SQL implements StatementParamResolver, IWhere {
         if(!expression) {
             return this;
         }
-        if((whereOrSetFlag & FLAG_WHERE) == 0) {
-            sqlBuilder.append(" WHERE ");
-            whereOrSetFlag |= FLAG_WHERE;
-        } else if(BIND_AND.equals(bind)) {
-            sqlBuilder.append(" AND ");
-        } else if(BIND_OR.equals(bind)) {
-            sqlBuilder.append(" OR ");
+        if(COND_RBRACKET.equals(cond)) {
+            sqlBuilder.append(" )");
+            return this;
+        }
+        if((whereOrSetFlag & FLAG_NNOTBIND) == 0) {
+            if((whereOrSetFlag & FLAG_WHERE) == 0) {
+                sqlBuilder.append(" WHERE ");
+                whereOrSetFlag |= FLAG_WHERE;
+            } else if(BIND_AND.equals(bind)) {
+                sqlBuilder.append(" AND ");
+            } else if(BIND_OR.equals(bind)) {
+                sqlBuilder.append(" OR ");
+            }
+        }
+        if(COND_LBRACKET.equals(cond)) {
+            sqlBuilder.append(" (");
+            whereOrSetFlag |= FLAG_NNOTBIND;
+            return this;
         }
         sqlBuilder.append(columnName);
         Consumer<Object> con = o -> {
@@ -303,6 +315,7 @@ public class SQL implements StatementParamResolver, IWhere {
             default:
                 throw new BaseServiceRunException("不支持的查询运算符");
         }
+        whereOrSetFlag &= (~FLAG_NNOTBIND);
         return this;
     }
 

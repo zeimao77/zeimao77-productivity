@@ -1,6 +1,5 @@
 package top.zeimao77.product.util;
 
-import top.zeimao77.product.exception.BaseServiceException;
 import top.zeimao77.product.exception.BaseServiceRunException;
 import top.zeimao77.product.exception.ExceptionCodeDefinition;
 

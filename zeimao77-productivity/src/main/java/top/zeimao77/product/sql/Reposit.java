@@ -1,14 +1,59 @@
 package top.zeimao77.product.sql;
 
+import top.zeimao77.product.model.ImmutableRow;
+import top.zeimao77.product.util.BeanUtil;
+
+import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 
 /**
  * 一个SQL执行器的实现 它将以某种形式把SQL消费掉
  */
 public interface Reposit {
+
+    /**
+     * 通过Bean或者Map的方式插入数据
+     * @param tablename 表名
+     * @param table 对象数据
+     * @param fun 忽略字段及字段名转换函数扩展
+     * @return 修改的行数
+     */
+    default int insertTable(String tablename, Object table, BiFunction<String,Object, ImmutableRow<Boolean,String,String>> fun) {
+        SQL sql = new SQL();
+        Field[] declaredFields = table.getClass().getDeclaredFields();
+        sql.insert(tablename);
+        BiConsumer<String,Object> con = (name,property) -> {
+            if(fun != null) {
+                ImmutableRow<Boolean, String, String> apply = fun.apply(name, property);
+                if(apply != null)
+                    sql.addValues(apply.getLeft(),name,apply.getCenter(),apply.getRight(),property);
+                else
+                    sql.addValues(name,property);
+            } else {
+                sql.addValues(name,property);
+            }
+        };
+        if(table instanceof Map) {
+            Map<String, Object> tableMap = (Map<String, Object>) table;
+            for(Iterator<Map.Entry<String, Object>> iterator = tableMap.entrySet().iterator();iterator.hasNext();) {
+                Map.Entry<String, Object> next = iterator.next();
+                con.accept(next.getKey(),next.getValue());
+            }
+        } else {
+            for (Field declaredField : declaredFields) {
+                String name = declaredField.getName();
+                Object property = BeanUtil.getProperty(table, name);
+                con.accept(name,property);
+            }
+        }
+        sql.endValues();
+        return updateByResolver(sql);
+    }
 
     /**
      * @param sql SQL及参数对象封装

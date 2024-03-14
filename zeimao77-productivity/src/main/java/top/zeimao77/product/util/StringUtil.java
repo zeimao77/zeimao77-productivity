@@ -21,6 +21,8 @@ public class StringUtil {
     public static String cut(String str,int len,String suffix) {
         if(str == null)
             return null;
+        if(str.length() <= len)
+            return str;
         if(suffix == null)
             suffix = EMPTY_SUFFIX;
         len = len >= str.length() ? str.length() : len - suffix.length();

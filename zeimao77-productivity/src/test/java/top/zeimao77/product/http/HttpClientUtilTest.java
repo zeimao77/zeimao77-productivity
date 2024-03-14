@@ -15,5 +15,4 @@ class HttpClientUtilTest extends BaseMain {
         logger.info(s1);
     }
 
-
 }

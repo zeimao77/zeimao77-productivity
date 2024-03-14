@@ -8,7 +8,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * 自定义过期时间
@@ -24,7 +24,7 @@ public abstract class AbstractCustomRefreshConverter<K> implements IConverter<K>
     /**
      * 规则刷新锁，防止并发刷新规则;
      */
-    protected ReentrantLock lock = new ReentrantLock();
+    protected ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
     /**
      * 规则缓存
      */
@@ -66,8 +66,13 @@ public abstract class AbstractCustomRefreshConverter<K> implements IConverter<K>
     @Override
     public Object get(K key) {
         refreshRule();
-        Object resultValue = this.ruleRepository.get(key);
-        return resultValue == null ? defaultName(key) : resultValue;
+        try {
+            lock.readLock().lock();
+            Object resultValue = this.ruleRepository.get(key);
+            return resultValue == null ? defaultName(key) : resultValue;
+        } finally {
+            lock.readLock().unlock();
+        }
     }
 
     /**
@@ -77,7 +82,7 @@ public abstract class AbstractCustomRefreshConverter<K> implements IConverter<K>
     public void refreshRule() {
         long between = ChronoUnit.SECONDS.between(LocalDateTime.now(), expiryTime);
         if(ruleRepository.isEmpty() || between <= 0) {
-            lock.lock();
+            lock.writeLock().lock();
             try {
                 between = ChronoUnit.SECONDS.between(LocalDateTime.now(), expiryTime);
                 if(ruleRepository.isEmpty() || between <= 0) {
@@ -86,7 +91,7 @@ public abstract class AbstractCustomRefreshConverter<K> implements IConverter<K>
                     refreshExpiryTime();
                 }
             } finally {
-                lock.unlock();
+                lock.writeLock().unlock();
             }
         }
     }

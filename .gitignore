@@ -3,6 +3,7 @@
 *.iml
 
 build
+target
 gradle
 gradle.bat
 localcontext.properties
@@ -11,4 +12,3 @@ secring.gpg
 app-main.log
 gradlew.bat
 gradlew
-zeimao77-algorithmimpl

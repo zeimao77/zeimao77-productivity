@@ -47,7 +47,6 @@ public class ConfigurationFacotry77 extends ConfigurationFactory {
         return value == null ? defaultValue : value;
     }
 
-
     @Override
     protected String[] getSupportedTypes() {
         return new String[]{".77.conf"};
@@ -114,7 +113,6 @@ public class ConfigurationFacotry77 extends ConfigurationFactory {
         rootLoggerComponentBuilder.add(builder.newAppenderRef("rollingFile"));
         return fileComponentBuilder;
     }
-
 
     private Configuration createConfiguration(final String name, ConfigurationBuilder<BuiltConfiguration> builder) {
         builder.setConfigurationName(name);

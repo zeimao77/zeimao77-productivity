@@ -5,7 +5,7 @@ plugins {
 }
 
 group 'top.zeimao77'
-version '2.2.1'
+version '2.2.2'
 description '效率包'
 archivesBaseName = 'zeimao77-productivity-jdk8'
 
@@ -110,6 +110,19 @@ tasks.withType(JavaCompile) {
 tasks.withType(Javadoc) {
     options.addStringOption("encoding","UTF-8")
     options.addStringOption("charset","UTF-8")
+}
+
+task sourcesJar(type:Jar){
+    dependsOn classes
+    archiveClassifier.convention('sources')
+    archiveClassifier.set('sources')
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type:Jar) {
+    from javadoc
+    archiveClassifier.convention('javadoc')
+    archiveClassifier.set('javadoc')
 }
 
 java {

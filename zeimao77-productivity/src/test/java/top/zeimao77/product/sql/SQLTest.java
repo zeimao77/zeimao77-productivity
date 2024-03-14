@@ -21,7 +21,24 @@ class SQLTest extends BaseMain {
                 .addValues("c", "val_c")
                 .endValues();
         logger.info(insert.getExecSql());
+    }
 
-
+    @Test
+    void testbracket() {
+        SQL select = new SQL().select()
+                .from("a")
+                .where(true,SQL.BIND_AND,"fa",IWhere.COND_QIS,"va")
+                .where(true,SQL.BIND_AND,null,IWhere.COND_LBRACKET,null)
+                .where(true,SQL.BIND_AND,null,IWhere.COND_LBRACKET,null)
+                .where(true,SQL.BIND_AND,null,IWhere.COND_LBRACKET,null)
+                .where(true,SQL.BIND_AND,"fb",IWhere.COND_QIS,2)
+                .where(true,SQL.BIND_OR,"fb",IWhere.COND_QIS,2)
+                .where(true,SQL.BIND_AND,null,IWhere.COND_RBRACKET,null)
+                .where(true,SQL.BIND_AND,"fb",IWhere.COND_QIS,2)
+                .where(true,SQL.BIND_OR,"fb",IWhere.COND_QIS,3)
+                .where(true,SQL.BIND_AND,null,IWhere.COND_RBRACKET,null)
+                .where(true,SQL.BIND_AND,null,IWhere.COND_RBRACKET,null);
+        logger.info(select.getSql());
+        logger.info(select.getExecSql());
     }
 }
