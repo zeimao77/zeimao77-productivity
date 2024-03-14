@@ -12,12 +12,12 @@ class JsonBeanUtilTest extends BaseMain {
 
     @Test
     void toJsonString() {
-        BeanFactory.DEFAULT.registerSingleton("con", new AbstractNonReFreshConverter<String>() {
+        BeanFactory.DEFAULT.registerSingleton("con", new AbstractNonReFreshConverter<Integer>() {
             @Override
             protected void refresh() {
-                addConvRule("1","满意");
-                addConvRule("2","很满意");
-                addConvRule("3","非常满意");
+                addConvRule(1,"满意");
+                addConvRule(2,"很满意");
+                addConvRule(3,"非常满意");
             }
         });
         DemoModel demo12345 = new DemoModel(123L,new StringOptional("张三"),"17788882222");
@@ -67,8 +67,10 @@ class JsonBeanUtilTest extends BaseMain {
         @JacksonDesensitization(type = JacksonDesensitization.NAME)
         private String dname;
         @JacksonConvertion(converterBean = "con",format = "full")
-        private String ttype;
+        private int ttype;
 
+        @JacksonConvertion(converterBean = "con",format = "full")
+        private Integer type;
         public DemoModel() {
         }
 
@@ -83,7 +85,8 @@ class JsonBeanUtilTest extends BaseMain {
             this.demoName = demoName;
             this.dname = demoName.get();
             this.mobile = mobile;
-            this.ttype = "1";
+            this.ttype = 2;
+            this.type = 1;
         }
 
         public String getMobile() {
@@ -118,12 +121,20 @@ class JsonBeanUtilTest extends BaseMain {
             this.dname = dname;
         }
 
-        public String getTtype() {
+        public int getTtype() {
             return ttype;
         }
 
-        public void setTtype(String ttype) {
+        public void setTtype(int ttype) {
             this.ttype = ttype;
+        }
+
+        public Integer getType() {
+            return type;
+        }
+
+        public void setType(Integer type) {
+            this.type = type;
         }
     }
 }

@@ -11,14 +11,18 @@ import top.zeimao77.product.factory.BeanFactory;
 
 import java.io.IOException;
 
-public class JacksonConvertSerializer extends JsonSerializer<String> implements ContextualSerializer {
+public class JacksonConvertSerializer extends JsonSerializer<Object> implements ContextualSerializer {
 
     private String propertyName;
     private JacksonConvertion dictDesensitization;
 
     @Override
-    public void serialize(String value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-        gen.writeString(value);
+    public void serialize(Object value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+        if(value instanceof Number) {
+            gen.writeNumber(value.toString());
+        } else {
+            gen.writeString(value.toString());
+        }
         String converterBean = this.dictDesensitization.converterBean();
         String format = this.dictDesensitization.format();
         try {
