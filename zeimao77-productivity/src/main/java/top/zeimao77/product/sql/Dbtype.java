@@ -11,6 +11,6 @@ public interface Dbtype {
      Integer SQLSERVER = 0x00000010;  /* Microsoft SQL server */
      Integer ACCESS = 0x00000020;  /* Microsoft Access */
      Integer MARIADB = 0x0000040;  /* MariaDB */
-
+     Integer OCEANBASE = 0x0000080;  /* OceanBase */
 
 }
