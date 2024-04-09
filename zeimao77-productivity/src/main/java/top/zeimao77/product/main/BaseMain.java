@@ -23,7 +23,7 @@ public class BaseMain {
     protected static Logger logger;
 
     static {
-        initLoggerConfig();
+        // initLoggerConfig();
         logger = LoggerFactory.getLogger(BaseMain.class);
         initLocalContext();
     }

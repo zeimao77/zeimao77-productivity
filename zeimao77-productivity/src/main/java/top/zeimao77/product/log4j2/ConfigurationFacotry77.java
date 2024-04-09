@@ -18,7 +18,7 @@ import top.zeimao77.product.util.BoolUtil;
  * @author zeimao77
  * @since 2.0.9
  */
-@Plugin(name = "MyConfigurationFactory", category = ConfigurationFactory.CATEGORY)
+@Plugin(name = "MyConfigurationFactory", category = ConfigurationFactory.CATEGORY,printObject = true)
 @Order(3)
 public class ConfigurationFacotry77 extends ConfigurationFactory {
 
