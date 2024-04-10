@@ -86,7 +86,7 @@ public class AssertUtil {
      * @return 判断结果
      */
     public static boolean isEmpty(Object obj) {
-        return obj == null || "".equals(obj.toString());
+        return obj == null || obj.toString().isEmpty();
     }
 
     /**
@@ -95,7 +95,7 @@ public class AssertUtil {
      * @return 判断结果
      */
     public static boolean isBlack(CharSequence obj) {
-        return obj == null || "".equals(obj.toString().trim());
+        return obj == null || obj.toString().trim().isEmpty();
     }
 
     public static <T extends CharSequence> void ifNotBlack(T obj,Consumer<T> con) {

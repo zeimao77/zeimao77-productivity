@@ -4,6 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import top.zeimao77.product.converter.AbstractNonReFreshConverter;
 import top.zeimao77.product.exception.BaseServiceRunException;
+import top.zeimao77.product.util.AssertUtil;
+
 import java.io.*;
 import java.util.Properties;
 
@@ -47,30 +49,14 @@ public class LocalContextConverter extends AbstractNonReFreshConverter<String> {
             return;
         }
         {
-            InputStream resourceAsStream;
-            if(localContextActive == null) {
-                resourceAsStream = LocalContext.class.getClassLoader().getResourceAsStream("localcontext.properties");
-                if(resourceAsStream != null)
-                    logger.debug("尝试加载配置文件:localcontext.properties");
-            } else {
-                resourceAsStream = LocalContext.class.getClassLoader().getResourceAsStream("localcontext-"+localContextActive + ".properties");
-                if(resourceAsStream != null)
-                    logger.debug("尝试加载配置文件:localcontext-{}.properties",localContextActive);
-            }
-            if(resourceAsStream != null) {
+            String resourceName = AssertUtil.isBlack(localContextActive) ? "localcontext.properties" : "localcontext-"+localContextActive + ".properties";
+            try(InputStream resourceAsStream = LocalContext.class.getClassLoader().getResourceAsStream(resourceName)) {
+                if(resourceAsStream == null)
+                    return;
+                logger.debug("尝试加载配置文件:{}",resourceName);
                 putByProperties(resourceAsStream);
-                try {
-                    resourceAsStream.close();
-                } catch (IOException e) {
-                    throw new BaseServiceRunException(IOEXCEPTION,"IO错误",e);
-                } finally {
-                    try {
-                        resourceAsStream.close();
-                    } catch (IOException e) {
-                        logger.error("IO错误",e);
-                    }
-                }
-                return;
+            }catch (IOException e) {
+                logger.error("IO错误",e);
             }
         }
     }
