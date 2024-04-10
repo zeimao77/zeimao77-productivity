@@ -15,10 +15,7 @@ public interface CellFiledTypeResover<T> extends Orderd {
 
     default boolean support(Class<?> clazz, Cell cell) {
         AssertUtil.notNull(clazz,"excel解析类型必须指定;");
-        if(clazz.equals(getTclass())) {
-            return true;
-        }
-        return false;
+        return clazz.equals(getTclass());
     }
 
     T resove(Cell cell);

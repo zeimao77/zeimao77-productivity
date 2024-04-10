@@ -43,9 +43,8 @@ public class BeanFactory {
     public void registerPrototypesFactory(String beanName,Supplier<?> supplier) {
         synchronized (this.prototypesFactory) {
             Supplier<?> oldObject = prototypesFactory.get(beanName);
-            if (oldObject != null) {
+            if (oldObject != null)
                 throw new IllegalStateException("不可以注册单例BEAN 因为该BEAN名称已经被定义;");
-            }
             this.prototypesFactory.put(beanName,supplier);
         }
     }
@@ -60,9 +59,8 @@ public class BeanFactory {
         AssertUtil.notNull(singletonObject, "单例BEAN不能为空");
         synchronized (this.singletonObjects) {
             Object oldObject = this.singletonObjects.get(beanName);
-            if (oldObject != null) {
+            if (oldObject != null)
                 throw new IllegalStateException("不可以注册单例BEAN 因为该BEAN名称已经被定义;");
-            }
            this.singletonObjects.put(beanName,singletonObject);
         }
     }
@@ -107,9 +105,8 @@ public class BeanFactory {
      */
     public <T> T getBean(Class<T> requiredType) {
         for (Object value : singletonObjects.values()) {
-            if(requiredType.isAssignableFrom(value.getClass())) {
+            if(requiredType.isAssignableFrom(value.getClass()))
                 return (T)value;
-            }
         }
         throw new BaseServiceRunException(WRONG_ACTION,"没有这样的单例BEAN实例:"+requiredType.getName());
     }
