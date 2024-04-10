@@ -91,7 +91,6 @@ dependencies {
     compileOnly group: 'com.guicedee.services', name: 'commons-beanutils', version: '1.2.2.1'
     testImplementation group: 'com.guicedee.services', name: 'commons-beanutils', version: '1.2.2.1'
 
-
     implementation 'org.slf4j:slf4j-api:2.0.6'
     implementation 'com.fasterxml.jackson.core:jackson-core:2.14.2'
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.14.2'
