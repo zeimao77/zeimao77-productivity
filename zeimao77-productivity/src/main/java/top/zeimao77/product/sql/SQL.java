@@ -413,7 +413,7 @@ public class SQL implements StatementParamResolver, IWhere {
 
     public SQL endValue(int c) {
         sqlBuilder.append(") VALUES (");
-        for (int i = 0; i < paramIndex; i++) {
+        for (int i = 0; i < c; i++) {
             StatementParameter statementParameter = statementParams.get(i);
             if(i > 0)
                 sqlBuilder.append(",");

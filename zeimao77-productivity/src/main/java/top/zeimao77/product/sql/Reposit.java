@@ -1,5 +1,8 @@
 package top.zeimao77.product.sql;
 
+import com.fasterxml.jackson.databind.node.JsonNodeType;
+import top.zeimao77.product.jobs.IJob;
+import top.zeimao77.product.json.Ijson;
 import top.zeimao77.product.model.ImmutableRow;
 import top.zeimao77.product.util.BeanUtil;
 
@@ -24,9 +27,7 @@ public interface Reposit {
      * @return 修改的行数
      */
     default int insertTable(String tablename, Object table, BiFunction<String,Object, ImmutableRow<Boolean,String,String>> fun) {
-        SQL sql = new SQL();
-        Field[] declaredFields = table.getClass().getDeclaredFields();
-        sql.insert(tablename);
+        SQL sql = new SQL().insert(tablename);
         BiConsumer<String,Object> con = (name,property) -> {
             if(fun != null) {
                 ImmutableRow<Boolean, String, String> apply = fun.apply(name, property);
@@ -44,7 +45,23 @@ public interface Reposit {
                 Map.Entry<String, Object> next = iterator.next();
                 con.accept(next.getKey(),next.getValue());
             }
+        } else if(table instanceof Ijson t) {
+            t.forEach((s, jsonNode) -> {
+                switch (jsonNode.getNodeType()) {
+                    case STRING -> con.accept(s,jsonNode.asText());
+                    case NUMBER -> {
+                        if (jsonNode.asText().indexOf('.') == -1) {
+                            con.accept(s,jsonNode.asLong());
+                        } else {
+                            con.accept(s,jsonNode.asDouble());
+                        }
+                    }
+                    case BOOLEAN -> con.accept(s,jsonNode.asBoolean());
+                    case NULL -> con.accept(s,null);
+                }
+            });
         } else {
+            Field[] declaredFields = table.getClass().getDeclaredFields();
             for (Field declaredField : declaredFields) {
                 String name = declaredField.getName();
                 Object property = BeanUtil.getProperty(table, name);

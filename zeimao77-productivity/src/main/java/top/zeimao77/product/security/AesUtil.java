@@ -6,9 +6,14 @@ import static top.zeimao77.product.exception.ExceptionCodeDefinition.APPERR;
 import static top.zeimao77.product.exception.ExceptionCodeDefinition.CUSTOM;
 
 import javax.crypto.*;
+import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import java.io.IOException;
+import java.security.AlgorithmParameters;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidParameterSpecException;
 import java.util.Base64;
 
 /**
@@ -16,6 +21,8 @@ import java.util.Base64;
  */
 public class AesUtil {
     private SecretKey secretKey;
+    private AlgorithmParameters algorithmParameters;
+    Cipher cipher;
 
     /**
      * 生成密钥 key的长度
@@ -39,7 +46,32 @@ public class AesUtil {
      * @param key 密钥
      */
     public AesUtil(byte[] key){
+        this("AES/ECB/PKCS5Padding",key,null);
+    }
+
+    public AesUtil(byte [] key,byte[] iv){
+        this("AES/CTR/NoPadding",key,iv);
+    }
+
+    public AesUtil(String mode,byte [] key,byte[] iv){
+        try {
+            this.cipher = Cipher.getInstance(mode);
+        } catch (NoSuchAlgorithmException e) {
+            throw new BaseServiceRunException(CUSTOM,"解密错误",e);
+        } catch (NoSuchPaddingException e) {
+            throw new BaseServiceRunException(CUSTOM,"解密错误",e);
+        }
         this.secretKey = new SecretKeySpec(key, 0, key.length, "AES");
+        if(iv != null) {
+            try {
+                this.algorithmParameters = AlgorithmParameters.getInstance("AES");
+                this.algorithmParameters.init(new IvParameterSpec(iv));
+            } catch (NoSuchAlgorithmException e) {
+            } catch (InvalidParameterSpecException e) {
+                throw new BaseServiceRunException(CUSTOM,"解密错误",e);
+            }
+        }
+
     }
 
     /**
@@ -49,19 +81,20 @@ public class AesUtil {
      */
     public byte[] encode(byte[] source) {
         try {
-            Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
-            cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+            if(algorithmParameters != null) {
+                cipher.init(Cipher.ENCRYPT_MODE, secretKey,algorithmParameters);
+            } else {
+                cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+            }
             byte[]  bs = cipher.doFinal(source);
             return bs;
-        } catch (NoSuchAlgorithmException e) {
-            throw new BaseServiceRunException(CUSTOM,"解密错误",e);
-        } catch (NoSuchPaddingException e) {
-            throw new BaseServiceRunException(CUSTOM,"解密错误",e);
         } catch (InvalidKeyException e) {
             throw new BaseServiceRunException(CUSTOM,"解密错误",e);
         } catch (BadPaddingException e) {
             throw new BaseServiceRunException(CUSTOM,"解密错误",e);
         } catch (IllegalBlockSizeException e) {
+            throw new BaseServiceRunException(CUSTOM,"解密错误",e);
+        } catch (InvalidAlgorithmParameterException e) {
             throw new BaseServiceRunException(CUSTOM,"解密错误",e);
         }
     }
@@ -84,20 +117,21 @@ public class AesUtil {
      */
     public byte[] decode(byte[] source) {
         try {
-            Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
-            cipher.init(Cipher.DECRYPT_MODE,secretKey);
+            if(algorithmParameters != null) {
+                cipher.init(Cipher.ENCRYPT_MODE, secretKey,algorithmParameters);
+            } else {
+                cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+            }
             byte[] decode = cipher.doFinal(source);
             return decode;
         }catch (IllegalBlockSizeException e) {
             throw new BaseServiceRunException(APPERR,"非法密文",e);
-        }catch (NoSuchAlgorithmException e) {
-            throw new BaseServiceRunException(CUSTOM,"解密错误",e);
         } catch (InvalidKeyException e) {
-            throw new BaseServiceRunException(CUSTOM,"解密错误",e);
-        } catch (NoSuchPaddingException e) {
             throw new BaseServiceRunException(CUSTOM,"解密错误",e);
         } catch (BadPaddingException e) {
             throw new BaseServiceRunException(CUSTOM,"解密错误", e);
+        } catch (InvalidAlgorithmParameterException e) {
+            throw new BaseServiceRunException(CUSTOM,"解密错误",e);
         }
     }
 

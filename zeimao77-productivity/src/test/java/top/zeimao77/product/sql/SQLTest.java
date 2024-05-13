@@ -25,7 +25,8 @@ class SQLTest extends BaseMain {
 
     @Test
     void testbracket() {
-        SQL select = new SQL().select()
+        SQL select = new SQL().select("a","aa")
+                .select("b","bb")
                 .from("a")
                 .where(true,SQL.BIND_AND,"fa",IWhere.COND_QIS,"va")
                 .where(true,SQL.BIND_AND,null,IWhere.COND_LBRACKET,null)
