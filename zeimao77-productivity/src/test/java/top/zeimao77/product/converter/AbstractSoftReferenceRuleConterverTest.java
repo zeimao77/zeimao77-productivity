@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Test;
 import top.zeimao77.product.main.BaseMain;
 import top.zeimao77.product.util.UuidGenerator;
 
+import java.time.LocalDateTime;
+
 class AbstractSoftReferenceRuleConterverTest extends BaseMain {
 
     @Test
@@ -17,6 +19,11 @@ class AbstractSoftReferenceRuleConterverTest extends BaseMain {
                 for (int i = 0; i < 100000; i++) {
                     addConvRule(String.valueOf(i), UuidGenerator.INSTANCE.generate());
                 }
+            }
+
+            @Override
+            protected void refreshExpiryTime() {
+                this.expiryTime = LocalDateTime.now().plusSeconds(10);
             }
         };
         abstractSoftReferenceRuleConterver.lock();

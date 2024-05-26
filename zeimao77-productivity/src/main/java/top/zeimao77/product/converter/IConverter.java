@@ -9,6 +9,10 @@ import java.util.function.Function;
  */
 public interface IConverter<K> {
 
+    int REFRESHFLAG = 0x01;  // 刷新标志
+    int REFRESHFLAG_SUCCESS = 0x02;  // 刷新成功标志
+
+
 
     /**
      * 默认的INT类型转换

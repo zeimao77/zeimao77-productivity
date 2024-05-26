@@ -26,6 +26,10 @@ public abstract class AbstractCustomRefreshConverter<K> implements IConverter<K>
      */
     protected ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
     /**
+     * 未刷新过标志 刷新后置false
+     */
+    protected int refreshFalg = 0;
+    /**
      * 规则缓存
      */
     protected RuleRepository<K> ruleRepository = new MemoryRuleRepository<>();
@@ -80,20 +84,25 @@ public abstract class AbstractCustomRefreshConverter<K> implements IConverter<K>
      */
     @Override
     public void refreshRule() {
-        long between = ChronoUnit.SECONDS.between(LocalDateTime.now(), expiryTime);
-        if(ruleRepository.isEmpty() || between <= 0) {
+        if(needRefresh()) {
             lock.writeLock().lock();
             try {
-                between = ChronoUnit.SECONDS.between(LocalDateTime.now(), expiryTime);
-                if(ruleRepository.isEmpty() || between <= 0) {
+                if(needRefresh()) {
                     clear();
+                    refreshFalg = 0;
                     refresh();
+                    refreshFalg |= REFRESHFLAG;
                     refreshExpiryTime();
                 }
             } finally {
                 lock.writeLock().unlock();
             }
         }
+    }
+
+    protected boolean needRefresh() {
+        long between = ChronoUnit.SECONDS.between(LocalDateTime.now(), expiryTime);
+        return (refreshFalg & REFRESHFLAG) == 0 || between < 0;
     }
 
     /**

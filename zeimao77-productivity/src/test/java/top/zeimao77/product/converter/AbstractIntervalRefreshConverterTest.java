@@ -16,6 +16,7 @@ class AbstractIntervalRefreshConverterTest extends BaseMain {
                 addConvRule(1, 200, "A1200");
                 addConvRule(2, 300, "B2300");
                 addConvRule(3, 400, "C3400");
+
             }
 
             @Override
@@ -28,7 +29,7 @@ class AbstractIntervalRefreshConverterTest extends BaseMain {
             }
         };
         logger.info(converter.getName(new ImmutablePair<>(1,200)));
-        delay_ms(3500);
+        delay_ms(3970);
         logger.info(converter.getName(new ImmutablePair<>(1,201)));
     }
 }
