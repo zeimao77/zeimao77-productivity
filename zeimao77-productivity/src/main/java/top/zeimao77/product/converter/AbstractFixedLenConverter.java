@@ -6,10 +6,8 @@ import org.slf4j.LoggerFactory;
 import java.time.LocalDateTime;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.locks.ReentrantLock;
 
 public abstract class AbstractFixedLenConverter<K> implements IConverter<K> {
 
@@ -47,7 +45,7 @@ public abstract class AbstractFixedLenConverter<K> implements IConverter<K> {
         Object result = null;
         CacheData cacheData = ruleRepository.get(key);
         if(cacheData != null) {
-            cacheData.setAccessdTime(System.currentTimeMillis());
+            cacheData.access();
             return cacheData.getData();
         }
         this.refreshRule();
@@ -91,16 +89,19 @@ public abstract class AbstractFixedLenConverter<K> implements IConverter<K> {
     }
 
     private boolean needRefresh() {
+        if(lastRefresh == null)
+            lastRefresh = LocalDateTime.now();
+        // 超过2倍的最小刷新时间  则刷新
+        LocalDateTime nextRefreshTime = lastRefresh.plusSeconds(minRefresh*2);
+        if(nextRefreshTime.isBefore(LocalDateTime.now()))
+            return true;
         // 不满 则不用清理
         if(this.ruleRepository.size() < capacity)
             return false;
-        if(lastRefresh == null)
-            lastRefresh = LocalDateTime.now();
         // 没有满足最小刷新时间 则不清
-        LocalDateTime nextRefreshTime = lastRefresh.plusSeconds(minRefresh);
-        if(nextRefreshTime.isAfter(LocalDateTime.now())) {
+        nextRefreshTime = lastRefresh.plusSeconds(minRefresh);
+        if(nextRefreshTime.isAfter(LocalDateTime.now()))
             return false;
-        }
         return true;
     }
 
@@ -115,6 +116,11 @@ public abstract class AbstractFixedLenConverter<K> implements IConverter<K> {
             this.accessdTime = System.currentTimeMillis();
             this.cacheTime = accessdTime;
             this.count = 1;
+        }
+
+        public void access() {
+            this.accessdTime = System.currentTimeMillis();
+            this.count++;
         }
 
         public Long getCacheTime() {

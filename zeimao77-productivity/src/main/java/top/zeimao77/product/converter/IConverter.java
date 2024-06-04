@@ -42,7 +42,10 @@ public interface IConverter<K> {
      * @return 结果
      */
     default <T> T getName(K key, Function<Object,T> fun){
-        return fun.apply(get(key));
+        Object o = get(key);
+        if(o == null)
+            return null;
+        return fun.apply(o);
     }
 
     /**

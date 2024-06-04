@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 import top.zeimao77.product.main.BaseMain;
 import top.zeimao77.product.util.CollectionUtil;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

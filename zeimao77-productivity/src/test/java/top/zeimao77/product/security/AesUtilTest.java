@@ -21,7 +21,7 @@ import static top.zeimao77.product.exception.ExceptionCodeDefinition.CUSTOM;
 class AesUtilTest extends BaseMain {
 
     @Test
-    void encode() throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidParameterSpecException, InvalidAlgorithmParameterException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+    void encode() {
         byte[] key = ByteArrayCoDesUtil.hexDecode("5F65674615986D45836261410CE3FF92CD750B2839BB551C37C1D36DAEB69813");
         byte[] iv = ByteArrayCoDesUtil.hexDecode("6F856743C5986D458362C141ACE3FF91");
 
