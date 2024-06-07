@@ -85,7 +85,7 @@ public class HttpClientUtil11 implements IHttpClient {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             result = response.body();
         } catch (IOException e) {
-            throw new BaseServiceRunException(IOEXCEPTION,"GET请求IO异常",e);
+            throw new BaseServiceRunException(IOEXCEPTION,"GET请求IO异常:"+e.getMessage(),e);
         } catch (InterruptedException e) {
             logger.error("线程中断错误",e);
             Thread.currentThread().interrupt();
@@ -126,7 +126,7 @@ public class HttpClientUtil11 implements IHttpClient {
             logger.debug("response_code:{}",response.statusCode());
             result = response.body();
         } catch (IOException e) {
-            throw new BaseServiceRunException(IOEXCEPTION,"POST请求IO异常",e);
+            throw new BaseServiceRunException(IOEXCEPTION,"POST请求IO异常:"+e.getMessage(),e);
         } catch (InterruptedException e){
             logger.error("线程中断错误",e);
             Thread.currentThread().interrupt();

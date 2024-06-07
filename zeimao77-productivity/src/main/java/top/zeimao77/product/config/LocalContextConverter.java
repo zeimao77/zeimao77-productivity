@@ -44,7 +44,7 @@ public class LocalContextConverter extends AbstractNonReFreshConverter<String> {
             } catch (FileNotFoundException e) {
                 throw new BaseServiceRunException(WRONG_SOURCE,"文件不存在",e);
             } catch (IOException e) {
-                throw new BaseServiceRunException(IOEXCEPTION,"IO错误",e);
+                throw new BaseServiceRunException(IOEXCEPTION,"IO错误:"+e.getMessage(),e);
             }
             return;
         }
@@ -66,7 +66,7 @@ public class LocalContextConverter extends AbstractNonReFreshConverter<String> {
         try {
             properties.load(is);
         } catch (IOException e) {
-            throw new BaseServiceRunException(IOEXCEPTION,"IO错误");
+            throw new BaseServiceRunException(IOEXCEPTION,"IO错误:"+e.getMessage());
         }
         for (Object o : properties.keySet()) {
             String k = o.toString();

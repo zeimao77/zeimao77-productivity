@@ -85,7 +85,7 @@ public class CodeFile {
                 file.createNewFile();
                 printStream = new PrintStream(file);
             } catch (IOException e) {
-                throw new BaseServiceRunException(IOEXCEPTION,"IO异常",e);
+                throw new BaseServiceRunException(IOEXCEPTION,"IO异常:"+e.getMessage(),e);
             }
         }
         for (String line : _lines) {

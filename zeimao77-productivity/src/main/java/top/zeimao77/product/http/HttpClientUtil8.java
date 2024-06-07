@@ -52,7 +52,7 @@ public class HttpClientUtil8 implements IHttpClient {
                 try {
                     is.close();
                 } catch (IOException e) {
-                    throw new BaseServiceRunException(IOEXCEPTION,"IO错误",e);
+                    throw new BaseServiceRunException(IOEXCEPTION,"IO错误:"+e.getMessage(),e);
                 }
             }
         }
