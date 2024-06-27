@@ -37,6 +37,12 @@ public class StringUtil {
         return cut(str,len,DEFAULT_SUFFIX);
     }
 
+    public static String printNullableObject(Object o) {
+        return o == null ? "null" : o.toString();
+    }
 
+    public static String printNullableObject(Object o,String defaultValue) {
+        return o == null ? defaultValue : o.toString();
+    }
 
 }
