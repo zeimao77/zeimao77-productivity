@@ -24,6 +24,8 @@ import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.concurrent.TimeUnit;
 
 public class Main extends BaseMain {
@@ -179,9 +181,9 @@ public class Main extends BaseMain {
 
 
     public static void main(String[] args) throws UnsupportedEncodingException {
-        BaseMain.showBanner("0.0.1");
-        InsertCoupon(1233785354584564865L,"1002",21,10.61D);
-        //InsertErp();
+        BigDecimal bigDecimal = new BigDecimal("1500.0000");
+        BigDecimal bigDecimal1 = new BigDecimal("1500.00");
+        logger.info("compire:{}",bigDecimal1.equals(bigDecimal),bigDecimal.compareTo(bigDecimal1)==0 );
     }
 
     public static void InsertCoupon(Long oid,String shardingCode,Integer rowNo, Double amount) {
