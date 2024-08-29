@@ -2,7 +2,7 @@ package top.zeimao77.product.jobs;
 import top.zeimao77.product.util.LongBitMap;
 
 import static top.zeimao77.product.exception.ExceptionCodeDefinition.APPERR;
-import static top.zeimao77.product.exception.ExceptionCodeDefinition.NON_RETRYABLE;
+import static top.zeimao77.product.exception.ExceptionCodeDefinition.RETRYABLE;
 
 public interface JobExec {
 
@@ -29,7 +29,7 @@ public interface JobExec {
         }
 
         public boolean retrieable(){
-            return !LongBitMap.matches(this.resultCode,NON_RETRYABLE);
+            return !LongBitMap.matches(this.resultCode,RETRYABLE);
         }
 
         /**

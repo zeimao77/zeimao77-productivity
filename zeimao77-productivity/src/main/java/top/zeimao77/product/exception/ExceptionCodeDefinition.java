@@ -6,7 +6,7 @@ package top.zeimao77.product.exception;
  */
 public interface ExceptionCodeDefinition {
 
-    Integer NON_RETRYABLE = 0x40000000;  // 定义一个错误是不建议再次尝试的;
+    Integer RETRYABLE = 0x40000000;  // 定义一个错误是建议再次尝试的;
     Integer CONVERTIBLE = 0x20000000;  // 表示该错误由于捕获一个异常之后转化而来的异常;
     Integer RETAION1 = 0x10000000;  // 保留标志1
     Integer RETAION2 = 0x08000000;  // 保留标志2

@@ -181,9 +181,10 @@ public class Main extends BaseMain {
 
 
     public static void main(String[] args) throws UnsupportedEncodingException {
-        BigDecimal bigDecimal = new BigDecimal("1500.0000");
-        BigDecimal bigDecimal1 = new BigDecimal("1500.00");
-        logger.info("compire:{}",bigDecimal1.equals(bigDecimal),bigDecimal.compareTo(bigDecimal1)==0 );
+        String[] split = "abc,444".split(",");
+        for (String s : split) {
+            System.out.println(s);
+        }
     }
 
     public static void InsertCoupon(Long oid,String shardingCode,Integer rowNo, Double amount) {

@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.function.BiFunction;
 
 import static top.zeimao77.product.exception.ExceptionCodeDefinition.CUSTOM;
-import static top.zeimao77.product.exception.ExceptionCodeDefinition.NON_RETRYABLE;
 
 public abstract class AbstractSimpleRepository<T,W> extends AbstractRepository<T, W> {
 
@@ -193,7 +192,7 @@ public abstract class AbstractSimpleRepository<T,W> extends AbstractRepository<T
                     sql.where(SQL.BIND_AND,codeNameToDbName(name),SQL.COND_QIS,idParseFunc.apply(id,name));
                 }
             } else {
-                throw new BaseServiceRunException(CUSTOM | NON_RETRYABLE,"悲剧了,我无法解释该主键");
+                throw new BaseServiceRunException(CUSTOM,"悲剧了,我无法解释该主键");
             }
         }
     }
@@ -215,7 +214,7 @@ public abstract class AbstractSimpleRepository<T,W> extends AbstractRepository<T
                     sql.where(SQL.BIND_AND,codeNameToDbName(name),SQL.COND_QIS,idParseFunc.apply(id,name));
                 }
             } else {
-                throw new BaseServiceRunException(CUSTOM | NON_RETRYABLE,"悲剧了,我无法解释该主键");
+                throw new BaseServiceRunException(CUSTOM,"悲剧了,我无法解释该主键");
             }
         }
     }
