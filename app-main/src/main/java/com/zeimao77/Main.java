@@ -181,10 +181,8 @@ public class Main extends BaseMain {
 
 
     public static void main(String[] args) throws UnsupportedEncodingException {
-        String[] split = "abc,444".split(",");
-        for (String s : split) {
-            System.out.println(s);
-        }
+        long l = 0xFFFFFF;
+        System.out.println(l);
     }
 
     public static void InsertCoupon(Long oid,String shardingCode,Integer rowNo, Double amount) {
