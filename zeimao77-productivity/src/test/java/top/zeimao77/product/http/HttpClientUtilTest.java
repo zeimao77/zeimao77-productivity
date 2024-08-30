@@ -18,9 +18,8 @@ class HttpClientUtilTest extends BaseMain {
         HttpClientUtil11 httpClientUtil = new HttpClientUtil11();
         String s = httpClientUtil.sendGet("https://www.baidu.com");
         logger.info(s);
-        HttpClientUtil8 httpClientUtil8 = new HttpClientUtil8();
-        String s1 = httpClientUtil8.sendGet("https://www.baidu.com");
-        logger.info(s1);
+        s = new HttpClientUtil8().sendGet("https://www.zeimao77.top/stadir/66", null, 1000);
+        logger.info(s);
     }
 
     @Test
