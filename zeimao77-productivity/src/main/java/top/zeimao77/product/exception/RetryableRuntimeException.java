@@ -1,7 +1,7 @@
 package top.zeimao77.product.exception;
 
 /**
- * 不可重试的异常
+ * 可重试的异常
  */
 public class RetryableRuntimeException extends BaseServiceRunException {
 

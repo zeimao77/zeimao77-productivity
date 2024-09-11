@@ -26,7 +26,10 @@ class StringOptionalTest extends BaseMain {
     void ifBlankThrow() {
         String param = " ";
         StringOptional stringOptional = new StringOptional(param);
-        stringOptional.ifBlankThrow("param");
+        logger.info("isBlank:{}",stringOptional.isBlank());
+        logger.info("isEmpty:{}",stringOptional.isEmpty());
+        logger.info("isNull:{}",stringOptional.isNull());
+        stringOptional.ifEmptyThrow("param");
         logger.info("Done..................");
     }
 
