@@ -10,7 +10,7 @@ import java.util.function.Supplier;
 
 public class StringOptional {
 
-    public static final Predicate<String> TRIM_BLACK_CHECK = o -> !o.trim().isEmpty() ;
+    public static final Predicate<String> TRIM_BLANK_CHECK = o -> !o.trim().isEmpty() ;
     public static final StringOptional EMPTY = new StringOptional(null);
 
     private Predicate<String> check;
@@ -18,7 +18,7 @@ public class StringOptional {
 
     public StringOptional(String value){
         this.optional = Optional.ofNullable(value);
-        this.check = TRIM_BLACK_CHECK;
+        this.check = TRIM_BLANK_CHECK;
     }
 
     public void setCheck(Predicate<String> check) {
@@ -29,31 +29,31 @@ public class StringOptional {
         return EMPTY;
     }
 
-    public boolean isBlack() {
+    public boolean isBlank() {
         return optional.filter(check).isEmpty();
     }
 
-    public void ifNotBlack(Consumer<String> action) {
-        if (!isBlack())
+    public void ifNotBlank(Consumer<String> action) {
+        if (!isBlank())
             action.accept(optional.get());
     }
 
-    public String orBlackGet(String defaultValue) {
-        return isBlack() ? defaultValue : optional.get();
+    public String orBlankGet(String defaultValue) {
+        return isBlank() ? defaultValue : optional.get();
     }
 
-    public String orBlackGet(Supplier<String> supplier) {
-        return isBlack() ? supplier.get() : optional.get();
+    public String orBlankGet(Supplier<String> supplier) {
+        return isBlank() ? supplier.get() : optional.get();
     }
 
-    public String ifBlackThrow(String fieldName) {
-        if(isBlack())
+    public String ifBlankThrow(String fieldName) {
+        if(isBlank())
             throw new BaseServiceRunException(ExceptionCodeDefinition.WRONG_SOURCE,fieldName + "参数必需;");
         return optional.get();
     }
 
-    public <X extends Throwable> String ifBlackThrow(Supplier<? extends X> exceptionSupplier) throws X {
-        if (isBlack()) {
+    public <X extends Throwable> String ifBlankThrow(Supplier<? extends X> exceptionSupplier) throws X {
+        if (isBlank()) {
             return optional.get();
         } else {
             throw exceptionSupplier.get();

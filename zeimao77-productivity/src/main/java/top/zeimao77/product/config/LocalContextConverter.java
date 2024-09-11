@@ -49,7 +49,7 @@ public class LocalContextConverter extends AbstractNonReFreshConverter<String> {
             return;
         }
         {
-            String resourceName = AssertUtil.isBlack(localContextActive) ? "localcontext.properties" : "localcontext-"+localContextActive + ".properties";
+            String resourceName = AssertUtil.isBlank(localContextActive) ? "localcontext.properties" : "localcontext-"+localContextActive + ".properties";
             try(InputStream resourceAsStream = LocalContext.class.getClassLoader().getResourceAsStream(resourceName)) {
                 if(resourceAsStream == null)
                     return;

@@ -105,7 +105,7 @@ public interface StatementParamResolver {
                 }
             } else if(StringOptional.class.isAssignableFrom(javaType)) {
                 StringOptional s = (StringOptional) value;
-                if(s.isBlack()) {
+                if(s.isBlank()) {
                     execSqlBuilder.append("NULL");
                 } else if(s.get().contains("'")) {
                     execSqlBuilder.append(QUOTATION_MARKS).append(s.get().replaceAll("'","\\\\'")).append(QUOTATION_MARKS);

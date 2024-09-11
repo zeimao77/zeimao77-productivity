@@ -94,12 +94,12 @@ public class AssertUtil {
      * @param obj 对象
      * @return 判断结果
      */
-    public static boolean isBlack(CharSequence obj) {
+    public static boolean isBlank(CharSequence obj) {
         return obj == null || obj.toString().trim().isEmpty();
     }
 
-    public static <T extends CharSequence> void ifNotBlack(T obj,Consumer<T> con) {
-        if(!isBlack(obj))
+    public static <T extends CharSequence> void ifNotBlank(T obj, Consumer<T> con) {
+        if(!isBlank(obj))
             con.accept(obj);
     }
 

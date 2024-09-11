@@ -48,7 +48,7 @@ public class LocalContext {
             return Optional.empty();
         if(o instanceof Long t)
             return Optional.of(t);
-        return AssertUtil.isBlack(o.toString()) ? Optional.empty() : Optional.of(Long.valueOf(o.toString()));
+        return AssertUtil.isBlank(o.toString()) ? Optional.empty() : Optional.of(Long.valueOf(o.toString()));
     }
 
     public static Optional<Integer> getInteger(String key) {
@@ -57,7 +57,7 @@ public class LocalContext {
             return Optional.empty();
         if(o instanceof Integer t)
             return Optional.of(t);
-        return AssertUtil.isBlack(o.toString()) ? Optional.empty() : Optional.of(Integer.valueOf(o.toString()));
+        return AssertUtil.isBlank(o.toString()) ? Optional.empty() : Optional.of(Integer.valueOf(o.toString()));
     }
 
     public static Optional<Double> getDouble(String key) {
@@ -66,7 +66,7 @@ public class LocalContext {
             return Optional.empty();
         if(o instanceof Double t)
             return Optional.of(t);
-        return AssertUtil.isBlack(o.toString()) ? Optional.empty() : Optional.of(Double.valueOf(o.toString()));
+        return AssertUtil.isBlank(o.toString()) ? Optional.empty() : Optional.of(Double.valueOf(o.toString()));
     }
 
     public static Optional<Boolean> getBoolean(String key) {

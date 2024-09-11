@@ -105,11 +105,11 @@ public class ComponentFactory {
                 return beanFactory.getBean(datasourceBeanName,DataSource.class);
         }
         StringOptional url = LocalContext.getString(prefx + "_url");
-        url.ifBlackThrow(prefx+"_url");
+        url.ifBlankThrow(prefx+"_url");
         StringOptional username = LocalContext.getString(prefx + "_username");
-        username.ifBlackThrow(prefx+"_username");
+        username.ifBlankThrow(prefx+"_username");
         StringOptional password = LocalContext.getString(prefx + "_password");
-        password.ifBlackThrow(prefx+"_password");
+        password.ifBlankThrow(prefx+"_password");
 
         StringOptional driverClassName = LocalContext.getString(prefx + "_driverClassName");
         StringOptional maxLifetime = LocalContext.getString(prefx + "_maxLifetime");
@@ -124,23 +124,23 @@ public class ComponentFactory {
         dataSource.setJdbcUrl(url.get());
         dataSource.setUsername(username.get());
         dataSource.setPassword(password.get());
-        driverClassName.ifNotBlack(dataSource::setDriverClassName);
-        poolName.ifNotBlack(dataSource::setPoolName);
+        driverClassName.ifNotBlank(dataSource::setDriverClassName);
+        poolName.ifNotBlank(dataSource::setPoolName);
         // 客户端等待来自池的连接的最大毫秒数，超时将SQLException 最少 250; 默认 30000（30秒）
-        connectionTimeout.ifNotBlack(o -> dataSource.setConnectionTimeout(Long.valueOf(o)));
+        connectionTimeout.ifNotBlank(o -> dataSource.setConnectionTimeout(Long.valueOf(o)));
         // 连接的最大生命周期 最小 30000; 默认值：1800000（30 分钟）
-        maxLifetime.ifNotBlack(o -> dataSource.setMaxLifetime(Long.valueOf(o)));
+        maxLifetime.ifNotBlank(o -> dataSource.setMaxLifetime(Long.valueOf(o)));
         // 允许达到的连接的最大数量 默认值：10
-        maximumPoolSize.ifNotBlack(o -> dataSource.setMaximumPoolSize(Integer.valueOf(o)));
+        maximumPoolSize.ifNotBlank(o -> dataSource.setMaximumPoolSize(Integer.valueOf(o)));
         // 维护的最小空闲连接数 默认值 与 maximumPoolSize 相同
-        minimumIdea.ifNotBlack(o -> dataSource.setMinimumIdle(Integer.valueOf(o)));
+        minimumIdea.ifNotBlank(o -> dataSource.setMinimumIdle(Integer.valueOf(o)));
         // 允许连接在池中空闲的最长时间 超时淘汰 0:永不淘汰
         // 允许的最小值为 10000; 默认值：600000（10 分钟）
-        idleTimeout.ifNotBlack(o -> dataSource.setIdleTimeout(Long.valueOf(o)));
+        idleTimeout.ifNotBlank(o -> dataSource.setIdleTimeout(Long.valueOf(o)));
         // 尝试保持连接活动的频率 最小值为 30000（30 秒）， 默认值：0（禁用）
-        keepaliveTime.ifNotBlack(o -> dataSource.setKeepaliveTime(Long.valueOf(o)));
+        keepaliveTime.ifNotBlank(o -> dataSource.setKeepaliveTime(Long.valueOf(o)));
         // 存在Connection.isValid() API时不建议设置此值
-        connectionTestQuery.ifNotBlack(dataSource::setConnectionTestQuery);
+        connectionTestQuery.ifNotBlank(dataSource::setConnectionTestQuery);
         if(beanFactory != null)
             beanFactory.registerSingleton(datasourceBeanName,dataSource);
         return dataSource;
@@ -206,7 +206,7 @@ public class ComponentFactory {
      */
     public static Jedis initJedis(String prefx,BeanFactory beanFactory) {
         StringOptional host = LocalContext.getString(prefx + "_host");
-        host.ifBlackThrow(prefx + "_host");
+        host.ifBlankThrow(prefx + "_host");
         StringOptional password = LocalContext.getString(prefx + "_password");
         Jedis jedis = JedisBuilder.create().host(HostAndPort.from(host.get()))
                 .password(password.get())
@@ -229,13 +229,13 @@ public class ComponentFactory {
      */
     public static SimpleEmailSender initSimpleEmailSender(String prefx,BeanFactory beanFactory) {
         StringOptional smtpHost = LocalContext.getString(prefx+"_smtpHost");
-        smtpHost.ifBlackThrow(prefx+"_smtpHost");
+        smtpHost.ifBlankThrow(prefx+"_smtpHost");
         StringOptional from = LocalContext.getString(prefx+"_from");
-        smtpHost.ifBlackThrow(prefx+"_from");
+        smtpHost.ifBlankThrow(prefx+"_from");
         StringOptional username = LocalContext.getString(prefx + "_username");
-        smtpHost.ifBlackThrow(prefx+"_username");
+        smtpHost.ifBlankThrow(prefx+"_username");
         StringOptional password = LocalContext.getString(prefx + "_password");
-        smtpHost.ifBlackThrow(prefx+"_password");
+        smtpHost.ifBlankThrow(prefx+"_password");
         SimpleEmailSender simpleEmailSender = new SimpleEmailSender(smtpHost.get(), from.get());
         simpleEmailSender.authenticator(username.get(),password.get());
         if(beanFactory != null)
@@ -255,12 +255,12 @@ public class ComponentFactory {
      */
     public static DingDingRobotClient initDingDingRobotClient(String prefx,BeanFactory beanFactory) {
         StringOptional webhook = LocalContext.getString(prefx+"_webhook");
-        webhook.ifBlackThrow("webhook");
+        webhook.ifBlankThrow("webhook");
         StringOptional token = LocalContext.getString(prefx+"_token");
         StringOptional secret = LocalContext.getString(prefx+"_secret");
-        secret.ifBlackThrow("secret");
+        secret.ifBlankThrow("secret");
         DingDingRobotClient client = null;
-        if(token.isBlack())
+        if(token.isBlank())
             client = new DingDingRobotClient(webhook.get(),secret.get());
         else
             client = new DingDingRobotClient(webhook.get(),token.get(),secret.get());
@@ -277,7 +277,7 @@ public class ComponentFactory {
 
     public static PrintWriter createPrintWriter(String key) {
         StringOptional writerPath = LocalContext.getString(key);
-        writerPath.ifBlackThrow(key);
+        writerPath.ifBlankThrow(key);
         PrintWriter printStream = StreamUtil.printWriter(writerPath.get());
         return printStream;
     }

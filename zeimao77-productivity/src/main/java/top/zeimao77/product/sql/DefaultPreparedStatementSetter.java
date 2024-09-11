@@ -27,7 +27,7 @@ public class DefaultPreparedStatementSetter implements PreparedStatementSetter {
             } else if(String.class.isAssignableFrom(javaType)) {
                 preparedStatement.setString(index, (String) value);
             } else if(StringOptional.class.isAssignableFrom(javaType)) {
-                preparedStatement.setString(index,((StringOptional)value).isBlack() ? null : ((StringOptional)value).get());
+                preparedStatement.setString(index,((StringOptional)value).isBlank() ? null : ((StringOptional)value).get());
             } else if(Integer.class.isAssignableFrom(javaType)) {
                 preparedStatement.setInt(index, ((Integer) value));
             } else if(Long.class.isAssignableFrom(javaType)) {
