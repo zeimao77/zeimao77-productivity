@@ -54,19 +54,18 @@ public interface StatementParamResolver {
         int end = 0;
         if(getStatementParams() == null || getStatementParams().isEmpty()) {
             return getSql();
-        } else {
-            execSqlBuilder = new StringBuilder();
-            for (StatementParameter param : getStatementParams()) {
-                end = getSql().indexOf("?",end);
-                if(end > 0) {
-                    execSqlBuilder.append(getSql(),start,end);
-                    paramSetter.setParam(execSqlBuilder,param.getIndex(),param.getJavaType(),param.getJdbcType(),param.getValue());
-                    start = end+1;
-                    end++;
-                }
-            }
-            execSqlBuilder.append(getSql(),start,getSql().length());
         }
+        execSqlBuilder = new StringBuilder();
+        for (StatementParameter param : getStatementParams()) {
+            end = getSql().indexOf("?",end);
+            if(end > 0) {
+                execSqlBuilder.append(getSql(),start,end);
+                paramSetter.setParam(execSqlBuilder,param.getIndex(),param.getJavaType(),param.getJdbcType(),param.getValue());
+                start = end+1;
+                end++;
+            }
+        }
+        execSqlBuilder.append(getSql(),start,getSql().length());
         return execSqlBuilder.toString();
     }
 
@@ -106,7 +105,7 @@ public interface StatementParamResolver {
                 }
             } else if(StringOptional.class.isAssignableFrom(javaType)) {
                 StringOptional s = (StringOptional) value;
-                if(s.isBlack()) {
+                if(s.isBlank()) {
                     execSqlBuilder.append("NULL");
                 } else if(s.get().contains("'")) {
                     execSqlBuilder.append(QUOTATION_MARKS).append(s.get().replaceAll("'","\\\\'")).append(QUOTATION_MARKS);

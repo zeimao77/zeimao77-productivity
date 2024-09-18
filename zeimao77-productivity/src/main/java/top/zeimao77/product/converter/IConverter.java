@@ -9,6 +9,10 @@ import java.util.function.Function;
  */
 public interface IConverter<K> {
 
+    int REFRESHFLAG = 0x01;  // 刷新标志
+    int REFRESHFLAG_SUCCESS = 0x02;  // 刷新成功标志
+
+
 
     /**
      * 默认的INT类型转换
@@ -38,7 +42,10 @@ public interface IConverter<K> {
      * @return 结果
      */
     default <T> T getName(K key, Function<Object,T> fun){
-        return fun.apply(get(key));
+        Object o = get(key);
+        if(o == null)
+            return null;
+        return fun.apply(o);
     }
 
     /**

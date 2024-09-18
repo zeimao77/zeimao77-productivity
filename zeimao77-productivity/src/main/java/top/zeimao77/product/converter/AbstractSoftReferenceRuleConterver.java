@@ -4,6 +4,8 @@ import top.zeimao77.product.exception.ExceptionCodeDefinition;
 import top.zeimao77.product.util.AssertUtil;
 
 import java.lang.ref.SoftReference;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -15,12 +17,15 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * @param <K>
  * @since 2.2.1
  */
-public abstract class AbstractSoftReferenceRuleConterver<K> implements IConverter<K>{
+public abstract class AbstractSoftReferenceRuleConterver<K> implements IConverter<K> {
 
     private MemoryRuleRepository<K> memoryRuleRepository;
     private SoftReference<MemoryRuleRepository<K>> softReferenceMemoryRuleRepository = new SoftReference<>(null);
     private AtomicInteger refrenceCount = new AtomicInteger(0);
     protected ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
+    protected LocalDateTime expiryTime = LocalDateTime.of(2000,1,1,0,0,0);
+    protected int refreshFalg = 0;
+
 
     public void lock() {
         if(memoryRuleRepository == null)
@@ -32,6 +37,7 @@ public abstract class AbstractSoftReferenceRuleConterver<K> implements IConverte
                 if(memoryRuleRepository == null) {
                     memoryRuleRepository = new MemoryRuleRepository<K>();
                     softReferenceMemoryRuleRepository = new SoftReference<>(memoryRuleRepository);
+                    refreshFalg = 0;
                 }
             } finally {
                 lock.writeLock().unlock();
@@ -52,18 +58,33 @@ public abstract class AbstractSoftReferenceRuleConterver<K> implements IConverte
         this.memoryRuleRepository.put(key,value);
     }
 
+    public void clear() {
+        this.memoryRuleRepository.clear();
+    }
+
     @Override
     public void refreshRule() {
         AssertUtil.assertTrue(this.refrenceCount.get() > 0, ExceptionCodeDefinition.WRONG_ACTION,"缓存处于软引用状态，请先上锁");
-        if(memoryRuleRepository.isEmpty()) {
+        if(needRefresh()) {
             lock.writeLock().lock();
             try {
-                if(memoryRuleRepository.isEmpty())
+                if(needRefresh())
+                    clear();
+                    refreshFalg = 0;
                     refresh();
+                    refreshFalg |= REFRESHFLAG;
+                    refreshExpiryTime();
             } finally {
                 lock.writeLock().unlock();
             }
         }
+    }
+
+    protected abstract void refreshExpiryTime();
+
+    protected boolean needRefresh() {
+        long between = ChronoUnit.SECONDS.between(LocalDateTime.now(), expiryTime);
+        return (refreshFalg & REFRESHFLAG) == 0 || between < 0;
     }
 
     public void refreshRule(boolean force) {

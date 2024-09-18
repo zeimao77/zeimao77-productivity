@@ -1,32 +1,32 @@
 package com.zeimao77;
-
-import top.zeimao77.product.cmd.ProgressBar;
-import top.zeimao77.product.config.LocalContext;
-import top.zeimao77.product.jobs.TokenBucket;
 import top.zeimao77.product.main.BaseMain;
 
-import top.zeimao77.product.util.LongIdGenerator;
-
 import java.io.UnsupportedEncodingException;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.concurrent.TimeUnit;
+import java.util.HashMap;
 
 public class Main extends BaseMain {
 
     public static void main(String[] args) throws UnsupportedEncodingException {
-        BaseMain.showBanner("0.0.1");
+        test();
+    }
 
-        logger.info("param:{}", LocalContext.getString("top_zeimao77_test").get());
-        logger.trace("{}",LongIdGenerator.INSTANCE.generate());
-        logger.debug("{}",LongIdGenerator.INSTANCE.generate());
-        logger.info("{}",LongIdGenerator.INSTANCE.generate());
-        logger.warn("{}",LongIdGenerator.INSTANCE.generate());
-        logger.error("{}",LongIdGenerator.INSTANCE.generate());
-        logger.info(Long.toHexString(System.currentTimeMillis()));
-
-
+    public static HashMap<String,Object> test() {
+        HashMap<String, Object> res = new HashMap<>();
+        int r = 1;
+        label1: {
+            label2 : {
+                if(r == 1) {
+                    res.put("msg","FAIL1");
+                    break label1;
+                }
+                //todo
+                res.put("msg","OK");
+            }
+            res.put("msg","label2");
+        }
+        // TODO
+        System.out.println(res.get("msg"));
+        return res;
     }
 
 

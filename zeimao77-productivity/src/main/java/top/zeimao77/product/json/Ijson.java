@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import top.zeimao77.product.exception.BaseServiceRunException;
 import static top.zeimao77.product.exception.ExceptionCodeDefinition.APPERR;
 
@@ -14,6 +15,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
@@ -77,6 +82,16 @@ public class Ijson {
             return new Ijson(jsonNode);
         }
         throw new BaseServiceRunException(APPERR,String.format("json字段类型错误:%s不可以转换对Obj",this.jsonNode.getNodeType().name()));
+    }
+
+    public void forEach(BiConsumer<String,JsonNode> consumer) {
+        if(this.jsonNode.getNodeType()== JsonNodeType.OBJECT && this.jsonNode instanceof ObjectNode) {
+            ObjectNode j = (ObjectNode) this.jsonNode;
+            for(Iterator<Map.Entry<String, JsonNode>> elements = j.fields(); elements.hasNext();){
+                Map.Entry<String, JsonNode> next = elements.next();
+                consumer.accept(next.getKey(),next.getValue());
+            }
+        }
     }
 
     /**

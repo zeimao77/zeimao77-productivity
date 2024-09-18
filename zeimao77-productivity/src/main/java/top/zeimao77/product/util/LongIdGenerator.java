@@ -1,6 +1,8 @@
 package top.zeimao77.product.util;
 import static top.zeimao77.product.exception.ExceptionCodeDefinition.WRONG_SOURCE;
-import top.zeimao77.product.exception.NonRetryableRuntimeException;
+
+import top.zeimao77.product.exception.BaseServiceRunException;
+import top.zeimao77.product.exception.RetryableRuntimeException;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -33,7 +35,7 @@ public class LongIdGenerator implements IdGenerator<Long>{
      */
     public LongIdGenerator(final long macid,final long timeoffset) {
         if(macid > 0x3F)
-            throw new NonRetryableRuntimeException(WRONG_SOURCE,"机器ID范围从0到63");
+            throw new BaseServiceRunException(WRONG_SOURCE,"机器ID范围从0到63");
         this.macid = macid;
         this.timeoffset = timeoffset;
     }

@@ -45,10 +45,10 @@ public class RootMenu implements MenuStarter {
             for (int i = 0; i < menuList.size(); i++)
                 System.out.printf("%d. %s\n",i+1,menuList.get(i).name());
             StringOptional p = CommandParamUtil.getParamFromSystemIn("请选择[退出输入:Q]:");
-            if(!p.isBlack() && "Q".equals(p.get()))
+            if(!p.isBlank() && "Q".equals(p.get()))
                 break;
             try {
-                if(!p.isBlack()) {
+                if(!p.isBlank()) {
                     int selectMenu = p.getInteger();
                     if(selectMenu > 0 && selectMenu <= menuList.size()) {
                         menuList.get(selectMenu-1).start(args);

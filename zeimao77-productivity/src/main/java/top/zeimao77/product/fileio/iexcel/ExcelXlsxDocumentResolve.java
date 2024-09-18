@@ -488,7 +488,7 @@ public class ExcelXlsxDocumentResolve<T> {
                 errorMsgList.add(errorMsg);
             }
             if(stopOnError && errorMsg != null) {
-                throw new BaseServiceRunException(ExceptionCodeDefinition.WRONG_SOURCE | ExceptionCodeDefinition.NON_RETRYABLE ,"出错停止解析");
+                throw new BaseServiceRunException(ExceptionCodeDefinition.WRONG_SOURCE,"出错停止解析");
             }
         }
         return t;
@@ -573,7 +573,7 @@ public class ExcelXlsxDocumentResolve<T> {
                     errorMsgList.add(errorMsg);
                 }
                 if(stopOnError && errorMsg != null) {
-                    throw new BaseServiceRunException(ExceptionCodeDefinition.WRONG_SOURCE | ExceptionCodeDefinition.NON_RETRYABLE ,"出错停止解析");
+                    throw new BaseServiceRunException(ExceptionCodeDefinition.WRONG_SOURCE,"出错停止解析");
                 }
                 t.put(column.getField(),value);
             }

@@ -44,9 +44,8 @@ public class TokenBucket {
         if (numTokens <= this.size) {
             this.size -= numTokens;
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     /**

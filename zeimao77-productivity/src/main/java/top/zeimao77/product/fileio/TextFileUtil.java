@@ -46,9 +46,10 @@ public class TextFileUtil {
      * @param con 消费者
      */
     public static void lineConsumer(File file, BiConsumer<Integer,String> con, Charset cs) {
-        try{
-            FileInputStream in = new FileInputStream(file);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(in,cs));
+        try(
+                FileInputStream in = new FileInputStream(file);
+                BufferedReader reader = new BufferedReader(new InputStreamReader(in,cs));
+        ) {
             String s1 = reader.readLine();
             int lineNo = 1;
             while (s1 != null) {
@@ -56,12 +57,10 @@ public class TextFileUtil {
                 s1 = reader.readLine();
                 lineNo++;
             }
-            reader.close();
-            in.close();
         } catch (FileNotFoundException e) {
             throw new BaseServiceRunException(WRONG_SOURCE,"文件未找到",e);
         } catch (IOException e) {
-            throw new BaseServiceRunException(IOEXCEPTION,"IO错误",e);
+            throw new BaseServiceRunException(IOEXCEPTION,"IO错误:"+e.getMessage(),e);
         }
     }
 

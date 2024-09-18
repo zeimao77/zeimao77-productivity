@@ -116,7 +116,7 @@ public class SerializeWriter {
         try {
             os.write(byteBuffer.array(),0,byteBuffer.position());
         } catch (IOException e) {
-            throw new BaseServiceRunException(ExceptionCodeDefinition.IOEXCEPTION,"IO错误",e);
+            throw new BaseServiceRunException(ExceptionCodeDefinition.IOEXCEPTION,"IO错误:"+e.getMessage(),e);
         }
     }
 

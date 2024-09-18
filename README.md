@@ -8,119 +8,15 @@
 
 ## 快速开始一个jar
 
-<<<<<<< HEAD
 ### gradle&jdk17
 
 1. 新建一个工程，以`app-amin`为例,gradle(7.4.2)文件配置如下;
-=======
-1. 新建一个工程，以`app-main`为例,gradle(7.4.2)文件配置如下;
->>>>>>> main
+1. 导入一个工程
+> 如果您希望用maven管理您的项目，可以使用`app-main-mvn`项目导入;  
+> 如果您希望用gradle管理您的项目，可以使用`app-main`项目导入;  
+> 如果想了解详细信息请移步项目README;  
 
-```groovy
-plugins {
-    id 'java'
-    id 'application'
-}
-
-group 'com.zeimao77'
-version '1.0.0'
-
-repositories {
-    maven {
-        url 'https://maven.aliyun.com/nexus/content/groups/public'
-    }
-    mavenCentral()
-}
-
-tasks.withType(JavaCompile) {
-    options.encoding = "UTF-8"
-}
-
-dependencies {
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
-    implementation group: 'top.zeimao77',name:'zeimao77-productivity',version: '2.2.2'
-    implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.20.0'
-    implementation 'org.apache.logging.log4j:log4j-slf4j2-impl:2.20.0'
-}
-
-application {
-    mainClass = 'com.zeimao77.Main'
-    applicationDefaultJvmArgs = ['-Dlog.level=DEBUG','-Dlog.file=app-main.log']
-}
-
-test {
-    useJUnitPlatform()
-}
-
-jar {
-    archiveFileName = 'app-main.jar'
-    String cp = configurations.runtimeClasspath.collect {it.getName()}.join(" ")
-    manifest {
-        attributes("Main-Class": "com.zeimao77.Main")
-        attributes("Class-Path": cp)
-    }
-}
-
-task collectlib(type:Copy) {
-    dependsOn('jar')
-    configurations.runtimeClasspath.collect {
-        var t = buildDir.getPath() + "\\" + libsDirName + "\\"
-        from it.getAbsoluteFile()
-        into t
-    }
-}
-
-```
-
-2. 编写核心业务
-
-```java
-package com.zeimao77;
-
-import top.zeimao77.product.main.BaseMain;
-import top.zeimao77.product.util.LongIdGenerator;
-
-public class Main extends BaseMain {
-
-    public static void main(String[] args) {
-        BaseMain.showBanner("0.0.1");
-        logger.trace(LongIdGenerator.INSTANCE.generate());
-        logger.debug(LongIdGenerator.INSTANCE.generate());
-        logger.info(LongIdGenerator.INSTANCE.generate());
-        logger.warn(LongIdGenerator.INSTANCE.generate());
-        logger.error(LongIdGenerator.INSTANCE.generate());
-        logger.fatal(LongIdGenerator.INSTANCE.generate());
-    }
-}
-```
-
-3. 执行`gradle collectlib`打包，打包的文件及依赖会放在`build/libs`目录下;
-- 如果您有合适的执行环境就可以直接在`build/libs`目录下执行`java -jar app-main.jar`了;
-- 如果没有，请接着以下步骤<a href="#275e2554-8749-48c6-a97a-338afd6ec7ea">打包JRE</a>或者<a href="#bd99e813-7894-4bc6-a502-f8932db31ebf">docker执行</a>;
-
-
-4. 分析依赖并<a id="275e2554-8749-48c6-a97a-338afd6ec7ea">打包JRE</a>
-
-```bash
-## 分析依赖
-/jdk-17.0.3/bin/jdeps -cp '/home/libs/*' --module-path '/home/libs/*' \
---multi-release 9 --print-module-deps --ignore-missing-deps libs/app-main.jar
-## 打包JRE
-/jdk-17.0.3/bin/jlink --add-modules java.base,java.compiler,java.desktop,java.management\
-,java.naming,java.net.http,java.rmi,java.scripting,java.security.sasl,java.sql,jdk.unsupported \
---output app-main-with-jre
-```
-
-5. 如果您想依赖JRE执行
-
-```bash
-## 守望护进程执行
-nohup /jdk-17.0.3/bin/java -Xms256m -Xmx1024m -Dlog.file=app-main.log \
--jar /home/libs/app-main.jar >> /dev/null 2>&1 &
-```
-
-6. 如果您想依赖<a id="bd99e813-7894-4bc6-a502-f8932db31ebf">在docker容器中执行</a>
+2. 如果您想依赖<a id="bd99e813-7894-4bc6-a502-f8932db31ebf">在docker容器中执行</a>
 
 ```bash
 ## 前台执行

@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import static top.zeimao77.product.exception.ExceptionCodeDefinition.*;
 
@@ -102,6 +103,19 @@ public class SimpleSqlClient implements Reposit,AutoCloseable {
             }
         };
         return update(sql.getSql(),con);
+    }
+
+    public <Z> void batchUpdate(String sqlt,Consumer<PreparedStatement> statementParamSetter) {
+        PreparedStatement preparedStatement = null;
+        Connection connection = createContection();
+        try {
+            preparedStatement = connection.prepareStatement(sqlt);
+            statementParamSetter.accept(preparedStatement);
+        } catch (SQLException e) {
+            throw new BaseServiceRunException(IOEXCEPTION,"IO错误",e);
+        }  finally {
+            close(connection);
+        }
     }
 
     /**

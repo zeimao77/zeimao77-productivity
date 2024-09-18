@@ -26,8 +26,8 @@ public class StringUtil {
         if(suffix == null)
             suffix = EMPTY_SUFFIX;
         len = len >= str.length() ? str.length() : len - suffix.length();
-        String s = str.substring(0,len);
-        if(len < str.length()) {
+        String s = str.substring(0, len);
+        if (len < str.length()) {
             s = s.concat(suffix);
         }
         return s;
@@ -37,6 +37,12 @@ public class StringUtil {
         return cut(str,len,DEFAULT_SUFFIX);
     }
 
+    public static String printNullableObject(Object o) {
+        return o == null ? "null" : o.toString();
+    }
 
+    public static String printNullableObject(Object o,String defaultValue) {
+        return o == null ? defaultValue : o.toString();
+    }
 
 }

@@ -84,7 +84,7 @@ public class StreamUtil {
             }
             zipos.closeEntry();
         } catch (IOException e) {
-            throw new BaseServiceRunException(IOEXCEPTION,"IO错误",e);
+            throw new BaseServiceRunException(IOEXCEPTION,"IO错误:"+e.getMessage(),e);
         }
     }
 

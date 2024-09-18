@@ -1,5 +1,7 @@
 package top.zeimao77.product.converter;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
@@ -15,6 +17,7 @@ public abstract class AbstractNonReFreshConverter<K> implements IConverter<K> {
      * 转换关系MAP
      */
     protected Map<K,Object> convRuleMap;
+    protected int refreshFalg = 0;
     protected ReentrantLock lock = new ReentrantLock();
 
     /**
@@ -53,17 +56,23 @@ public abstract class AbstractNonReFreshConverter<K> implements IConverter<K> {
      */
     @Override
     public void refreshRule() {
-        if (this.convRuleMap.isEmpty()) {
+        if (needRefresh()) {
             lock.lock();
             try {
-                if (this.convRuleMap.isEmpty()) {
+                if (needRefresh()) {
                     this.refresh();
+                    refreshFalg |= REFRESHFLAG;
                 }
             }finally {
                 lock.unlock();
             }
         }
     }
+
+    protected boolean needRefresh() {
+        return (refreshFalg & REFRESHFLAG) == 0;
+    }
+
 
     /**
      * 刷新规则的具体实现;

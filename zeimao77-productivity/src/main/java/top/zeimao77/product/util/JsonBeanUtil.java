@@ -40,7 +40,7 @@ public class JsonBeanUtil {
         javaTimeModule.addSerializer(StringOptional.class,new JsonSerializer<StringOptional>() {
             @Override
             public void serialize(StringOptional value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-                gen.writeString(value.isBlack() ? null : value.get());
+                gen.writeString(value.isBlank() ? null : value.get());
             }
         });
         javaTimeModule.addDeserializer(StringOptional.class,new JsonDeserializer<StringOptional>() {

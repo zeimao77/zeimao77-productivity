@@ -1,7 +1,7 @@
 package top.zeimao77.product.util;
 
 import top.zeimao77.product.exception.BaseServiceRunException;
-import top.zeimao77.product.exception.ExceptionCodeDefinition;
+import static top.zeimao77.product.exception.ExceptionCodeDefinition.WRONG_SOURCE;
 
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -10,54 +10,116 @@ import java.util.function.Supplier;
 
 public class StringOptional {
 
-    public static final Predicate<String> TRIM_BLACK_CHECK = o -> !o.trim().isEmpty() ;
     public static final StringOptional EMPTY = new StringOptional(null);
 
-    private Predicate<String> check;
     private final Optional<String> optional;
 
     public StringOptional(String value){
         this.optional = Optional.ofNullable(value);
-        this.check = TRIM_BLACK_CHECK;
-    }
-
-    public void setCheck(Predicate<String> check) {
-        this.check = check;
     }
 
     public static StringOptional empty() {
         return EMPTY;
     }
 
-    public boolean isBlack() {
-        return !optional.filter(check).isPresent() || optional.filter(check).get().isEmpty();
+    public boolean test(Predicate<Optional<String>> predicate) {
+        return predicate.test(optional);
     }
 
-    public void ifNotBlack(Consumer<String> action) {
-        if (!isBlack())
+    public void ifTestFalse(Predicate<Optional<String>> predicate, Consumer<String> action) {
+        if (!predicate.test(optional))
             action.accept(optional.get());
     }
 
-    public String orBlackGet(String defaultValue) {
-        return isBlack() ? defaultValue : optional.get();
+    public boolean isBlank() {
+        return !optional.filter(o -> !o.trim().isEmpty()).isPresent();
     }
 
-    public String orBlackGet(Supplier<String> supplier) {
-        return isBlack() ? supplier.get() : optional.get();
+    public void ifNotBlank(Consumer<String> action) {
+        if (!isBlank())
+            action.accept(optional.get());
     }
 
-    public String ifBlackThrow(String fieldName) {
-        if(isBlack())
-            throw new BaseServiceRunException(ExceptionCodeDefinition.WRONG_SOURCE,fieldName + "参数必需;");
+
+    public String orBlankGet(String defaultValue) {
+        return isBlank() ? defaultValue : optional.get();
+    }
+
+    public String orBlankGet(Supplier<String> supplier) {
+        return isBlank() ? supplier.get() : optional.get();
+    }
+
+    public String ifBlankThrow(String fieldName) {
+        if(isBlank())
+            throw new BaseServiceRunException(WRONG_SOURCE,fieldName + "参数必需;");
         return optional.get();
     }
 
-    public <X extends Throwable> String ifBlackThrow(Supplier<? extends X> exceptionSupplier) throws X {
-        if (isBlack()) {
+    public <X extends Throwable> String ifBlankThrow(Supplier<? extends X> exceptionSupplier) throws X {
+        if (isBlank())
             return optional.get();
-        } else {
+        else
             throw exceptionSupplier.get();
-        }
+    }
+
+    public boolean isEmpty() {
+        return !optional.filter(o -> !o.isEmpty()).isPresent();
+    }
+
+    public void ifNotEmpty(Consumer<String> action) {
+        if (!isEmpty())
+            action.accept(optional.get());
+    }
+
+    public String orEmptyGet(String defaultValue) {
+        return isEmpty() ? defaultValue : optional.get();
+    }
+
+    public String orEmptyGet(Supplier<String> supplier) {
+        return isEmpty() ? supplier.get() : optional.get();
+    }
+
+    public String ifEmptyThrow(String fieldName) {
+        if(isEmpty())
+            throw new BaseServiceRunException(WRONG_SOURCE,fieldName + "参数必需;");
+        return optional.get();
+    }
+
+    public <X extends Throwable> String ifEmptyThrow(Supplier<? extends X> exceptionSupplier) throws X {
+        if (isEmpty())
+            return optional.get();
+        else
+            throw exceptionSupplier.get();
+    }
+
+    public boolean isNull() {
+        return !optional.isPresent();
+    }
+
+    public void ifNotNull(Consumer<String> action) {
+        if (!isNull())
+            action.accept(optional.get());
+    }
+
+    public String orNullGet(String defaultValue) {
+        return isNull() ? defaultValue : optional.get();
+    }
+
+    public String orNullGet(Supplier<String> supplier) {
+        return isNull() ? supplier.get() : optional.get();
+    }
+
+    public String ifNullThrow(String fieldName) {
+        if(isNull())
+            throw new BaseServiceRunException(WRONG_SOURCE,fieldName + "参数必需;");
+        return optional.get();
+    }
+
+    public <X extends Throwable> String ifNullThrow(Supplier<? extends X> exceptionSupplier) throws X {
+        if (isNull())
+            return optional.get();
+        else
+            throw exceptionSupplier.get();
     }
 
     public Optional<String> getOptional() {
@@ -94,4 +156,5 @@ public class StringOptional {
     public String toString() {
         return !optional.isPresent() ? null : optional.get();
     }
+
 }

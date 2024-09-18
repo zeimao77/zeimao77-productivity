@@ -3,18 +3,15 @@ package top.zeimao77.product.config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import top.zeimao77.product.exception.BaseServiceRunException;
-import static top.zeimao77.product.exception.ExceptionCodeDefinition.IOEXCEPTION;
+
 import top.zeimao77.product.util.AssertUtil;
 import top.zeimao77.product.util.BoolUtil;
 import top.zeimao77.product.util.StringOptional;
 
-import java.io.*;
 import java.time.Duration;
 import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Optional;
-import java.util.Properties;
 
 /**
  * @author zeimao77
@@ -23,19 +20,20 @@ import java.util.Properties;
 public class LocalContext {
 
     private static Logger logger = LoggerFactory.getLogger(LocalContext.class);
+    private static final LocalContextConverter LOCAL_CONTEXT;
 
-    private static final HashMap<String,Object> context = new HashMap<>();
-
-    public static Object put(String key,Object value) {
-        return context.put(key,value);
+    static {
+        String localContextFile = getPropertyOrEnv("local.context.file",null);
+        String localContextActive = getPropertyOrEnv("local.context.active",null);
+        LOCAL_CONTEXT = new LocalContextConverter(localContextFile,localContextActive);
     }
 
     public static Object get(String key) {
-        return context.get(key);
+        return LOCAL_CONTEXT.get(key);
     }
 
     public static Optional<Object> getObject(String key) {
-        Object o = context.get(key);
+        Object o = get(key);
         return o == null ? Optional.empty() : Optional.of(o);
     }
 
@@ -52,7 +50,7 @@ public class LocalContext {
             Long t = (Long) o;
             return Optional.of(t);
         }
-        return AssertUtil.isBlack(o.toString()) ? Optional.empty() : Optional.of(Long.valueOf(o.toString()));
+        return AssertUtil.isBlank(o.toString()) ? Optional.empty() : Optional.of(Long.valueOf(o.toString()));
     }
 
     public static Optional<Integer> getInteger(String key) {
@@ -63,7 +61,7 @@ public class LocalContext {
             Integer t = (Integer) o;
             return Optional.of(t);
         }
-        return AssertUtil.isBlack(o.toString()) ? Optional.empty() : Optional.of(Integer.valueOf(o.toString()));
+        return AssertUtil.isBlank(o.toString()) ? Optional.empty() : Optional.of(Integer.valueOf(o.toString()));
     }
 
     public static Optional<Double> getDouble(String key) {
@@ -74,7 +72,7 @@ public class LocalContext {
             Double t = (Double) o;
             return Optional.of(t);
         }
-        return AssertUtil.isBlack(o.toString()) ? Optional.empty() : Optional.of(Double.valueOf(o.toString()));
+        return AssertUtil.isBlank(o.toString()) ? Optional.empty() : Optional.of(Double.valueOf(o.toString()));
     }
 
     public static Optional<Boolean> getBoolean(String key) {
@@ -95,23 +93,11 @@ public class LocalContext {
         return !aLong.isPresent() ? Optional.empty() : Optional.of(Duration.of(aLong.get(),unit));
     }
 
-    public static Object remove(String key) {
-        return context.remove(key);
-    }
-
-    public static void show() {
-        int i = 1;
-        for (String s : context.keySet()) {
-            logger.info("CONTEXT({}):{}:{}",i,s,context.get(s));
-            i++;
-        }
-    }
-
     public static ArrayList<String> get(String keyFromat,int len) {
         ArrayList<String> resultList = new ArrayList<>();
         for (int i = 0; i < len; i++) {
             String key = String.format(keyFromat,i);
-            Object value = LocalContext.get(key);
+            Object value = get(key);
             if(AssertUtil.isNotEmpty(value)) {
                 resultList.add(value.toString());
             } else {
@@ -121,19 +107,18 @@ public class LocalContext {
         return resultList;
     }
 
-    public static void putByProperties(InputStream is) {
-        Properties properties = new Properties();
-        try {
-            properties.load(is);
-        } catch (IOException e) {
-            throw new BaseServiceRunException(IOEXCEPTION,"IO错误");
-        }
-        for (Object o : properties.keySet()) {
-            String k = o.toString();
-            Object v = properties.get(o);
-            LocalContext.put(k,v);
-        }
-    }
 
+    /**
+     * 从命令参数或者环境变量获取参数
+     * @param key 键
+     * @param defaultValue 默认值 如果找不到将返回该值
+     * @return 结果
+     */
+    public static String getPropertyOrEnv(String key,String defaultValue) {
+        String value = System.getProperty(key);
+        if(value == null)
+            value = System.getenv(key);
+        return value == null ? defaultValue : value;
+    }
 
 }
