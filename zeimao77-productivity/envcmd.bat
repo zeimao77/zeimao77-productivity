@@ -16,3 +16,4 @@ SET GRADLE_HOME=D:\MyProgramFile\gradle-8.4-bin\gradle-8.4
 SET PATH=%GRADLE_HOME%\bin;%JAVA_HOME%\bin;%PATH%
 
 gradle -V
+echo "gradle publishMavenJavaPublicationToAliyunRepository"

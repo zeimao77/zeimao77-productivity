@@ -5,6 +5,7 @@ import static top.zeimao77.product.exception.ExceptionCodeDefinition.WRONG_SOURC
 
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public class StringOptional {
@@ -19,6 +20,15 @@ public class StringOptional {
 
     public static StringOptional empty() {
         return EMPTY;
+    }
+
+    public boolean test(Predicate<Optional<String>> predicate) {
+        return predicate.test(optional);
+    }
+
+    public void ifTestFalse(Predicate<Optional<String>> predicate, Consumer<String> action) {
+        if (!predicate.test(optional))
+            action.accept(optional.get());
     }
 
     public boolean isBlank() {
