@@ -1,33 +1,27 @@
 package com.zeimao77;
 import top.zeimao77.product.main.BaseMain;
+import top.zeimao77.product.util.ByteArrayCoDesUtil;
+import top.zeimao77.product.util.LocalDateTimeUtil;
 
 import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.regex.Pattern;
 
 public class Main extends BaseMain {
 
     public static void main(String[] args) throws UnsupportedEncodingException {
-        test();
+        long l = System.currentTimeMillis();
+        logger.info("{}",l);
+        LocalDateTime localDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(l), ZoneId.systemDefault());
+        logger.info(LocalDateTimeUtil.toDateTime(localDateTime));
+        logger.info(ByteArrayCoDesUtil.hexEncode(" ".getBytes("UTF-8")));
+        logger.info(ByteArrayCoDesUtil.hexEncode(" ".trim().getBytes("UTF-8")));
+        logger.info(ByteArrayCoDesUtil.hexEncode("　".trim().getBytes("UTF-8")));
+        logger.info(ByteArrayCoDesUtil.hexEncode(String.valueOf('\u3000').getBytes("UTF-8")));
     }
 
-    public static HashMap<String,Object> test() {
-        HashMap<String, Object> res = new HashMap<>();
-        int r = 1;
-        label1: {
-            label2 : {
-                if(r == 1) {
-                    res.put("msg","FAIL1");
-                    break label1;
-                }
-                //todo
-                res.put("msg","OK");
-            }
-            res.put("msg","label2");
-        }
-        // TODO
-        System.out.println(res.get("msg"));
-        return res;
-    }
 
 
 }

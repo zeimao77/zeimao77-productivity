@@ -1,5 +1,7 @@
 package top.zeimao77.product.util;
 
+import java.util.regex.Pattern;
+
 /**
  * 字符串工具
  */
@@ -7,6 +9,8 @@ public class StringUtil {
 
     public static final String EMPTY_SUFFIX = "";
     public static final String DEFAULT_SUFFIX = "...";
+
+    public static final Pattern TRIMSPACE_PATTERN = Pattern.compile("^[ \u3000]+|[ \u3000]+$");
 
     private StringUtil() {}
 
@@ -43,6 +47,13 @@ public class StringUtil {
 
     public static String printNullableObject(Object o,String defaultValue) {
         return o == null ? defaultValue : o.toString();
+    }
+
+    public static String trimSpaces(String str) {
+        if(str == null) return str;
+        if(str.startsWith(" ") || str.startsWith("\u3000") || str.endsWith(" ") || str.endsWith("\u3000"))
+            return TRIMSPACE_PATTERN.matcher(str).replaceAll("");
+        return str;
     }
 
 }

@@ -18,6 +18,10 @@ public class StringOptional {
         this.optional = Optional.ofNullable(value);
     }
 
+    public static StringOptional trimSpacesOf(String value) {
+        return new StringOptional(StringUtil.trimSpaces(value));
+    }
+
     public static StringOptional empty() {
         return EMPTY;
     }

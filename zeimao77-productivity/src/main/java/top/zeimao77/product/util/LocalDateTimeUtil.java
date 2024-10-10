@@ -35,6 +35,10 @@ public class LocalDateTimeUtil {
         return dateTime != null ? formatter.format(dateTime) : null;
     }
 
+    public static String toDateTime(long dateTime, ZoneId zone) {
+        return toDateTime(LocalDateTime.ofInstant(Instant.ofEpochMilli(dateTime), zone));
+    }
+
     public static String toDate(TemporalAccessor dateTime) {
         return dateTime != null ? STANDARDDATEFORMATTER.format(dateTime) : null;
     }

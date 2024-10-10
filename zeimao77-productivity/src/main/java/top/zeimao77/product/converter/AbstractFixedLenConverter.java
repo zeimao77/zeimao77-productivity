@@ -3,7 +3,6 @@ package top.zeimao77.product.converter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.time.LocalDateTime;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -16,7 +15,7 @@ public abstract class AbstractFixedLenConverter<K> implements IConverter<K> {
     protected int capacity;
     protected ConcurrentHashMap<K, CacheData> ruleRepository;
 
-    private AtomicInteger refreshFalg = new AtomicInteger(0);
+    private AtomicInteger refreshFlag = new AtomicInteger(0);
 
     /**
      * 最小刷新间隔 单位秒
@@ -26,7 +25,7 @@ public abstract class AbstractFixedLenConverter<K> implements IConverter<K> {
     /**
      * 上次刷新时间
      */
-    protected LocalDateTime lastRefresh;
+    protected long lastRefreshTimeMillis;
 
     public abstract Object doGet(K key);
 
@@ -36,37 +35,34 @@ public abstract class AbstractFixedLenConverter<K> implements IConverter<K> {
         this.ruleRepository = new ConcurrentHashMap<>(capacity);
     }
 
-    protected synchronized void addConvRule(K key, Object value) {
+    protected void addConvRule(K key, Object value) {
         this.ruleRepository.put(key,new CacheData(value));
     }
 
     @Override
     public Object get(K key) {
         Object result = null;
+        this.refreshRule();
         CacheData cacheData = ruleRepository.get(key);
         if(cacheData != null) {
             cacheData.access();
             return cacheData.getData();
         }
-        this.refreshRule();
         result = doGet(key);
-
-        if(refreshFalg.get() == 0 && result != null && this.ruleRepository.size() < capacity) {
+        if(result != null && this.ruleRepository.size() < capacity) {
             addConvRule(key, result);
         }
         return result;
     }
 
     @Override
-    public synchronized void refreshRule() {
-        try {
-            if(needRefresh()) {
-                refreshFalg.set(1);
-                logger.info("正在清理......................");
+    public void refreshRule() {
+        if(needRefresh() && refreshFlag.compareAndSet(0,1)) {
+            try {
                 doRefreshRule();
+            } finally {
+                refreshFlag.set(0);
             }
-        } finally {
-            refreshFalg.set(0);
         }
     }
 
@@ -74,40 +70,30 @@ public abstract class AbstractFixedLenConverter<K> implements IConverter<K> {
         long flag,flag2;
         {
             long l = System.currentTimeMillis();
-            flag = l - this.minRefresh * 500;
+            flag = l - this.minRefresh * 600;
             flag2 = l - this.minRefresh * 2000;
         }
         for(Iterator<Map.Entry<K, CacheData>> ite = this.ruleRepository.entrySet().iterator();ite.hasNext();) {
             Map.Entry<K, CacheData> next = ite.next();
             CacheData cacheData = next.getValue();
-            if(cacheData.getAccessdTime() < flag)
-                ite.remove();
-            if(cacheData.getCacheTime() < flag2)
+            if(cacheData.getAccessdTime() < flag || cacheData.getCacheTime() < flag2)
                 ite.remove();
         }
-        this.lastRefresh = LocalDateTime.now();
+        this.lastRefreshTimeMillis = System.currentTimeMillis();
     }
 
     private boolean needRefresh() {
-        if(lastRefresh == null)
-            lastRefresh = LocalDateTime.now();
-        // 超过2倍的最小刷新时间  则刷新
-        LocalDateTime nextRefreshTime = lastRefresh.plusSeconds(minRefresh*2);
-        if(nextRefreshTime.isBefore(LocalDateTime.now()))
-            return true;
-        // 不满 则不用清理
-        if(this.ruleRepository.size() < capacity)
-            return false;
-        // 没有满足最小刷新时间 则不清
-        nextRefreshTime = lastRefresh.plusSeconds(minRefresh);
-        if(nextRefreshTime.isAfter(LocalDateTime.now()))
-            return false;
-        return true;
+        if (lastRefreshTimeMillis == 0L)
+            this.lastRefreshTimeMillis = System.currentTimeMillis();
+        // 超过最小刷新时间  则刷新
+        long nextRefreshTimeMillis = this.lastRefreshTimeMillis + this.minRefresh * 1000;
+        return nextRefreshTimeMillis < System.currentTimeMillis()
+                || this.ruleRepository.size() >= capacity;
     }
 
     public static class CacheData {
-        private Long accessdTime;
-        private Long cacheTime;
+        private long accessdTime;
+        private long cacheTime;
         private int count;
         private Object data;
 
@@ -123,28 +109,20 @@ public abstract class AbstractFixedLenConverter<K> implements IConverter<K> {
             this.count++;
         }
 
-        public Long getCacheTime() {
-            return cacheTime;
-        }
-
-        public void setCacheTime(Long cacheTime) {
-            this.cacheTime = cacheTime;
-        }
-
-        public Long getAccessdTime() {
+        public long getAccessdTime() {
             return accessdTime;
         }
 
-        public void setAccessdTime(Long accessdTime) {
+        public void setAccessdTime(long accessdTime) {
             this.accessdTime = accessdTime;
+        }
+
+        public long getCacheTime() {
+            return cacheTime;
         }
 
         public int getCount() {
             return count;
-        }
-
-        public void setCount(int count) {
-            this.count = count;
         }
 
         public Object getData() {

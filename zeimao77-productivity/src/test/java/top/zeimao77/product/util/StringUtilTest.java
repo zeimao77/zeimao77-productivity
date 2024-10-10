@@ -14,6 +14,7 @@ class StringUtilTest extends BaseMain {
         // 截取字符串
         String cut = StringUtil.cut(s, 12,StringUtil.DEFAULT_SUFFIX);
         logger.info(cut);
+        logger.info("|"+StringUtil.trimSpaces("　  　　 　abc  　　　 ")+"|");
     }
 
 }

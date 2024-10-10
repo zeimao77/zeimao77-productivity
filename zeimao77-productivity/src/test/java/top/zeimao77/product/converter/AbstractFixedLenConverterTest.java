@@ -18,12 +18,13 @@ public class AbstractFixedLenConverterTest extends BaseMain {
         private AtomicLong count = new AtomicLong(0);
 
         public TestConverter(AbstractNonReFreshConverter<String> store) {
-            super(20,10);
+            super(30,2000);
             this.store = store;
         }
         @Override
         public Object doGet(String key) {
             count.addAndGet(1L);
+            logger.info("创建数据:{}:{}",key,this.store.get(key));
             return this.store.get(key);
         }
 
@@ -32,15 +33,36 @@ public class AbstractFixedLenConverterTest extends BaseMain {
         }
     }
 
+    @Test
+    public void test2() {
+        AbstractNonReFreshConverter<String> abstractNonReFreshConverter = new AbstractNonReFreshConverter<>() {
+            @Override
+            protected void refresh() {
+                for (int i = 0; i < 30; i++) {
+                    addConvRule(String.format("KEY_%d", i), Integer.valueOf(600 + i));
+                }
+            }
+        };
+        TestConverter testConverter = new TestConverter(abstractNonReFreshConverter);
+        String random = "KEY_2";
+        int tc = 10;
+        for (int i = 0; i < tc; i++) {
+            logger.info("{}/{}:{}", System.currentTimeMillis(),random, testConverter.get(random));
+            delay_ms(3000);
+
+        }
+        logger.info("命中率: {}/{}",(tc - testConverter.getCount()),tc);
+
+    }
 
     @Test
     public void test() {
         AbstractNonReFreshConverter<String> abstractNonReFreshConverter = new AbstractNonReFreshConverter<>() {
             @Override
             protected void refresh() {
-                for (int i = 0; i < 30; i++) {
-                    addConvRule(String.format("KEY_%d",i),Integer.valueOf(600+i));
-                }
+            for (int i = 0; i < 30; i++) {
+                addConvRule(String.format("KEY_%d",i),Integer.valueOf(600+i));
+            }
             }
         };
         TestConverter testConverter = new TestConverter(abstractNonReFreshConverter);
@@ -54,9 +76,10 @@ public class AbstractFixedLenConverterTest extends BaseMain {
         for (int i = 0; i < 10; i++) {
             executorService.submit(()->{
                 for (int j = 0; j < 10000; j++) {
-                    // delay_ms(2);
+                    delay_ms(1);
                     String random = CollectionUtil.getRandom(list);
-                    logger.info("{}:{}",random,testConverter.get(random));
+                    testConverter.get(random);
+                    // logger.info("{}:{}",random,testConverter.get(random));
                 }
             });
         }
