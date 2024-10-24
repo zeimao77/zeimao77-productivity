@@ -3,7 +3,7 @@ package top.zeimao77.product.sql;
 import java.sql.*;
 import java.util.List;
 
-public class DefaultPreparedStatementSetter implements PreparedStatementSetter {
+public class DefaultPreparedStatementSetter extends AbstractPrepardStatementSetter {
 
     private List<StatementParameter> statementParams;
 
@@ -18,5 +18,6 @@ public class DefaultPreparedStatementSetter implements PreparedStatementSetter {
                     ,statementParam.getValue());
         }
     }
+
 
 }

@@ -9,10 +9,8 @@ import top.zeimao77.product.mysql.DemoModel;
 import top.zeimao77.product.mysql.SimpleRepository;
 import top.zeimao77.product.util.AssertUtil;
 import top.zeimao77.product.util.JsonBeanUtil;
-import top.zeimao77.product.util.StreamUtil;
 import top.zeimao77.product.util.WordUtil;
 
-import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -21,7 +19,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 
 class SimpleSqlClientTest extends BaseMain {
 
@@ -30,9 +27,8 @@ class SimpleSqlClientTest extends BaseMain {
     @Test
     void test() {
         // 取客户端
-        SimpleSqlClient simpleSqlClient = BeanFactory.DEFAULT.getBean(ComponentFactory.AUTOBEAN_SQLCLIENT+MYSQL,SimpleSqlClient.class);
-
-        // 静态SQL 用法1
+        SimpleSqlClient simpleSqlClient = ComponentFactory.initSimpleSqlClient(MYSQL,null);
+                // 静态SQL 用法1
         simpleSqlClient.update("DELETE FROM demo WHERE demo_id = ?",new Object[]{22309205499183107L});
         simpleSqlClient.update("insert into demo(demo_id,demo_name,ch,bo,de) values ('22309205499183107','demo0',2,2,32.456)", null);
         simpleSqlClient.update("UPDATE demo SET demo_name = ? WHERE demo_id = ?"
@@ -105,13 +101,16 @@ class SimpleSqlClientTest extends BaseMain {
     @Test
     void select() {
         SimpleSqlClient simpleSqlClient = ComponentFactory.initSimpleSqlClient(MYSQL,null);
-        ArrayList<ResultStr> select = simpleSqlClient.select("SELECT demo_name AS result FROM demo WHERE demo_id <= ?", o -> {
-            try {
-                o.setLong(1, 22309205499183107L);
-            } catch (SQLException e) {
-                e.printStackTrace();
+        ArrayList<ResultStr> select = simpleSqlClient.select("SELECT demo_name AS result FROM demo WHERE demo_id <= ?", new AbstractPrepardStatementSetter() {
+            @Override
+            public void setParam(PreparedStatement o) throws SQLException {
+                try {
+                    o.setLong(1, 22309205499183107L);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
             }
-        },  ResultStr.class);
+        }, ResultStr.class);
         select.forEach(o -> logger.info(o.getResult()));
     }
 
@@ -136,23 +135,6 @@ class SimpleSqlClientTest extends BaseMain {
             logger.info(demoModel.toString());
         }
 
-
-        SQL sql = new SQL()
-                .select("demo_id","demoId")
-                .select("demo_name","demoName")
-                .select("created_time","createdTime")
-                .select("de")
-                .from("demo")
-                .where(true,SQL.BIND_AND,"demo_id",SQL.COND_QLTE,22321875757563914L)
-                .limit(0,30);
-        sql.resolve();
-        List<StatementParameter> statementParams = sql.getStatementParams();
-
-        simpleSqlClient.select("SELECT * FROM demo where demo_id = ?",o -> o.setString(1,"23334")
-        ,(o1,o2) -> {
-            long demoId = o1.getLong("demo_id");
-            logger.info("demoId:{}",demoId);
-        });
     }
 
     /**
