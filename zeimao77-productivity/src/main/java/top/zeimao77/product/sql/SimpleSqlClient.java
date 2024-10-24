@@ -45,23 +45,20 @@ public class SimpleSqlClient implements Reposit,AutoCloseable {
 
     private static Logger logger = LoggerFactory.getLogger(SimpleSqlClient.class);
 
-    protected PreparedStatementSetter preparedStatementSetter;
     protected int queryTimeout = 30;
 
     protected TransactionFactory connectFacotry;
 
     public static SimpleSqlClient create(TransactionFactory connectFacotry) {
-        return new SimpleSqlClient(connectFacotry,DefaultPreparedStatementSetter.INSTANCE);
+        return new SimpleSqlClient(connectFacotry);
     }
 
     /**
      *
      * @param connectFacotry Connection持有
-     * @param preparedStatementSetter 参数设置器
-     */
-    public SimpleSqlClient(TransactionFactory connectFacotry, PreparedStatementSetter preparedStatementSetter) {
+    */
+    public SimpleSqlClient(TransactionFactory connectFacotry) {
         this.connectFacotry = connectFacotry;
-        this.preparedStatementSetter = preparedStatementSetter;
     }
 
     /**
@@ -73,13 +70,8 @@ public class SimpleSqlClient implements Reposit,AutoCloseable {
     public int updateByResolver(StatementParamResolver sql) {
         sql.resolve();
         List<StatementParameter> statementParams = sql.getStatementParams();
-        Consumer<PreparedStatement> con = o -> {
-            for (StatementParameter statementParam : statementParams) {
-                setParam(o,statementParam.getIndex(),statementParam.getJavaType(),statementParam.getJdbcType()
-                        ,statementParam.getValue());
-            }
-        };
-        return update(sql.getSql(),con);
+        DefaultPreparedStatementSetter defaultPreparedStatementSetter = new DefaultPreparedStatementSetter(statementParams);
+        return update(sql.getSql(),defaultPreparedStatementSetter);
     }
 
     public <Z> void batchUpdate(String sqlt,Consumer<PreparedStatement> statementParamSetter) {
@@ -127,10 +119,7 @@ public class SimpleSqlClient implements Reposit,AutoCloseable {
                     preparedStatement = connection.prepareStatement(sql.getSql());
                 }
                 ArrayList<StatementParameter> statementParamterList = sql.getStatementParams();
-                for (StatementParameter param : statementParamterList) {
-                    setParam(preparedStatement,param.getIndex(),param.getJavaType(),param.getJdbcType()
-                            ,param.getValue());
-                }
+                new DefaultPreparedStatementSetter(statementParamterList).setParam(preparedStatement);
                 preparedStatement.addBatch();
             }
             int[] ints = preparedStatement.executeBatch();
@@ -164,13 +153,13 @@ public class SimpleSqlClient implements Reposit,AutoCloseable {
         return updateByResolver(new DefaultStatementParamResolver(sqlt, params));
     }
 
-    public int update(String sql,Consumer<PreparedStatement> statementParamSetter) {
+    public int update(String sql,PreparedStatementSetter statementParamSetter) {
         Connection connection = createContection();
         try {
             logger.debug("Prepared SQL:{}",sql);
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             if(statementParamSetter != null) {
-                statementParamSetter.accept(preparedStatement);
+                statementParamSetter.setParam(preparedStatement);
             }
             long start = System.currentTimeMillis();
             int update = preparedStatement.executeUpdate();
@@ -197,7 +186,7 @@ public class SimpleSqlClient implements Reposit,AutoCloseable {
      * @param <T> 返回泛型
      * @return 查询结果集
      */
-    public <T> ArrayList<T> select(String sql, Consumer<PreparedStatement> statementParamSetter
+    public <T> ArrayList<T> select(String sql, PreparedStatementSetter statementParamSetter
             , Class<T> clazz){
         ArrayList<T> list = new ArrayList<>();
         BeanResultMapResolver<T> tBeanResultMapResolver = new BeanResultMapResolver<>(clazz, list);
@@ -205,13 +194,13 @@ public class SimpleSqlClient implements Reposit,AutoCloseable {
         return list;
     }
 
-    public void select(String sql, Consumer<PreparedStatement> statementParamSetter,ResultSetResolver resolver) {
+    public void select(String sql, PreparedStatementSetter statementParamSetter,ResultSetResolver resolver) {
         Connection contection = createContection();
         try{
             logger.debug("Prepared SQL:{}",sql);
             PreparedStatement preparedStatement = contection.prepareStatement(sql);
             if(statementParamSetter != null) {
-                statementParamSetter.accept(preparedStatement);
+                statementParamSetter.setParam(preparedStatement);
             }
             preparedStatement.setQueryTimeout(queryTimeout);
             long start = System.currentTimeMillis();
@@ -223,19 +212,6 @@ public class SimpleSqlClient implements Reposit,AutoCloseable {
         } finally {
             close(contection);
         }
-    }
-
-   /**
-    * 为preparedStatement对象设置参数
-    * @param preparedStatement
-    * @param index 参数位置
-    * @param javaType JAVA类型
-    * @param jdbcType MYSQL数据库类型
-    * @param value 值
-    */
-    protected void setParam(PreparedStatement preparedStatement,int index,Class<?> javaType,int jdbcType,Object value) {
-        logger.debug("param({}):{}",index,value);
-        this.preparedStatementSetter.setParam(preparedStatement,index,javaType,jdbcType,value);
     }
 
     /**
@@ -251,14 +227,22 @@ public class SimpleSqlClient implements Reposit,AutoCloseable {
         return collect;
     }
 
-    public ArrayList<Map<String,Object>> selectListMap(String sql, Consumer<PreparedStatement> statementParamSetter) {
+    @Override
+    public ArrayList<Map<String, Object>> selectListMap(String sqlt, Object param) {
+        DefaultStatementParamResolver defaultStatementParamResolver = new DefaultStatementParamResolver(sqlt, param);
+        defaultStatementParamResolver.resolve();
+        List<StatementParameter> statementParams = defaultStatementParamResolver.getStatementParams();
+        DefaultPreparedStatementSetter statementSetter = new DefaultPreparedStatementSetter(statementParams);
+        return selectListMap(defaultStatementParamResolver.getSql(),statementSetter);
+    }
+
+    public ArrayList<Map<String,Object>> selectListMap(String sql, PreparedStatementSetter preparedStatementSetter) {
         ArrayList<Map<String,Object>> list = new ArrayList<>();
         Connection contection = createContection();
         try{
             logger.debug("Prepared SQL:{}",sql);
             PreparedStatement preparedStatement = contection.prepareStatement(sql);
-
-            statementParamSetter.accept(preparedStatement);
+            preparedStatementSetter.setParam(preparedStatement);
             preparedStatement.setQueryTimeout(queryTimeout);
             long start = System.currentTimeMillis();
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -277,25 +261,15 @@ public class SimpleSqlClient implements Reposit,AutoCloseable {
     public <T> ArrayList<T> selectByResolver(StatementParamResolver sql, Class<T> clazz) {
         sql.resolve();
         List<StatementParameter> statementParams = sql.getStatementParams();
-        Consumer<PreparedStatement> con = o -> {
-            for (StatementParameter statementParam : statementParams) {
-                setParam(o,statementParam.getIndex(),statementParam.getJavaType(),statementParam.getJdbcType()
-                        ,statementParam.getValue());
-            }
-        };
-        return select(sql.getSql(),con,clazz);
+        DefaultPreparedStatementSetter preparedStatementSetter = new DefaultPreparedStatementSetter(statementParams);
+        return select(sql.getSql(),preparedStatementSetter,clazz);
     }
 
     public void selectByResolver(StatementParamResolver sql, ResultSetResolver resolver) {
         sql.resolve();
         List<StatementParameter> statementParams = sql.getStatementParams();
-        Consumer<PreparedStatement> con = o -> {
-            for (StatementParameter statementParam : statementParams) {
-                setParam(o,statementParam.getIndex(),statementParam.getJavaType(),statementParam.getJdbcType()
-                        ,statementParam.getValue());
-            }
-        };
-        select(sql.getSql(),con,resolver);
+        DefaultPreparedStatementSetter statementSetter = new DefaultPreparedStatementSetter(statementParams);
+        select(sql.getSql(),statementSetter,resolver);
     }
 
     @Override
@@ -306,21 +280,6 @@ public class SimpleSqlClient implements Reposit,AutoCloseable {
     @Override
     public <T> ArrayList<T> selectListObj(String sql, Class<T> clazz) {
         return select(sql,null,clazz);
-    }
-
-
-    @Override
-    public ArrayList<Map<String, Object>> selectListMap(String sqlt, Object param) {
-        DefaultStatementParamResolver defaultStatementParamResolver = new DefaultStatementParamResolver(sqlt, param);
-        defaultStatementParamResolver.resolve();
-        List<StatementParameter> statementParams = defaultStatementParamResolver.getStatementParams();
-        Consumer<PreparedStatement> con = o -> {
-            for (StatementParameter statementParam : statementParams) {
-                setParam(o,statementParam.getIndex(),statementParam.getJavaType(),statementParam.getJdbcType()
-                        ,statementParam.getValue());
-            }
-        };
-        return selectListMap(defaultStatementParamResolver.getSql(),con);
     }
 
     public <T> T selectFirstObj(String sqlt,Object param,Class<T> clazz) {
@@ -348,6 +307,7 @@ public class SimpleSqlClient implements Reposit,AutoCloseable {
         resolver.resolve();
         String sql = resolver.getSql();
         List<StatementParameter> statementParams = resolver.getStatementParams();
+        DefaultPreparedStatementSetter defaultPreparedStatementSetter = new DefaultPreparedStatementSetter(statementParams);
         ArrayList<StatementParameter> outParams = new ArrayList<>();
         Connection contection = createContection();
         try {
@@ -356,7 +316,7 @@ public class SimpleSqlClient implements Reposit,AutoCloseable {
             callableStatement.setQueryTimeout(queryTimeout);
             for (StatementParameter statementParam : statementParams) {
                 if(statementParam.getMode() == 1) {
-                    setParam(callableStatement,statementParam.getIndex(),statementParam.getJavaType()
+                    defaultPreparedStatementSetter.setParam(callableStatement,statementParam.getIndex(),statementParam.getJavaType()
                             ,statementParam.getJdbcType(),statementParam.getValue());
                 } else if(statementParam.getMode() == 2) {
                     callableStatement.registerOutParameter(statementParam.getIndex(),statementParam.getJdbcType());
@@ -406,14 +366,6 @@ public class SimpleSqlClient implements Reposit,AutoCloseable {
 
     public void rollback() {
         this.connectFacotry.rollback();
-    }
-
-    public PreparedStatementSetter getPreparedStatementSetter() {
-        return preparedStatementSetter;
-    }
-
-    public void setPreparedStatementSetter(PreparedStatementSetter preparedStatementSetter) {
-        this.preparedStatementSetter = preparedStatementSetter;
     }
 
     public int getQueryTimeout() {

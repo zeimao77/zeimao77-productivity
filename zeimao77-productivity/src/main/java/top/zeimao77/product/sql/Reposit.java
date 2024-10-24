@@ -4,14 +4,12 @@ import top.zeimao77.product.model.ImmutableRow;
 import top.zeimao77.product.util.BeanUtil;
 
 import java.lang.reflect.Field;
-import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
-import java.util.function.Consumer;
 
 /**
  * 一个SQL执行器的实现 它将以某种形式把SQL消费掉
@@ -81,7 +79,7 @@ public interface Reposit {
 
     void selectByResolver(StatementParamResolver sql, ResultSetResolver resolver);
 
-    void select(String sql, Consumer<PreparedStatement> statementParamSetter, ResultSetResolver resolver);
+    void select(String sql,PreparedStatementSetter statementParamSetter, ResultSetResolver resolver);
 
     int updateByResolver(StatementParamResolver sql);
 

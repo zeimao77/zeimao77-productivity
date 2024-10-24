@@ -76,8 +76,7 @@ public class ComponentFactory {
             throw new BaseServiceRunException(WRONG_ACTION,prefx+" Bean已经被定义！");
         DataSource dataSource = createDataSource(prefx,beanFactory);
         DataSourceTransactionFactory dataSourceTransactionFactory = new DataSourceTransactionFactory(dataSource);
-        SimpleSqlClient simpleSqlClient = new SimpleSqlClient(dataSourceTransactionFactory
-                , DefaultPreparedStatementSetter.INSTANCE);
+        SimpleSqlClient simpleSqlClient = new SimpleSqlClient(dataSourceTransactionFactory);
         if(beanFactory != null)
             beanFactory.registerSingleton(AUTOBEAN_SQLCLIENT + prefx,simpleSqlClient);
         return simpleSqlClient;

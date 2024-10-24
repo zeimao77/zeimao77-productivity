@@ -5,12 +5,10 @@ import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
 import java.io.PrintWriter;
-import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 /**
  * 一个仅将可执行SQL输出的SQL执行器
@@ -59,7 +57,7 @@ public class OnlyPrintReposit implements  Reposit, Closeable {
     }
 
     @Override
-    public void select(String sql, Consumer<PreparedStatement> statementParamSetter, ResultSetResolver resolver) {
+    public void select(String sql, PreparedStatementSetter statementParamSetter, ResultSetResolver resolver) {
 
     }
 

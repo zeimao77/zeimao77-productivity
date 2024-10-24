@@ -27,7 +27,6 @@ public class SimpleSqlTemplate {
 
     DataSource dataSource;
 
-    protected PreparedStatementSetter preparedStatementSetter = DefaultPreparedStatementSetter.INSTANCE;
     private SimpleSqlClient simpleSqlClient;
 
     public SimpleSqlTemplate(DataSource dataSource) {
@@ -56,7 +55,7 @@ public class SimpleSqlTemplate {
             throw new BaseServiceRunException(SQLEXCEPTION,"SQL错误",e);
         }
         ConnectionTransactionFactory threadExclusiveConnectionFactory = new ConnectionTransactionFactory(connection);
-        return new SimpleSqlClient(threadExclusiveConnectionFactory,preparedStatementSetter);
+        return new SimpleSqlClient(threadExclusiveConnectionFactory);
     }
 
     /**
@@ -86,7 +85,7 @@ public class SimpleSqlTemplate {
     public SimpleSqlClient createClient() {
         if(this.simpleSqlClient == null) {
             DataSourceTransactionFactory factory = new DataSourceTransactionFactory(this.dataSource);
-            this.simpleSqlClient = new SimpleSqlClient(factory,preparedStatementSetter);
+            this.simpleSqlClient = new SimpleSqlClient(factory);
         }
         return this.simpleSqlClient;
     }
@@ -100,14 +99,6 @@ public class SimpleSqlTemplate {
 
         T doInTransaction(SimpleSqlClient client);
 
-    }
-
-    public PreparedStatementSetter getPreparedStatementSetter() {
-        return preparedStatementSetter;
-    }
-
-    public void setPreparedStatementSetter(PreparedStatementSetter preparedStatementSetter) {
-        this.preparedStatementSetter = preparedStatementSetter;
     }
 
 }
