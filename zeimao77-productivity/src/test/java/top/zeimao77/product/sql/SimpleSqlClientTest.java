@@ -14,6 +14,7 @@ import top.zeimao77.product.util.WordUtil;
 
 import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -110,7 +111,7 @@ class SimpleSqlClientTest extends BaseMain {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-        }, DefaultResultSetResolve.INSTANCE, ResultStr.class);
+        },  ResultStr.class);
         select.forEach(o -> logger.info(o.getResult()));
     }
 
@@ -134,6 +135,29 @@ class SimpleSqlClientTest extends BaseMain {
         for (DemoModel demoModel : demoList) {
             logger.info(demoModel.toString());
         }
+
+
+        SQL sql = new SQL()
+                .select("demo_id","demoId")
+                .select("demo_name","demoName")
+                .select("created_time","createdTime")
+                .select("de")
+                .from("demo")
+                .where(true,SQL.BIND_AND,"demo_id",SQL.COND_QLTE,22321875757563914L)
+                .limit(0,30);
+        sql.resolve();
+        List<StatementParameter> statementParams = sql.getStatementParams();
+        Consumer<PreparedStatement> con = o -> {
+            try {
+                o.setString(1,"22321875757563914L");
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        };
+        simpleSqlClient.select("SELECT * FROM demo",null,(o1,o2) -> {
+            long demoId = o1.getLong("demo_id");
+            logger.info("demoId:{}",demoId);
+        });
     }
 
     /**

@@ -77,7 +77,7 @@ public class ComponentFactory {
         DataSource dataSource = createDataSource(prefx,beanFactory);
         DataSourceTransactionFactory dataSourceTransactionFactory = new DataSourceTransactionFactory(dataSource);
         SimpleSqlClient simpleSqlClient = new SimpleSqlClient(dataSourceTransactionFactory
-                , DefaultPreparedStatementSetter.INSTANCE, DefaultResultSetResolve.INSTANCE);
+                , DefaultPreparedStatementSetter.INSTANCE);
         if(beanFactory != null)
             beanFactory.registerSingleton(AUTOBEAN_SQLCLIENT + prefx,simpleSqlClient);
         return simpleSqlClient;

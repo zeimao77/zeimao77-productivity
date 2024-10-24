@@ -28,7 +28,7 @@ public class PostgresqlTest extends BaseMain {
         });
         DataSource dataSource = ComponentFactory.createDataSource("postgre_local_zeimao77",null);
         DataSourceTransactionFactory df = new DataSourceTransactionFactory(dataSource);
-        SimpleSqlClient simpleSqlClient = new SimpleSqlClient(df, DefaultPreparedStatementSetter.INSTANCE, DefaultResultSetResolve.INSTANCE);
+        SimpleSqlClient simpleSqlClient = new SimpleSqlClient(df, DefaultPreparedStatementSetter.INSTANCE);
         TestRepository testRepository = new TestRepository(simpleSqlClient);
         ArrayList<TestModel> list = new ArrayList();
         long start = System.currentTimeMillis();
