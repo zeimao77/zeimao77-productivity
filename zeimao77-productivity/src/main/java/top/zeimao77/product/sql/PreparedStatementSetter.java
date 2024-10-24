@@ -83,6 +83,6 @@ public interface PreparedStatementSetter {
         }
     }
 
-    void setParam(PreparedStatement preparedStatement);
+    void setParam(PreparedStatement preparedStatement) throws SQLException;
 
 }

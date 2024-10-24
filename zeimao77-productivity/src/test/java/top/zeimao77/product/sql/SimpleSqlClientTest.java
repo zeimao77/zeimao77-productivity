@@ -147,14 +147,9 @@ class SimpleSqlClientTest extends BaseMain {
                 .limit(0,30);
         sql.resolve();
         List<StatementParameter> statementParams = sql.getStatementParams();
-        Consumer<PreparedStatement> con = o -> {
-            try {
-                o.setString(1,"22321875757563914L");
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-        };
-        simpleSqlClient.select("SELECT * FROM demo",null,(o1,o2) -> {
+
+        simpleSqlClient.select("SELECT * FROM demo where demo_id = ?",o -> o.setString(1,"23334")
+        ,(o1,o2) -> {
             long demoId = o1.getLong("demo_id");
             logger.info("demoId:{}",demoId);
         });
