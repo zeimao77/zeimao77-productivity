@@ -59,6 +59,7 @@ public class JedisLockImpl {
                 TimeUnit.MICROSECONDS.sleep(sleep);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
+                return false;
             }
             wait += sleep;
         }
