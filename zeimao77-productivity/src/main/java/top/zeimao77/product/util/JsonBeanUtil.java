@@ -16,6 +16,8 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 public class JsonBeanUtil {
 
@@ -32,7 +34,14 @@ public class JsonBeanUtil {
         objectMapper = new ObjectMapper();
         JavaTimeModule javaTimeModule = new JavaTimeModule();
         javaTimeModule.addSerializer(LocalDateTime.class,new LocalDateTimeSerializer(LocalDateTimeUtil.STANDARDDATETIMEFORMATTER));
-        javaTimeModule.addDeserializer(LocalDateTime.class,new LocalDateTimeDeserializer(LocalDateTimeUtil.STANDARDDATETIMEFORMATTER));
+        javaTimeModule.addDeserializer(LocalDateTime.class,new JsonDeserializer<LocalDateTime>() {
+
+            @Override
+            public LocalDateTime deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JacksonException {
+                String text = jsonParser.getText();
+                return LocalDateTimeUtil.smartParse(text);
+            }
+        });
         javaTimeModule.addSerializer(LocalDate.class,new LocalDateSerializer(LocalDateTimeUtil.STANDARDDATEFORMATTER));
         javaTimeModule.addDeserializer(LocalDate.class,new LocalDateDeserializer(LocalDateTimeUtil.STANDARDDATEFORMATTER));
         javaTimeModule.addSerializer(LocalTime.class,new LocalTimeSerializer(LocalDateTimeUtil.STANDARDTIMEFORMATTER));
@@ -52,6 +61,7 @@ public class JsonBeanUtil {
                 return StringOptional.empty();
             }
         });
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         objectMapper.registerModule(javaTimeModule);
     }
 

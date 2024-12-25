@@ -1,7 +1,11 @@
 package top.zeimao77.product.util;
 
+import top.zeimao77.product.exception.BaseServiceRunException;
+import top.zeimao77.product.exception.ExceptionCodeDefinition;
+
 import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAccessor;
 
@@ -17,6 +21,21 @@ public class LocalDateTimeUtil {
 
     public static LocalDateTime parseDateTime(String text) {
         return LocalDateTime.parse(text, STANDARDDATETIMEFORMATTER);
+    }
+
+    public static LocalDateTime smartParse(String text) {
+        DateTimeFormatter[] fs = new DateTimeFormatter[] {
+                STANDARDDATETIMEFORMATTER,
+                DateTimeFormatter.ISO_OFFSET_DATE_TIME,
+                DateTimeFormatter.ISO_LOCAL_DATE_TIME,
+                DateTimeFormatter.ISO_ZONED_DATE_TIME
+        };
+        for (DateTimeFormatter f : fs) {
+            try {
+                return LocalDateTime.parse(text,f);
+            } catch (DateTimeParseException e) {}
+        }
+        throw new BaseServiceRunException(ExceptionCodeDefinition.WRONG_SOURCE,"parse date time faild, string:" + text);
     }
 
     public static LocalDate parseDate(String text) {
