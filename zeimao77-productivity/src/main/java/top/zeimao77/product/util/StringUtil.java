@@ -41,6 +41,18 @@ public class StringUtil {
         return cut(str,len,DEFAULT_SUFFIX);
     }
 
+    public static String subString(String str,int start,int end) {
+        if(str == null)
+            return null;
+        if(start < 0)
+            start = 0;
+        if(end > str.length())
+            end = str.length();
+        if(start > end)
+            return "";
+        return str.substring(start,end);
+    }
+
     public static String printNullableObject(Object o) {
         return o == null ? "null" : o.toString();
     }
@@ -54,6 +66,13 @@ public class StringUtil {
         if(str.startsWith(" ") || str.startsWith("\u3000") || str.endsWith(" ") || str.endsWith("\u3000"))
             return TRIMSPACE_PATTERN.matcher(str).replaceAll("");
         return str;
+    }
+
+    public static int compare(String str1,String str2) {
+        if(str1 != null && str2 != null) return str1.compareTo(str2);
+        if(str1 == null && str2 != null) return -1;
+        if(str1 != null && str2 == null) return 1;
+        return 0;
     }
 
 }

@@ -33,7 +33,7 @@ public interface IConverter<K> {
     /**
      * 刷新转换规则
      */
-    void refreshRule();
+    void refreshRule(boolean force);
 
     /**
      * @param key 键

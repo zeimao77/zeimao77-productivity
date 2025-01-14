@@ -63,13 +63,13 @@ public abstract class AbstractCustomRefreshConverter<K> implements IConverter<K>
 
     /**
      * 如果规则为空或者过期将调用刷新 过期参数跳转:
-     * @see AbstractCustomRefreshConverter#refreshRule()
+     * @see AbstractCustomRefreshConverter#refreshRule(boolean)
      * @param key key键
      * @return 值
      */
     @Override
     public Object get(K key) {
-        refreshRule();
+        refreshRule(false);
         try {
             lock.readLock().lock();
             Object resultValue = this.ruleRepository.get(key);
@@ -83,11 +83,11 @@ public abstract class AbstractCustomRefreshConverter<K> implements IConverter<K>
      * 规则刷新函数
      */
     @Override
-    public void refreshRule() {
-        if(needRefresh()) {
+    public void refreshRule(boolean force) {
+        if(force || needRefresh()) {
             lock.writeLock().lock();
             try {
-                if(needRefresh()) {
+                if(force || needRefresh()) {
                     clear();
                     refreshFalg = 0;
                     refresh();

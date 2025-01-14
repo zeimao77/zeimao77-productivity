@@ -63,12 +63,12 @@ public abstract class AbstractSoftReferenceRuleConterver<K> implements IConverte
     }
 
     @Override
-    public void refreshRule() {
+    public void refreshRule(boolean force) {
         AssertUtil.assertTrue(this.refrenceCount.get() > 0, ExceptionCodeDefinition.WRONG_ACTION,"缓存处于软引用状态，请先上锁");
-        if(needRefresh()) {
+        if(force || needRefresh()) {
             lock.writeLock().lock();
             try {
-                if(needRefresh())
+                if(force || needRefresh())
                     clear();
                     refreshFalg = 0;
                     refresh();
@@ -87,23 +87,10 @@ public abstract class AbstractSoftReferenceRuleConterver<K> implements IConverte
         return (refreshFalg & REFRESHFLAG) == 0 || between < 0;
     }
 
-    public void refreshRule(boolean force) {
-        if(force) {
-            try {
-                lock.writeLock().lock();
-                memoryRuleRepository.clear();
-                refresh();
-            } finally {
-                lock.writeLock().unlock();
-            }
-        } else {
-            refreshRule();
-        }
-    }
 
     @Override
     public Object get(K key) {
-        refreshRule();
+        refreshRule(false);
         try {
             lock.readLock().lock();
             Object resultValue = this.memoryRuleRepository.get(key);

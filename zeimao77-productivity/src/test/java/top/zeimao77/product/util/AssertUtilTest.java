@@ -23,6 +23,9 @@ public class AssertUtilTest extends BaseMain {
         logger.info(numberUtil.format(23344432233.23));
         logger.info("2023-08-21 23:59:59".substring(0,10));
         logger.info(UUID.randomUUID().toString());
+        logger.info(StringUtil.subString("",0,20));
+        System.out.println("1".compareTo("2"));
+        System.out.println(StringUtil.compare(null,"2"));
 
     }
 

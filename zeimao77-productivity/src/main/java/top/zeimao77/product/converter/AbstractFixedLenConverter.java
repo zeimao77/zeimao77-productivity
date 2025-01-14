@@ -42,7 +42,7 @@ public abstract class AbstractFixedLenConverter<K> implements IConverter<K> {
     @Override
     public Object get(K key) {
         Object result = null;
-        this.refreshRule();
+        this.refreshRule(false);
         CacheData cacheData = ruleRepository.get(key);
         if(cacheData != null) {
             cacheData.access();
@@ -56,7 +56,7 @@ public abstract class AbstractFixedLenConverter<K> implements IConverter<K> {
     }
 
     @Override
-    public void refreshRule() {
+    public void refreshRule(boolean force) {
         if(needRefresh() && refreshFlag.compareAndSet(0,1)) {
             try {
                 doRefreshRule();

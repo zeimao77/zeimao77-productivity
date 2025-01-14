@@ -45,7 +45,7 @@ public abstract class AbstractNonReFreshConverter<K> implements IConverter<K> {
 
     @Override
     public Object get(K key) {
-        refreshRule();
+        refreshRule(false);
         Object resultValue = this.convRuleMap.get(key);
         return resultValue == null ? defaultName(key) : resultValue;
     }
@@ -55,11 +55,11 @@ public abstract class AbstractNonReFreshConverter<K> implements IConverter<K> {
      * 该函数用锁控制了刷新函数只能串行执行
      */
     @Override
-    public void refreshRule() {
-        if (needRefresh()) {
+    public void refreshRule(boolean force) {
+        if (force || needRefresh()) {
             lock.lock();
             try {
-                if (needRefresh()) {
+                if (force || needRefresh()) {
                     this.refresh();
                     refreshFalg |= REFRESHFLAG;
                 }

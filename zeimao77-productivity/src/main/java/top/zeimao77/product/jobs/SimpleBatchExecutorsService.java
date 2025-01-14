@@ -22,8 +22,10 @@ public abstract class SimpleBatchExecutorsService<T> {
         for (int i = 0; i < t; i++) {
             int s1 = i * pageSize;
             int e1 = (i + 1) * pageSize;
+            e1 = e1 > list.size() ? list.size() : e1;
+            int finalE = e1;
             executorService.submit(() -> {
-                doHandler(list, s1, e1);
+                doHandler(list, s1, finalE);
             });
         }
     }

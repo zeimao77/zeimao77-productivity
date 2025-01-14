@@ -19,8 +19,8 @@ public class HttpClientUtil8 implements IHttpClient {
     private static Logger logger = LoggerFactory.getLogger(HttpClientUtil8.class);
     public static final HttpClientUtil8 INSTANCE = new HttpClientUtil8();
 
-    @Override
-    public String sendPost(String url, String body, Map<String, String> headers, int timeout) {
+
+    public String sendHttp(String method,String url, String body, Map<String, String> headers, int timeout) {
         OutputStreamWriter out;
         InputStream is = null;
         String result;
@@ -29,6 +29,7 @@ public class HttpClientUtil8 implements IHttpClient {
         try {
             URL realUrl = new URL(url);
             conn = (HttpURLConnection)realUrl.openConnection();
+            conn.setRequestMethod(method);
             conn.setReadTimeout(timeout * 1000);
             conn.setConnectTimeout(5000);
             if(headers != null && !headers.isEmpty()) {
@@ -61,6 +62,11 @@ public class HttpClientUtil8 implements IHttpClient {
             }
         }
         return result;
+    }
+
+    @Override
+    public String sendPost(String url, String body, Map<String, String> headers, int timeout) {
+        return sendHttp("POST",url,body,headers,timeout);
     }
 
     @Override
