@@ -13,6 +13,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 
 public class HttpClientUtil8 implements IHttpClient {
 
@@ -20,12 +22,10 @@ public class HttpClientUtil8 implements IHttpClient {
     public static final HttpClientUtil8 INSTANCE = new HttpClientUtil8();
 
 
-    public String sendHttp(String method,String url, String body, Map<String, String> headers, int timeout) {
+    public static void sendHttp(String method, String url, String body, Map<String, String> headers, int timeout, Consumer<InputStream> con) {
         OutputStreamWriter out;
         InputStream is = null;
-        String result;
         HttpURLConnection conn = null;
-
         try {
             URL realUrl = new URL(url);
             conn = (HttpURLConnection)realUrl.openConnection();
@@ -38,15 +38,17 @@ public class HttpClientUtil8 implements IHttpClient {
             }
             conn.setDoOutput(true);
             conn.setDoInput(true);
-            out=new OutputStreamWriter(conn.getOutputStream(),"UTF-8");
-            out.write(body);
-            out.flush();
-            out.close();
+            if(body != null) {
+                out=new OutputStreamWriter(conn.getOutputStream(),"UTF-8");
+                out.write(body);
+                out.flush();
+                out.close();
+            }
             int responseCode = conn.getResponseCode();
             if(responseCode != HttpURLConnection.HTTP_OK)
                 throw new BaseServiceRunException(APPERR,"HTTP请求错误:"+responseCode);
             is = conn.getInputStream();
-            result = StreamUtil.readStream(is);
+            con.accept(is);
             conn.getInputStream().close();
         } catch (MalformedURLException e) {
             throw new BaseServiceRunException(WRONG_SOURCE,"URL错误",e);
@@ -61,49 +63,22 @@ public class HttpClientUtil8 implements IHttpClient {
                 }
             }
         }
-        return result;
     }
 
-    @Override
+    public String sendHttp(String method,String url, String body, Map<String, String> headers, int timeout) {
+        AtomicReference<String> result = null;
+        sendHttp(method,url,body,headers,timeout,(is)->{
+            result.set(StreamUtil.readStream(is));
+        });
+        return result.get();
+    }
+
     public String sendPost(String url, String body, Map<String, String> headers, int timeout) {
         return sendHttp("POST",url,body,headers,timeout);
     }
 
-    @Override
     public String sendGet(String url, Map<String, String> headers, int timeout) {
-        InputStream is = null;
-        String result;
-        HttpURLConnection conn = null;
-        try{
-            URL realUrl = new URL(url);
-            conn = (HttpURLConnection)realUrl.openConnection();
-            conn.setReadTimeout(timeout * 1000);
-            conn.setConnectTimeout(5000);
-            if(headers != null && !headers.isEmpty()) {
-                for (String o : headers.keySet())
-                    conn.setRequestProperty(o,headers.get(o));
-            }
-            int responseCode = conn.getResponseCode();
-            if(responseCode != HttpURLConnection.HTTP_OK)
-                throw new BaseServiceRunException(APPERR,"HTTP请求错误:"+responseCode);
-            is = conn.getInputStream();
-            result = StreamUtil.readStream(is);
-        } catch (MalformedURLException e) {
-            throw new BaseServiceRunException(WRONG_SOURCE,"URL错误",e);
-        } catch (IOException e) {
-            throw new BaseServiceRunException(IOEXCEPTION,"IO错误",e);
-        } finally {
-            if(is != null) {
-                try {
-                    is.close();
-                } catch (IOException e) {
-                    logger.error("关闭资源出错",e);
-                }
-            }
-            if (conn != null)
-                conn.disconnect();
-        }
-        return result;
+       return sendHttp("GET",url,null,headers,timeout);
     }
 
 }

@@ -29,14 +29,14 @@ public class PushDeerClient {
     protected void sendText(String messaage) {
         HttpClientUtil11 httpClientUtil11 = new HttpClientUtil11();
         String format = String.format("%s?pushkey=%s&text=%s",this.server,this.key,messaage);
-        String s = httpClientUtil11.sendGet(format);
+        String s = httpClientUtil11.sendGet(format,null,5);
         logger.debug("{}",s);
     }
 
     public void sendMarkdown(String title,String text) {
         String format = String.format("%s?pushkey=%s&text=%s&desp=%s&type=markdown",this.server,this.key,title,text);
         HttpClientUtil11 httpClientUtil11 = new HttpClientUtil11();
-        String s = httpClientUtil11.sendGet(format);
+        String s = httpClientUtil11.sendGet(format,null,5);
         logger.debug("{}",s);
     }
 

@@ -57,9 +57,6 @@ public abstract class AbstractCustomRefreshConverter<K> implements IConverter<K>
      * @param key 键
      * @param value 值
      */
-    protected void addConvRule(K key, Object value) {
-        this.ruleRepository.put(key,value);
-    }
 
     /**
      * 如果规则为空或者过期将调用刷新 过期参数跳转:

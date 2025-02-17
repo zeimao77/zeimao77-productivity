@@ -66,7 +66,7 @@ public class DingDingRobotClient {
         url += "&sign="+sign(timestamp);
         Map<String, String> headers = Map.of("Content-Type", "application/json");
         HttpClientUtil11 httpClientUtil11 = new HttpClientUtil11();
-        String s = httpClientUtil11.sendPost(url, JsonBeanUtil.DEFAULT.toJsonString(message),headers,5);
+        String s = httpClientUtil11.sendHttp("POST",url, JsonBeanUtil.DEFAULT.toJsonString(message),headers,5);
         logger.debug("robot:{}",s);
     }
 

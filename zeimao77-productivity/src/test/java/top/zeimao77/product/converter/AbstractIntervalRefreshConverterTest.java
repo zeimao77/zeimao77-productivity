@@ -25,7 +25,7 @@ class AbstractIntervalRefreshConverterTest extends BaseMain {
             }
 
             protected void addConvRule(Integer key1, Integer key2, Object value) {
-                addConvRule(new ImmutablePair<>(key1, key2), value);
+                // addConvRule(new ImmutablePair<>(key1, key2), value);
             }
         };
         logger.info(converter.getName(new ImmutablePair<>(1,200)));

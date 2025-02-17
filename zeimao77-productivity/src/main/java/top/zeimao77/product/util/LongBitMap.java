@@ -17,6 +17,10 @@ public interface LongBitMap {
         return (bitmap & flag) == flag;
     }
 
+    static boolean matchesAny(long bitmap,long flag) {
+        return (bitmap & flag) != 0;
+    }
+
     /**
      * 添加一个标志
      * @param bitmap 位图
