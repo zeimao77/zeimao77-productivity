@@ -65,6 +65,7 @@ public class HttpClientUtil8 implements IHttpClient {
         }
     }
 
+    @Override
     public String sendHttp(String method,String url, String body, Map<String, String> headers, int timeout) {
         AtomicReference<String> result = null;
         sendHttp(method,url,body,headers,timeout,(is)->{
@@ -73,10 +74,12 @@ public class HttpClientUtil8 implements IHttpClient {
         return result.get();
     }
 
+    @Override
     public String sendPost(String url, String body, Map<String, String> headers, int timeout) {
         return sendHttp("POST",url,body,headers,timeout);
     }
 
+    @Override
     public String sendGet(String url, Map<String, String> headers, int timeout) {
        return sendHttp("GET",url,null,headers,timeout);
     }

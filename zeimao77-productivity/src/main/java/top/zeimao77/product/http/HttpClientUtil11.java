@@ -40,21 +40,17 @@ public class HttpClientUtil11 implements IHttpClient {
             .build();
     }
 
+    @Override
     public String sendGet(String url,Map<String,String> headers,int timeout) {
         return sendHttp(this.client,"GET",url,null,headers,timeout,HttpResponse.BodyHandlers.ofString());
     }
 
+    @Override
     public String sendPost(String url, String body, Map<String, String> headers, int timeout) {
         return sendHttp(this.client,"POST",url,body,headers,timeout,HttpResponse.BodyHandlers.ofString());
     }
 
-    /**
-     * @return 客户端对象
-     */
-    public HttpClient getClient() {
-        return client;
-    }
-
+    @Override
     public String sendHttp(String method, String url, String body, Map<String, String> headers, int timeout) {
         return sendHttp(this.client,method,url,body,headers,timeout,HttpResponse.BodyHandlers.ofString());
     }
@@ -85,6 +81,13 @@ public class HttpClientUtil11 implements IHttpClient {
             Thread.currentThread().interrupt();
         }
         return null;
+    }
+
+    /**
+     * @return 客户端对象
+     */
+    public HttpClient getClient() {
+        return client;
     }
 
 }
