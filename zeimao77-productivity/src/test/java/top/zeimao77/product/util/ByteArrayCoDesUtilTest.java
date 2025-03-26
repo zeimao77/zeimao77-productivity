@@ -25,7 +25,9 @@ class ByteArrayCoDesUtilTest extends BaseMain {
         byte[] bytes = "helloworld".getBytes(StandardCharsets.UTF_8);
         String s = ByteArrayCoDesUtil.hexEncode(bytes);
         logger.info(s);
-        logger.info(new String(ByteArrayCoDesUtil.hexDecode(s)));
+        logger.info(ByteArrayCoDesUtil.toCode(bytes,16));
+        byte[] bytes1 =  {0x68, 0x65, 0x6C, 0x6C, 0x6F, 0x77, 0x6F, 0x72, 0x6C, 0x64};
+        logger.info(new String(bytes1,StandardCharsets.UTF_8));
     }
 
     @Test

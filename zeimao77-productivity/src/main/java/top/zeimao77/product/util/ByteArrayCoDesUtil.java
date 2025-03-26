@@ -33,6 +33,24 @@ public class ByteArrayCoDesUtil {
         return sb.toString();
     }
 
+    public static String toCode(byte[] bs,int format) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("{");
+        for (int i = 0; i < bs.length; i++) {
+            if(format == 16) {
+                String hex = hexEncode(bs[i]);
+                if(i > 0) sb.append(", ");
+                sb.append("0x").append(hex.toUpperCase());
+            } else {
+                int b = bs[i];
+                if(i > 0) sb.append(", ");
+                sb.append(b);
+            }
+        }
+        sb.append("}");
+        return sb.toString();
+    }
+
     /**
      * 十六进制编码
      * @param b 字节

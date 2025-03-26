@@ -15,6 +15,8 @@ public interface IWhere {
     String COND_QGTE = "$gte";
     String COND_QLT = "$lt";
     String COND_QLTE = "$lte";
+    String COND_QNULL = "$null";
+    String COND_QNNULL = "$nnull";
     String COND_QREGEXP = "$regexp";
     String COND_LBRACKET = "$lbrkt";
     String COND_RBRACKET = "$rbrkt";

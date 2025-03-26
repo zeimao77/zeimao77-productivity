@@ -249,6 +249,12 @@ public class SQL implements StatementParamResolver, IWhere {
                 sqlBuilder.append(",'%')");
                 con.accept(value);
             }
+            case COND_QNULL -> {
+                sqlBuilder.append(" IS NULL");
+            }
+            case COND_QNNULL -> {
+                sqlBuilder.append(" IS NOT NULL");
+            }
             case COND_QREGEXP -> {
                 sqlBuilder.append(" REGEXP ");
                 if(!AssertUtil.isEmpty(valSetPre))

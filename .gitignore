@@ -12,3 +12,5 @@ secring.gpg
 app-main.log
 gradlew.bat
 gradlew
+app-main
+app-main-mvn

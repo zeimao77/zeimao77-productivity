@@ -26,7 +26,9 @@ class OnlyPrintRepositTest {
         onlyPrintReposit.updateByResolver(new SQL()
                 .select("abc")
                 .from("tab")
-                .where(SQL.BIND_AND,"c1",SQL.COND_QIS,"1"));
+                .where(SQL.BIND_AND,"c1",SQL.COND_QIS,"1")
+                .where(SQL.BIND_AND,"c2",SQL.COND_QNULL,null)
+        );
         printWriter.close();
     }
 }
