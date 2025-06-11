@@ -53,6 +53,14 @@ public class StringUtil {
         return str.substring(start,end);
     }
 
+    public static String rightSubString(String str,int len) {
+        if(str == null)
+            return null;
+        if (len >= str.length())
+            return str;
+        return str.substring(str.length() - len);
+    }
+
     public static String printNullableObject(Object o) {
         return o == null ? "null" : o.toString();
     }

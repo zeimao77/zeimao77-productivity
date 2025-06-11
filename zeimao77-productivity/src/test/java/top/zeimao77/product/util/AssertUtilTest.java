@@ -8,6 +8,8 @@ import java.io.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.NumberFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Random;
 import java.util.TimeZone;
@@ -26,6 +28,7 @@ public class AssertUtilTest extends BaseMain {
         logger.info(StringUtil.subString("",0,20));
         System.out.println("1".compareTo("2"));
         System.out.println(StringUtil.compare(null,"2"));
+        System.out.println(LocalDateTimeUtil.toDate(LocalDateTime.now(),LocalDateTimeUtil.SMARTNUMBERDATEFORMATTER));
 
     }
 

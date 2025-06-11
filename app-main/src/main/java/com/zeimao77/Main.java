@@ -1,31 +1,27 @@
 package com.zeimao77;
 
+import com.szjc.FujitsuOrder;
 import com.zatca.*;
-import org.apache.logging.log4j.core.util.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xml.sax.SAXException;
-import sun.nio.cs.ISO_8859_1;
-import top.zeimao77.product.fileio.FilesUtil;
-import top.zeimao77.product.http.HttpClientUtil11;
-import top.zeimao77.product.json.Ijson;
-import top.zeimao77.product.main.BaseMain;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import top.zeimao77.product.model.ImmutableRow;
 import top.zeimao77.product.security.DigestUtil;
-import top.zeimao77.product.util.ByteArrayCoDesUtil;
-import top.zeimao77.product.util.JsonBeanUtil;
-import top.zeimao77.product.util.LocalDateTimeUtil;
-import top.zeimao77.product.util.LongBitMap;
+import top.zeimao77.product.util.*;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
-import java.io.*;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.List;
+import java.time.ZoneId;
+import java.util.*;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -36,11 +32,122 @@ public class Main {
 
     public static final String MYSQLBEAN = "mysql_top_zeimao77";
 
-    public static final String body = """
- {"event":"order.status_update","metadata":{"kafka_message_received_at":"2025-02-26T03:09:18.711214462Z"},"order":{"allergy_note":"NO CUTLERY / 不需要餐具","archived_items":[],"asap":true,"bag_fee":{"currency_code":"HKD","fractional":0},"customer":{"contact_access_code":"803230547","contact_number":"85230189333","first_name":"HK A.","loyalty":{"card_number":""},"order_frequency_at_site":"NEW CUSTOMER"},"customer_order_count":0,"display_id":"2868","id":"hk:81b12954-85b0-4f1f-8b56-025c7acec8c9","items":[{"allowed_actions_if_items_are_unavailable":["ITEM_REMOVAL"],"discount_amount":{"currency_code":"HKD","fractional":0},"id":"d94660d1-4cdd-467e-981a-44ecc49b681d","name":"可口可樂 (單罐裝) 330毫升 Coca Cola (Can) 330ML","operational_name":"可口可樂 330毫升 [G] - 2002947","pos_item_id":"002002947","quantity":1,"total_unit_price":{"currency_code":"HKD","fractional":720},"unit_price":{"currency_code":"HKD","fractional":720},"unreduced_total_unit_price":{"currency_code":"HKD","fractional":720}},{"allowed_actions_if_items_are_unavailable":["ITEM_REMOVAL"],"discount_amount":{"currency_code":"HKD","fractional":300},"id":"9fcd604b-c0b5-405c-850e-addf42a6b599","name":"飛雪礦物質水 1.5升 Mineral Water 1.5L","operational_name":"飛雪礦物質水 1.5升 [G] - 2000016","pos_item_id":"002000016","quantity":2,"total_unit_price":{"currency_code":"HKD","fractional":750},"unit_price":{"currency_code":"HKD","fractional":750},"unreduced_total_unit_price":{"currency_code":"HKD","fractional":750}},{"allowed_actions_if_items_are_unavailable":["ITEM_REMOVAL"],"discount_amount":{"currency_code":"HKD","fractional":165},"id":"c2c325d2-104a-42fb-b9db-2b52c82f8c0a","name":"TOPVALU BP 烏龍茶 525毫升 TOPVALU BP Ulong Tea 525ML","operational_name":"TOPVALU BP 烏龍茶 525毫升 [G] - 20004321","pos_item_id":"020004321","quantity":1,"total_unit_price":{"currency_code":"HKD","fractional":550},"unit_price":{"currency_code":"HKD","fractional":550},"unreduced_total_unit_price":{"currency_code":"HKD","fractional":550}}],"location_id":"1000","offer_discount":{"currency_code":"HKD","fractional":465},"order_type":"delivery","partners_final_order_subtotal":{"currency_code":"HKD","fractional":2305},"partners_final_order_total":{"currency_code":"HKD","fractional":2305},"prepare_for":"2025-02-26T03:07:57Z","promotions":[{"id":"1148a73b-f076-41c6-b927-7b41ba11266c","pos_item_ids":[{"id":"002000016"}],"quantity":0,"type":"percentage_off_on_items","value":20},{"id":"ca43b1b8-c232-41d6-b606-efc614ef5d5e","pos_item_ids":[{"id":"020004321"}],"quantity":0,"type":"percentage_off_on_items","value":30}],"status":"placed","status_log":[{"at":"2025-02-26T03:00:49Z","status":"pending"},{"at":"2025-02-26T03:00:50Z","status":"placed"},{"at":"2025-02-26T03:00:51.206638Z","status":"placed"}],"substituted_items_total":{"currency_code":"HKD","fractional":0},"subtotal_after_substitutions":{"currency_code":"HKD","fractional":2770},"subtotal_price":{"currency_code":"HKD","fractional":2770},"time_to_accept":10,"total_after_substitutions":{"currency_code":"HKD","fractional":2305},"total_price":{"currency_code":"HKD","fractional":2305},"updated_at_epoch_ms":1740538851206}}
-            """;
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
+
+
+
+    }
+
+    public static void appElement(Document document, Element element,String name, String value) {
+        Element element1 = document.createElement(name);
+        if(value != null) {
+            element1.setTextContent(value);
+        }
+        element.appendChild(element1);
+    }
+
+    public static void xmldoc()  {
+        FujitsuOrder fujitsuOrder = new FujitsuOrder();
+        fujitsuOrder.setWis_shop_id("1223");
+        fujitsuOrder.setWis_busi_date("2025-04-14");
+        fujitsuOrder.setWis_shop_type("01");
+        FujitsuOrder.Bill bill1 = new FujitsuOrder.Bill();
+        bill1.setWis_pos_id("1234567");
+        fujitsuOrder.setBill(bill1);
+        try {
+            Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+            Element sales = document.createElement("SALES");
+            sales.setAttribute("xmlns","http://www.baosight.com/shcema/general");
+            sales.setAttribute("xmlns:xsi","http://www.w3.org/2001/XMLSchema-instance");
+            document.appendChild(sales);
+            appElement(document,sales,"WIS_BUSI_DATE",fujitsuOrder.getWis_busi_date());
+            appElement(document,sales,"WIS_SHOP_ID",fujitsuOrder.getWis_shop_id());
+            appElement(document,sales,"WIS_SHOP_TYPE",fujitsuOrder.getWis_shop_type());
+            Element bill = document.createElement("BILL");
+            sales.appendChild(bill);
+            appElement(document,bill,"WIS_POS_ID",fujitsuOrder.getBill().getWis_pos_id());
+            appElement(document,bill,"WIS_BILL_NO",fujitsuOrder.getBill().getWis_bill_no());
+            appElement(document,bill,"WIS_BILL_CAT",fujitsuOrder.getBill().getWis_bill_cat());
+            appElement(document,bill,"WIS_WORK_SEQ",fujitsuOrder.getBill().getWis_work_seq());
+            appElement(document,bill,"WIS_TRAN_SEQ",fujitsuOrder.getBill().getWis_tran_seq());
+            appElement(document,bill,"WIS_SALE_TIME",fujitsuOrder.getBill().getWis_sale_time());
+            appElement(document,bill,"WIS_BILL_OLDNO",fujitsuOrder.getBill().getWis_bill_oldno());
+            appElement(document,bill,"WIS_PERSON_NUM",fujitsuOrder.getBill().getWis_person_num().toString());
+            appElement(document,bill,"WIS_ROW_COUNT",fujitsuOrder.getBill().getWis_row_count().toString());
+            appElement(document,bill,"WIS_QTY_TOTAL",fujitsuOrder.getBill().getWis_qty_total().toString());
+            appElement(document,bill,"WIS_SUM_TOTAL",fujitsuOrder.getBill().getWis_sum_total().toString());
+            appElement(document,bill,"WIS_ITEM_DISC",fujitsuOrder.getBill().getWis_item_disc().toString());
+            appElement(document,bill,"WIS_BILL_DISC",fujitsuOrder.getBill().getWis_bill_disc().toString());
+            appElement(document,bill,"WIS_REAL_TOTAL",fujitsuOrder.getBill().getWis_real_total().toString());
+            appElement(document,bill,"WIS_SERVICE_AMT",fujitsuOrder.getBill().getWis_service_amt().toString());
+            appElement(document,bill,"WIS_PAY_TOTAL",fujitsuOrder.getBill().getWis_pay_total().toString());
+            appElement(document,bill,"WIS_CUT_PAY",fujitsuOrder.getBill().getWis_cut_pay().toString());
+            appElement(document,bill,"WIS_OVER_PAY",fujitsuOrder.getBill().getWis_over_pay().toString());
+            appElement(document,bill,"WIS_VIP_NO",fujitsuOrder.getBill().getWis_vip_no());
+            appElement(document,bill,"WIS_CXXSSUM",fujitsuOrder.getBill().getWis_cxxssum().toString());
+            appElement(document,bill,"WIS_CXSELLSUM",fujitsuOrder.getBill().getWis_cxsellsum().toString());
+            appElement(document,bill,"WIS_CXYSJE",fujitsuOrder.getBill().getWis_cxysje().toString());
+            appElement(document,bill,"WIS_DISC_RATE",fujitsuOrder.getBill().getWis_disc_rate().toString());
+            appElement(document,bill,"WIS_OPERATOR",fujitsuOrder.getBill().getWis_operator());
+            appElement(document,bill,"WIS_CARRY_OUT",fujitsuOrder.getBill().getWis_carry_out());
+
+            Element details = document.createElement("DETAILS");
+            bill.appendChild(details);
+            Element detail = document.createElement("DETAIL");
+            details.appendChild(detail);
+            List<FujitsuOrder.Detail> detailList = fujitsuOrder.getBill().getDetails();
+            for (FujitsuOrder.Detail d : detailList) {
+                appElement(document,detail,"WISD_BILL_SEQ",d.getWisd_bill_seq().toString());
+                appElement(document,detail,"WISD_ITEM_NO",d.getWisd_item_no());
+                appElement(document,detail,"WISD_ITEM_NAME",d.getWisd_item_name());
+                appElement(document,detail,"WISD_ITEM_CATEGORY",d.getWisd_item_category());
+                appElement(document,detail,"WISD_ITEM_SHUILV",d.getWisd_item_shuilv().toString());
+                appElement(document,detail,"WISD_ITEM_SPEC",d.getWisd_item_spec());
+                appElement(document,detail,"WISD_ITEM_BRAND",d.getWisd_item_brand());
+                appElement(document,detail,"WISD_ITEM_UNIT",d.getWisd_item_unit());
+                appElement(document,detail,"WISD_ITEM_TYPE",d.getWisd_item_type());
+                appElement(document,detail,"WISD_UNIT_PRICE",d.getWisd_unit_price().toString());
+                appElement(document,detail,"WISD_RETURN_QTY",d.getWisd_return_qty().toString());
+                appElement(document,detail,"WISD_SALES_QTY",d.getWisd_sales_qty().toString());
+                appElement(document,detail,"WISD_SALES_AMT",d.getWisd_sales_amt().toString());
+                appElement(document,detail,"WISD_DISC_RATE",d.getWisd_disc_rate().toString());
+                appElement(document,detail,"WISD_ITEM_DISC",d.getWisd_item_disc().toString());
+                appElement(document,detail,"WISD_BILL_DISC",d.getWisd_bill_disc().toString());
+                appElement(document,detail,"WISD_REAL_AMT",d.getWisd_real_amt().toString());
+                appElement(document,detail,"WISD_ZDCXXUHAO",d.getWisd_zdcxxuhao().toString());
+                appElement(document,detail,"WISD_DPCXXUHAO",d.getWisd_dpcxxuhao().toString());
+            }
+            Element pays = document.createElement("PAYS");
+            bill.appendChild(pays);
+            Element pay = document.createElement("PAY");
+            pays.appendChild(pay);
+            List<FujitsuOrder.Pay> payList = fujitsuOrder.getBill().getPays();
+            for (FujitsuOrder.Pay p : payList) {
+                appElement(document,pay,"WISP_BILL_SEQ",p.getWisp_bill_seq().toString());
+                appElement(document,pay,"WISP_PAY_TYPE",p.getWisp_pay_type());
+                appElement(document,pay,"WISP_PAY_NAME",p.getWisp_pay_name());
+                appElement(document,pay,"WISP_PAY_CURRID",p.getWisp_pay_currid());
+                appElement(document,pay,"WISP_PAY_NUMS",p.getWisp_pay_nums().toString());
+                appElement(document,pay,"WISP_AS_PAY",p.getWisp_as_pay().toString());
+                appElement(document,pay,"WISP_PAY_BASEAMT",p.getWisp_pay_baseamt().toString());
+                appElement(document,pay,"WISP_PAY_CARDTYPE",p.getWisp_pay_cardtype());
+            }
+            TransformerFactory f = TransformerFactory.newInstance();
+            Transformer transformer = f.newTransformer();
+            DOMSource domSource = new DOMSource(document);
+            transformer.transform(domSource,new StreamResult(System.out));
+        }catch (Exception e) {
+
+        }
+
+    }
+
+    public static void test1() {
+
+    }
+
+    public static void zatca() throws Exception {
 
         // 对XML进行HASH并签名
         String filePath1 = "E:\\工作文档\\迪拜项目\\SDK\\zatca-einvoicing-sdk-Java-238-R3.3.9\\zatca-einvoicing-sdk-Java-238-R3.3.9\\Data\\Samples\\Standard\\Invoice\\Standard_Invoice.xml";
@@ -95,22 +202,89 @@ public class Main {
         System.out.println(ByteArrayCoDesUtil.hexEncode(DigestUtil.digest(ZatcaConst.CERTIFICATE,"MD5")));
 
 
-
-
     }
 
+    public static void test() {
 
-    public static List<String> getParameter(String paymentCode){
-        String name = "payOctopus,0403|payEleccoupons,0500|payPapercoupons,0502|payDircoupons,0503,0504|payEFT,0901,0902,0903|payACS,0306|payZKcoupons,0505|payMZcoupons,0506|payImpowerCode,0310|paySCB,0303|payMahatan,0307|payJFXF,0800|payJFHG,0707|payAEONCoupon,0509|信用卡,0301|payAEONSelectCoupon,0507|payACSTTH,0314|payNECCoupon,0510,0517|payCLP,0518,05199";
-        Pattern pattern = Pattern.compile(paymentCode+",([^|]+)");
-        Matcher matcher = pattern.matcher(name);
-        if (matcher.find()) {
-            String group = matcher.group(1);
-            String[] split = group.split(",");
-            List<String> list = Arrays.asList(split);
-            System.out.println(list.size());
-            return list;
+        ArrayList<OrdersDetailModel> ordersDetailModelList = new ArrayList<>();
+        ordersDetailModelList.add(new OrdersDetailModel(2,"0001","000100001",BigDecimal.valueOf(2D)));
+        ordersDetailModelList.add(new OrdersDetailModel(3,"0001","000100001",BigDecimal.valueOf(4D)));
+        ordersDetailModelList.add(new OrdersDetailModel(4,"0001","000100001",BigDecimal.ONE));
+        ordersDetailModelList.add(new OrdersDetailModel(5,"0001","000100001",BigDecimal.ONE));
+
+
+        HashMap<OrdersDetailModel,BigDecimal> allowRetrurnQty = new HashMap<>();
+        for (OrdersDetailModel ordersDetailModel : ordersDetailModelList) {
+            allowRetrurnQty.put(ordersDetailModel, ordersDetailModel.getAllowReturnCopies());
         }
-        return new ArrayList<>();
+
+        Function<ImmutableRow<String,String, BigDecimal>,OrdersDetailModel> fun = (o) ->{
+            OrdersDetailModel secondResult = null;
+            for (OrdersDetailModel ordersDetailModel : ordersDetailModelList) {
+                if(o.getLeft().equals(ordersDetailModel.getGoodsCode())
+                        && o.getCenter().equals(ordersDetailModel.getBarNo())) {
+                    BigDecimal allowReturnCopies = allowRetrurnQty.get(ordersDetailModel);
+                    if(allowReturnCopies.compareTo(o.getRight()) == 0) {
+                        allowRetrurnQty.put(ordersDetailModel, BigDecimal.ZERO);  // 可退数量置零
+                        return ordersDetailModel;
+                    } else if(allowReturnCopies.compareTo(o.getRight()) > 0) {
+                        if(secondResult == null || allowRetrurnQty.get(secondResult).compareTo(allowReturnCopies) > 0) {
+                            secondResult = ordersDetailModel;
+                        }
+                    }
+                }
+            }
+            if (secondResult == null) return null;
+            BigDecimal arq = allowRetrurnQty.get(secondResult);
+            allowRetrurnQty.put(secondResult, arq.subtract(o.getRight()));
+            return secondResult;
+        };
+
+        ArrayList<OrdersDetailModel> returnDetailList = new ArrayList<>();
+        returnDetailList.add(new OrdersDetailModel(1,"0001","000100001",BigDecimal.valueOf(4D)));
+        returnDetailList.add(new OrdersDetailModel(3,"0001","000100001",BigDecimal.valueOf(2D)));
+        returnDetailList.add(new OrdersDetailModel(5,"0001","000100001",BigDecimal.valueOf(1D)));
+        returnDetailList.add(new OrdersDetailModel(6,"0001","000100001",BigDecimal.valueOf(1D)));
+        for (OrdersDetailModel ordersDetailModel : returnDetailList) {
+            OrdersDetailModel apply = fun.apply(new ImmutableRow<>(ordersDetailModel.getGoodsCode(), ordersDetailModel.getBarNo(),ordersDetailModel.getAllowReturnCopies()));
+            if(apply == null) {
+                System.out.println(String.format("退单商品(%s)在原单找不到退可商品行",ordersDetailModel.getGoodsCode()));
+                continue;
+            }
+            System.out.println(String.format("退单商品(%s)找到可退商品行:%d",ordersDetailModel.getGoodsCode(),apply.getRowNo()));
+        }
+
     }
+
+    public static class OrdersDetailModel {
+        private Integer rowNo;
+        private String goodsCode;
+        private String barNo;
+        private BigDecimal allowReturnCopies;
+
+        public OrdersDetailModel(Integer rowNo,String goodsCode, String barNo, BigDecimal allowReturnCopies) {
+            this.rowNo = rowNo;
+            this.goodsCode = goodsCode;
+            this.barNo = barNo;
+            this.allowReturnCopies = allowReturnCopies;
+        }
+
+        public Integer getRowNo() {
+            return rowNo;
+        }
+
+        public String getGoodsCode() {
+            return goodsCode;
+        }
+
+        public String getBarNo() {
+            return barNo;
+        }
+
+        public BigDecimal getAllowReturnCopies() {
+            return allowReturnCopies;
+        }
+
+    }
+
 }

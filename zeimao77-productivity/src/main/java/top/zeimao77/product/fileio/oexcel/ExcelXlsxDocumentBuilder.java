@@ -45,6 +45,8 @@ public class ExcelXlsxDocumentBuilder implements XlsxDocumentBuilder{
         this.dataList = dataList;
     }
 
+    private HashSet<CellRangeValue> alreadyProcessed = new HashSet<>();
+
 
     /**
      * @param table 表结构定义
@@ -97,7 +99,6 @@ public class ExcelXlsxDocumentBuilder implements XlsxDocumentBuilder{
 
     private void setBody() {
         List<Table.Column> columnList = table.getColumnList();
-        List<CellRangeValue> cellRangeValueList = table.getCellRangeValueList();
         if(columnList != null && !columnList.isEmpty()) {
             for (Object o : dataList) {
                 Row row = newRow();
@@ -114,20 +115,28 @@ public class ExcelXlsxDocumentBuilder implements XlsxDocumentBuilder{
                 }
             }
         }
+        List<CellRangeValue> cellRangeValueList = table.getCellRangeValueList();
         if(cellRangeValueList != null && !cellRangeValueList.isEmpty()) {
             for (CellRangeValue cellRangeValue : cellRangeValueList) {
-                if(cellRangeValue.isMerge()) {
-                    CellRangeAddress cellRangeAddress = new CellRangeAddress(cellRangeValue.getStartRow()
-                            , cellRangeValue.getEndRow(), cellRangeValue.getStartColumn(), cellRangeValue.getEndColumn());
-                    sheet.addMergedRegion(cellRangeAddress);
+                if(!alreadyProcessed.contains(cellRangeValue)) {
+                    setRangeCell(cellRangeValue);
                 }
-                Row row = sheet.getRow(cellRangeValue.getStartRow());
-                row = row == null ? sheet.createRow(cellRangeValue.getStartRow()) : row;
-                Cell cell = row.createCell(cellRangeValue.getStartColumn());
-                setCellValue(cell,-1,cellRangeValue.getFormat(),cellRangeValue.getFormatFunc(),cellRangeValue.getValue());
             }
         }
     }
+
+    private void setRangeCell(CellRangeValue cellRangeValue) {
+        if(cellRangeValue.isMerge()) {
+            CellRangeAddress cellRangeAddress = new CellRangeAddress(cellRangeValue.getStartRow()
+                    , cellRangeValue.getEndRow(), cellRangeValue.getStartColumn(), cellRangeValue.getEndColumn());
+            sheet.addMergedRegion(cellRangeAddress);
+        }
+        Row row = sheet.getRow(cellRangeValue.getStartRow());
+        row = row == null ? sheet.createRow(cellRangeValue.getStartRow()) : row;
+        Cell cell = row.createCell(cellRangeValue.getStartColumn());
+        setCellValue(cell,-1,cellRangeValue.getFormat(),cellRangeValue.getFormatFunc(),cellRangeValue.getValue());
+    }
+
 
     protected void setCellValue(Cell cell, int index, String format, BiFunction<Workbook,CellStyleFactory, CellStyle> formatFunc, Object value) {
         if(formatFunc != null)
@@ -172,6 +181,15 @@ public class ExcelXlsxDocumentBuilder implements XlsxDocumentBuilder{
     }
 
     private void setHead() {
+        List<CellRangeValue> cellRangeValueList = table.getCellRangeValueList();
+        if(cellRangeValueList != null && !cellRangeValueList.isEmpty()) {
+            for (CellRangeValue cellRangeValue : cellRangeValueList) {
+                if (cellRangeValue.getStartRow() < this.rowNum) {
+                    alreadyProcessed.add(cellRangeValue);
+                    setRangeCell(cellRangeValue);
+                }
+            }
+        }
         List<Table.Column> columnList = table.getColumnList();
         if(columnList == null || columnList.isEmpty()) {
             return;

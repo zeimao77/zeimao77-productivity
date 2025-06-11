@@ -37,6 +37,7 @@ dependencies {
     implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.33'
     implementation 'org.apache.santuario:xmlsec:4.0.3'
     implementation 'org.bouncycastle:bcprov-jdk15on:1.70'
+    implementation 'org.apache.groovy:groovy-all:4.0.26'
 }
 
 application {

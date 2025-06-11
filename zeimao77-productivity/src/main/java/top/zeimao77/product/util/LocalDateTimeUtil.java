@@ -17,8 +17,8 @@ public class LocalDateTimeUtil {
     public static final DateTimeFormatter STANDARDDATETIMEFORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     public static final DateTimeFormatter STANDARDDATEFORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     public static final DateTimeFormatter NUMBERDATEFORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd");
+    public static final DateTimeFormatter SMARTNUMBERDATEFORMATTER = DateTimeFormatter.ofPattern("yyMMdd");
     public static final DateTimeFormatter STANDARDTIMEFORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss");
-
     public static final DateTimeFormatter UTCDATETIMEFORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
     public static LocalDateTime parseDateTime(String text) {

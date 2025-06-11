@@ -10,7 +10,8 @@ public class BoolUtil {
     private BoolUtil(){}
 
     public static boolean parseBool(String boolStr,boolean defaultValue) {
-        if("auto".equalsIgnoreCase(boolStr)
+        if(boolStr == null
+            || "auto".equalsIgnoreCase(boolStr)
             || "automatic".equalsIgnoreCase(boolStr)
             || "default".equalsIgnoreCase(boolStr)) {
             return defaultValue;
