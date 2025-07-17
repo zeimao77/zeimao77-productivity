@@ -83,4 +83,14 @@ public class StringUtil {
         return 0;
     }
 
+    public static String removeLeadingZeros(String str) {
+        if(str == null)
+            return null;
+        int i = 0;
+        while(i < str.length() && str.charAt(i) == '0') {
+            i++;
+        }
+        return str.substring(i);
+    }
+
 }

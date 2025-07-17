@@ -2,10 +2,15 @@ package com.zeimao77;
 
 import com.szjc.FujitsuOrder;
 import com.zatca.*;
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.beanutils.PropertyUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import top.zeimao77.product.exception.BaseServiceRunException;
+import top.zeimao77.product.json.Ijson;
+import top.zeimao77.product.model.ImmutablePair;
 import top.zeimao77.product.model.ImmutableRow;
 import top.zeimao77.product.security.DigestUtil;
 import top.zeimao77.product.util.*;
@@ -15,16 +20,20 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.text.SimpleDateFormat;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static top.zeimao77.product.exception.ExceptionCodeDefinition.WRONG_SOURCE;
 
 public class Main {
 
@@ -32,11 +41,57 @@ public class Main {
 
     public static final String MYSQLBEAN = "mysql_top_zeimao77";
 
+    public static class Demo {
+        private Integer rowNo;
+        private BigDecimal qty;
+        private Boolean weighGood;
 
-    public static void main(String[] args) {
+        public Demo(Integer rowNo, BigDecimal qty, Boolean weighGood) {
+            this.rowNo = rowNo;
+            this.qty = qty;
+            this.weighGood = weighGood;
+        }
+
+        public Integer getRowNo() {
+            return rowNo;
+        }
+
+        public void setRowNo(Integer rowNo) {
+            this.rowNo = rowNo;
+        }
+
+        public BigDecimal getQty() {
+            return qty;
+        }
+
+        public void setQty(BigDecimal qty) {
+            this.qty = qty;
+        }
+
+        public Boolean getWeighGood() {
+            return weighGood;
+        }
+
+        public void setWeighGood(Boolean weighGood) {
+            this.weighGood = weighGood;
+        }
+    }
 
 
+    public static void main(String[] args) throws NoSuchFieldException {
+        Demo demo = new Demo(1, new BigDecimal("1.0"), true);
+        System.out.println(BeanUtil.getProperty(demo, "rowNo"));
+        System.out.println(BeanUtil.getPropertyType(demo, "qty"));
+    }
 
+    public static String removeLeadingZeros(String str) {
+        if(str == null)
+            return null;
+        int i = 0;
+        while(i < str.length() && str.charAt(i) == '0') {
+            i++;
+        }
+        return str.substring(i);
     }
 
     public static void appElement(Document document, Element element,String name, String value) {

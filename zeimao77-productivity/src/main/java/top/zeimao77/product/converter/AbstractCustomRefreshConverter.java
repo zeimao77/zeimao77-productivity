@@ -34,6 +34,10 @@ public abstract class AbstractCustomRefreshConverter<K> implements IConverter<K>
      */
     protected RuleRepository<K> ruleRepository = new MemoryRuleRepository<>();
 
+    protected void addConvRule(K key, Object value) {
+        this.ruleRepository.put(key,value);
+    }
+
     /**
      * 设置过期时间
      * @param expiryTime 过期时间

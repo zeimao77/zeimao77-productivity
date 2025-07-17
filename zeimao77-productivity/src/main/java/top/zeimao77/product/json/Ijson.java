@@ -60,6 +60,31 @@ public class Ijson {
         return instance;
     }
 
+    public Object getProperty(String fieldName) {
+        if(!this.jsonNode.has(fieldName)) {
+            return null;
+        }
+        JsonNode node = this.jsonNode.get(fieldName);
+        if(!node.isValueNode()) {
+            throw new IllegalArgumentException("the ijson node(" + fieldName + ") is not a value node.");
+        }
+        return switch (node.getNodeType()) {
+            case NUMBER -> {
+                JsonNode jsonNode = this.jsonNode.get(fieldName);
+                yield jsonNode.asDouble();
+            }
+            case STRING, POJO -> {
+                JsonNode jsonNode = this.jsonNode.get(fieldName);
+                yield jsonNode.asText();
+            }
+            case BOOLEAN -> {
+                JsonNode jsonNode = this.jsonNode.get(fieldName);
+                yield jsonNode.asBoolean();
+            }
+            default -> null;
+        };
+    }
+
     /**
      * @param fieldName 键
      * @return IJSON对象

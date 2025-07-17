@@ -69,6 +69,51 @@ public interface Reposit {
         return updateByResolver(sql);
     }
 
+    default int updateTable(String tablename, Object table, BiFunction<String,Object, ImmutableRow<Boolean,String,String>> fun,String[] pks) {
+        SQL sql = new SQL().update(tablename);
+        BiConsumer<String,Object> con = (name,property) -> {
+            for (String pk : pks) {
+                if(name.equals(pk))
+                    return;
+            }
+            if(fun != null) {
+                ImmutableRow<Boolean, String, String> apply = fun.apply(name, property);
+                if(apply != null)
+                    sql.set(apply.getLeft(),name,apply.getCenter(),apply.getRight(),property);
+                else
+                    sql.set(name,property);
+            } else {
+                sql.set(name,property);
+            }
+        };
+        if(table instanceof Map tableMap) {
+            for(Iterator<Map.Entry<String, Object>> iterator = tableMap.entrySet().iterator();iterator.hasNext();) {
+                Map.Entry<String, Object> next = iterator.next();
+                con.accept(next.getKey(),next.getValue());
+            }
+            for (String pk : pks) {
+                Object property = tableMap.get(pk);
+                if (property == null)
+                    throw new IllegalArgumentException("primary [where] parameter is null.");
+                sql.where(IWhere.BIND_AND,pk,IWhere.COND_QIS,property);
+            }
+        } else {
+            Field[] declaredFields = table.getClass().getDeclaredFields();
+            for (Field declaredField : declaredFields) {
+                String name = declaredField.getName();
+                Object property = BeanUtil.getProperty(table, name);
+                con.accept(name,property);
+            }
+            for (String pk : pks) {
+                Object property = BeanUtil.getProperty(table, pk);
+                if (property == null)
+                    throw new IllegalArgumentException("primary [where] parameter is null.");
+                sql.where(IWhere.BIND_AND,pk,IWhere.COND_QIS,property);
+            }
+        }
+        return updateByResolver(sql);
+    }
+
     /**
      * @param sql SQL及参数对象封装
      * @param clazz 返回类型
