@@ -95,4 +95,15 @@ public class Fraction extends Number implements Comparable<Fraction> {
     public String toString() {
         return String.format("%d/%d",this.numerator,this.denominator);
     }
+
+    public static Fraction valueOf(String str) {
+        String[] split = str.split("/");
+        if(split.length == 1) {
+            return new Fraction(Long.parseLong(split[0]),1);
+        } else {
+            return new Fraction(Long.parseLong(split[0]),Long.parseLong(split[1]));
+        }
+    }
+
+
 }

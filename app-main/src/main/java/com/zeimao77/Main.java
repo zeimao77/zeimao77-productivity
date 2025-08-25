@@ -1,345 +1,179 @@
 package com.zeimao77;
 
-import com.szjc.FujitsuOrder;
 import com.zatca.*;
-import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.xml.security.c14n.CanonicalizationException;
+import org.apache.xml.security.c14n.Canonicalizer;
+import org.apache.xml.security.c14n.InvalidCanonicalizerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import top.zeimao77.product.exception.BaseServiceRunException;
+import org.w3c.dom.Node;
 import top.zeimao77.product.json.Ijson;
-import top.zeimao77.product.model.ImmutablePair;
-import top.zeimao77.product.model.ImmutableRow;
 import top.zeimao77.product.security.DigestUtil;
 import top.zeimao77.product.util.*;
 
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
+import java.security.cert.X509Certificate;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
-import java.util.function.Function;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.UUID;
 
-import static top.zeimao77.product.exception.ExceptionCodeDefinition.WRONG_SOURCE;
 
 public class Main {
 
     public static Logger logger = LoggerFactory.getLogger(Main.class);
 
+
     public static final String MYSQLBEAN = "mysql_top_zeimao77";
 
-    public static class Demo {
-        private Integer rowNo;
-        private BigDecimal qty;
-        private Boolean weighGood;
 
-        public Demo(Integer rowNo, BigDecimal qty, Boolean weighGood) {
-            this.rowNo = rowNo;
-            this.qty = qty;
-            this.weighGood = weighGood;
-        }
-
-        public Integer getRowNo() {
-            return rowNo;
-        }
-
-        public void setRowNo(Integer rowNo) {
-            this.rowNo = rowNo;
-        }
-
-        public BigDecimal getQty() {
-            return qty;
-        }
-
-        public void setQty(BigDecimal qty) {
-            this.qty = qty;
-        }
-
-        public Boolean getWeighGood() {
-            return weighGood;
-        }
-
-        public void setWeighGood(Boolean weighGood) {
-            this.weighGood = weighGood;
-        }
+    public static void main(String[] args) throws Exception{
+        // HowSign.testsign();
+        // zatca();
+        // testBuildZatcaInvoice();
+        String s = "EFT:051|TEST01|000003|AMEX      |2503|011457|9853000001     |NTUC TEST TRAINING TLO41 JOO KOON CIRCLE      #13-01 FAIRPRICE HUB   |TESTONLY1234|00|APPROVAL                                |38080750|250821|154913|374245XXXXX1005|0|A63846779537DA8E|APPROVAL                                |null|null|null|38080750|9853000001     ||null|null|null|null|null|null|null|null|null|null";
+        SeparatedBySeparator separatedBySeparator = new SeparatedBySeparator(s);
+        String value_13 = separatedBySeparator.getValue(13);
+        String value_14 = separatedBySeparator.getValue(14);
+        System.out.println(value_13);
+        String time = "20"+StringUtil.subString(value_13,0,2)
+                + "-" + StringUtil.subString(value_13,2,4)
+                + "-" +  StringUtil.subString(value_13,4,6)
+                + " " + StringUtil.subString(value_14,0,2)
+                + ":" + StringUtil.subString(value_14,2,4)
+                + ":" + StringUtil.subString(value_14,4,6);
+        System.out.println( time);
     }
 
 
-    public static void main(String[] args) throws NoSuchFieldException {
-        Demo demo = new Demo(1, new BigDecimal("1.0"), true);
-        System.out.println(BeanUtil.getProperty(demo, "rowNo"));
-        System.out.println(BeanUtil.getPropertyType(demo, "qty"));
-    }
-
-    public static String removeLeadingZeros(String str) {
-        if(str == null)
-            return null;
-        int i = 0;
-        while(i < str.length() && str.charAt(i) == '0') {
-            i++;
-        }
-        return str.substring(i);
-    }
-
-    public static void appElement(Document document, Element element,String name, String value) {
-        Element element1 = document.createElement(name);
-        if(value != null) {
-            element1.setTextContent(value);
-        }
-        element.appendChild(element1);
-    }
-
-    public static void xmldoc()  {
-        FujitsuOrder fujitsuOrder = new FujitsuOrder();
-        fujitsuOrder.setWis_shop_id("1223");
-        fujitsuOrder.setWis_busi_date("2025-04-14");
-        fujitsuOrder.setWis_shop_type("01");
-        FujitsuOrder.Bill bill1 = new FujitsuOrder.Bill();
-        bill1.setWis_pos_id("1234567");
-        fujitsuOrder.setBill(bill1);
-        try {
-            Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
-            Element sales = document.createElement("SALES");
-            sales.setAttribute("xmlns","http://www.baosight.com/shcema/general");
-            sales.setAttribute("xmlns:xsi","http://www.w3.org/2001/XMLSchema-instance");
-            document.appendChild(sales);
-            appElement(document,sales,"WIS_BUSI_DATE",fujitsuOrder.getWis_busi_date());
-            appElement(document,sales,"WIS_SHOP_ID",fujitsuOrder.getWis_shop_id());
-            appElement(document,sales,"WIS_SHOP_TYPE",fujitsuOrder.getWis_shop_type());
-            Element bill = document.createElement("BILL");
-            sales.appendChild(bill);
-            appElement(document,bill,"WIS_POS_ID",fujitsuOrder.getBill().getWis_pos_id());
-            appElement(document,bill,"WIS_BILL_NO",fujitsuOrder.getBill().getWis_bill_no());
-            appElement(document,bill,"WIS_BILL_CAT",fujitsuOrder.getBill().getWis_bill_cat());
-            appElement(document,bill,"WIS_WORK_SEQ",fujitsuOrder.getBill().getWis_work_seq());
-            appElement(document,bill,"WIS_TRAN_SEQ",fujitsuOrder.getBill().getWis_tran_seq());
-            appElement(document,bill,"WIS_SALE_TIME",fujitsuOrder.getBill().getWis_sale_time());
-            appElement(document,bill,"WIS_BILL_OLDNO",fujitsuOrder.getBill().getWis_bill_oldno());
-            appElement(document,bill,"WIS_PERSON_NUM",fujitsuOrder.getBill().getWis_person_num().toString());
-            appElement(document,bill,"WIS_ROW_COUNT",fujitsuOrder.getBill().getWis_row_count().toString());
-            appElement(document,bill,"WIS_QTY_TOTAL",fujitsuOrder.getBill().getWis_qty_total().toString());
-            appElement(document,bill,"WIS_SUM_TOTAL",fujitsuOrder.getBill().getWis_sum_total().toString());
-            appElement(document,bill,"WIS_ITEM_DISC",fujitsuOrder.getBill().getWis_item_disc().toString());
-            appElement(document,bill,"WIS_BILL_DISC",fujitsuOrder.getBill().getWis_bill_disc().toString());
-            appElement(document,bill,"WIS_REAL_TOTAL",fujitsuOrder.getBill().getWis_real_total().toString());
-            appElement(document,bill,"WIS_SERVICE_AMT",fujitsuOrder.getBill().getWis_service_amt().toString());
-            appElement(document,bill,"WIS_PAY_TOTAL",fujitsuOrder.getBill().getWis_pay_total().toString());
-            appElement(document,bill,"WIS_CUT_PAY",fujitsuOrder.getBill().getWis_cut_pay().toString());
-            appElement(document,bill,"WIS_OVER_PAY",fujitsuOrder.getBill().getWis_over_pay().toString());
-            appElement(document,bill,"WIS_VIP_NO",fujitsuOrder.getBill().getWis_vip_no());
-            appElement(document,bill,"WIS_CXXSSUM",fujitsuOrder.getBill().getWis_cxxssum().toString());
-            appElement(document,bill,"WIS_CXSELLSUM",fujitsuOrder.getBill().getWis_cxsellsum().toString());
-            appElement(document,bill,"WIS_CXYSJE",fujitsuOrder.getBill().getWis_cxysje().toString());
-            appElement(document,bill,"WIS_DISC_RATE",fujitsuOrder.getBill().getWis_disc_rate().toString());
-            appElement(document,bill,"WIS_OPERATOR",fujitsuOrder.getBill().getWis_operator());
-            appElement(document,bill,"WIS_CARRY_OUT",fujitsuOrder.getBill().getWis_carry_out());
-
-            Element details = document.createElement("DETAILS");
-            bill.appendChild(details);
-            Element detail = document.createElement("DETAIL");
-            details.appendChild(detail);
-            List<FujitsuOrder.Detail> detailList = fujitsuOrder.getBill().getDetails();
-            for (FujitsuOrder.Detail d : detailList) {
-                appElement(document,detail,"WISD_BILL_SEQ",d.getWisd_bill_seq().toString());
-                appElement(document,detail,"WISD_ITEM_NO",d.getWisd_item_no());
-                appElement(document,detail,"WISD_ITEM_NAME",d.getWisd_item_name());
-                appElement(document,detail,"WISD_ITEM_CATEGORY",d.getWisd_item_category());
-                appElement(document,detail,"WISD_ITEM_SHUILV",d.getWisd_item_shuilv().toString());
-                appElement(document,detail,"WISD_ITEM_SPEC",d.getWisd_item_spec());
-                appElement(document,detail,"WISD_ITEM_BRAND",d.getWisd_item_brand());
-                appElement(document,detail,"WISD_ITEM_UNIT",d.getWisd_item_unit());
-                appElement(document,detail,"WISD_ITEM_TYPE",d.getWisd_item_type());
-                appElement(document,detail,"WISD_UNIT_PRICE",d.getWisd_unit_price().toString());
-                appElement(document,detail,"WISD_RETURN_QTY",d.getWisd_return_qty().toString());
-                appElement(document,detail,"WISD_SALES_QTY",d.getWisd_sales_qty().toString());
-                appElement(document,detail,"WISD_SALES_AMT",d.getWisd_sales_amt().toString());
-                appElement(document,detail,"WISD_DISC_RATE",d.getWisd_disc_rate().toString());
-                appElement(document,detail,"WISD_ITEM_DISC",d.getWisd_item_disc().toString());
-                appElement(document,detail,"WISD_BILL_DISC",d.getWisd_bill_disc().toString());
-                appElement(document,detail,"WISD_REAL_AMT",d.getWisd_real_amt().toString());
-                appElement(document,detail,"WISD_ZDCXXUHAO",d.getWisd_zdcxxuhao().toString());
-                appElement(document,detail,"WISD_DPCXXUHAO",d.getWisd_dpcxxuhao().toString());
-            }
-            Element pays = document.createElement("PAYS");
-            bill.appendChild(pays);
-            Element pay = document.createElement("PAY");
-            pays.appendChild(pay);
-            List<FujitsuOrder.Pay> payList = fujitsuOrder.getBill().getPays();
-            for (FujitsuOrder.Pay p : payList) {
-                appElement(document,pay,"WISP_BILL_SEQ",p.getWisp_bill_seq().toString());
-                appElement(document,pay,"WISP_PAY_TYPE",p.getWisp_pay_type());
-                appElement(document,pay,"WISP_PAY_NAME",p.getWisp_pay_name());
-                appElement(document,pay,"WISP_PAY_CURRID",p.getWisp_pay_currid());
-                appElement(document,pay,"WISP_PAY_NUMS",p.getWisp_pay_nums().toString());
-                appElement(document,pay,"WISP_AS_PAY",p.getWisp_as_pay().toString());
-                appElement(document,pay,"WISP_PAY_BASEAMT",p.getWisp_pay_baseamt().toString());
-                appElement(document,pay,"WISP_PAY_CARDTYPE",p.getWisp_pay_cardtype());
-            }
-            TransformerFactory f = TransformerFactory.newInstance();
-            Transformer transformer = f.newTransformer();
-            DOMSource domSource = new DOMSource(document);
-            transformer.transform(domSource,new StreamResult(System.out));
-        }catch (Exception e) {
-
-        }
-
-    }
-
-    public static void test1() {
-
-    }
 
     public static void zatca() throws Exception {
-
         // 对XML进行HASH并签名
-        String filePath1 = "E:\\工作文档\\迪拜项目\\SDK\\zatca-einvoicing-sdk-Java-238-R3.3.9\\zatca-einvoicing-sdk-Java-238-R3.3.9\\Data\\Samples\\Standard\\Invoice\\Standard_Invoice.xml";
-        String filePath2 = "E:\\工作文档\\迪拜项目\\SDK\\zatca-einvoicing-sdk-Java-238-R3.3.9\\zatca-einvoicing-sdk-Java-238-R3.3.9\\Data\\Samples\\Simplified\\Invoice\\Simplified_Invoice.xml";
-
-        String base64QrCodeStr = "AQxCb2JzIFJlY29yZHMCDzMxMDEyMjM5MzUwMDAwMwMUMjAyMi0wNC0yNVQxNTozMDowMFoEBzEwMDYuMjUFBjEzMS4yNQYABwAIAAkA";
+        // String filePath1 = "E:\\工作文档\\迪拜项目\\SDK\\zatca-einvoicing-sdk-Java-238-R3.3.9\\zatca-einvoicing-sdk-Java-238-R3.3.9\\Data\\Samples\\Standard\\Invoice\\Standard_Invoice.xml";
+        // String filePath2 = "E:\\工作文档\\迪拜项目\\SDK\\zatca-einvoicing-sdk-Java-238-R3.3.9\\zatca-einvoicing-sdk-Java-238-R3.3.9\\Data\\Samples\\Simplified\\Invoice\\Simplified_Invoice.xml";
+        String filePath2 = "E:\\工作文档\\迪拜项目\\SDK\\zatca-einvoicing-sdk-Java-238-R3.3.9 (2)\\zatca-einvoicing-sdk-Java-238-R3.3.9\\Data\\Samples\\Simplified\\Invoice\\Simplified_Invoice.xml";
+        // String filePath2 = "E:\\工作文档\\迪拜项目\\SDK\\zatca-einvoicing-sdk-Java-238-R3.3.9\\zatca-einvoicing-sdk-Java-238-R3.3.9\\Simplified_Invoice.xml";
+        filePath2 = "C:\\Users\\zeimao77\\Desktop\\zatca_invoce_test.xml";
         try {
             String s = XMLHasher.generateHash(filePath2);
             System.out.println(s);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        // 生成二维码
-        QrCodeDataModel qrCodeDataModel = new QrCodeDataModel();
-        qrCodeDataModel.setSellerName("Bobs Records");
-        qrCodeDataModel.setVatNumber("310122393500003");
-        qrCodeDataModel.setTimeStamp(LocalDateTime.of(2022, 4, 25, 15, 30, 0));
-        qrCodeDataModel.setInvoiceTotal(new BigDecimal("1006.25"));
-        qrCodeDataModel.setVatTotal(new BigDecimal("131.25"));
-        qrCodeDataModel.getQrCode();
-        QrCodeParser qrCodeParser = new QrCodeParser(base64QrCodeStr);
-        qrCodeParser.parse();
 
         // 验签
         byte[] data = ByteArrayCoDesUtil.base64Decode("Hss2gNFjBY5OJn/5CEVZSSNUMrSf4QlCMxwsioPN6fA=");
-        byte[] sign = ByteArrayCoDesUtil.base64Decode("MEUCIQCpx+3BuqbNhmFh26OhgYlyZDWrOe2lO2CNMEOSqgtfTQIgS8PexZZNTFNjya3DNfQMU4gphQ+v1mgk7ZHl9TUu5lE=");
+        byte[] sign = ByteArrayCoDesUtil.base64Decode("MEYCIQCyPQSRiBoMmWKu+SsnHVPfEpd8MFcUh4TM4MOHJGNOZgIhAPN2GDNyJqAEH/eEr0EBGcVuCOmboEENi9LMQEXGXDgb");
         ECDSASignVerifier ecdsaSignVerifier = new ECDSASignVerifier();
-        boolean verify = ecdsaSignVerifier.verify(data, sign);
-        System.out.println("验证结果:"+verify);
-
-
-
-        // 对属性摘要
-        String properties = "";
-        String result = "NTUzMzVmMjExNWRjYzZkYzRlNjI1Y2Q1NDM1NWMwYjMzZjQ4MTZiYjlhOTZlMmY5ZDkzM2Q3ZDM1ODliNjE0ZA==";
-        String s = new String("69a95fc237b42714dc4457a33b94cc452fd9f110504c683c401144d9544894fb");
-        System.out.println(ByteArrayCoDesUtil.base64Encode(s.getBytes(StandardCharsets.UTF_8)));
-
-        String hash2 = CertificateHasher.hash(ZatcaConst.CERTIFICATE);
-        System.out.println("生成证书HASH2:"+hash2);
-
-        String c = "MIID3jCCA4SgAwIBAgITEQAAOAPF90Ajs/xcXwABAAA4AzAKBggqhkjOPQQDAjBiMRUwEwYKCZImiZPyLGQBGRYFbG9jYWwxEzARBgoJkiaJk/IsZAEZFgNnb3YxFzAVBgoJkiaJk/IsZAEZFgdleHRnYXp0MRswGQYDVQQDExJQUlpFSU5WT0lDRVNDQTQtQ0EwHhcNMjQwMTExMDkxOTMwWhcNMjkwMTA5MDkxOTMwWjB1MQswCQYDVQQGEwJTQTEmMCQGA1UEChMdTWF4aW11bSBTcGVlZCBUZWNoIFN1cHBseSBMVEQxFjAUBgNVBAsTDVJpeWFkaCBCcmFuY2gxJjAkBgNVBAMTHVRTVC04ODY0MzExNDUtMzk5OTk5OTk5OTAwMDAzMFYwEAYHKoZIzj0CAQYFK4EEAAoDQgAEoWCKa0Sa9FIErTOv0uAkC1VIKXxU9nPpx2vlf4yhMejy8c02XJblDq7tPydo8mq0ahOMmNo8gwni7Xt1KT9UeKOCAgcwggIDMIGtBgNVHREEgaUwgaKkgZ8wgZwxOzA5BgNVBAQMMjEtVFNUfDItVFNUfDMtZWQyMmYxZDgtZTZhMi0xMTE4LTliNTgtZDlhOGYxMWU0NDVmMR8wHQYKCZImiZPyLGQBAQwPMzk5OTk5OTk5OTAwMDAzMQ0wCwYDVQQMDAQxMTAwMREwDwYDVQQaDAhSUlJEMjkyOTEaMBgGA1UEDwwRU3VwcGx5IGFjdGl2aXRpZXMwHQYDVR0OBBYEFEX+YvmmtnYoDf9BGbKo7ocTKYK1MB8GA1UdIwQYMBaAFJvKqqLtmqwskIFzVvpP2PxT+9NnMHsGCCsGAQUFBwEBBG8wbTBrBggrBgEFBQcwAoZfaHR0cDovL2FpYTQuemF0Y2EuZ292LnNhL0NlcnRFbnJvbGwvUFJaRUludm9pY2VTQ0E0LmV4dGdhenQuZ292LmxvY2FsX1BSWkVJTlZPSUNFU0NBNC1DQSgxKS5jcnQwDgYDVR0PAQH/BAQDAgeAMDwGCSsGAQQBgjcVBwQvMC0GJSsGAQQBgjcVCIGGqB2E0PsShu2dJIfO+xnTwFVmh/qlZYXZhD4CAWQCARIwHQYDVR0lBBYwFAYIKwYBBQUHAwMGCCsGAQUFBwMCMCcGCSsGAQQBgjcVCgQaMBgwCgYIKwYBBQUHAwMwCgYIKwYBBQUHAwIwCgYIKoZIzj0EAwIDSAAwRQIhALE/ichmnWXCUKUbca3yci8oqwaLvFdHVjQrveI9uqAbAiA9hC4M8jgMBADPSzmd2uiPJA6gKR3LE03U75eqbC/rXA==";
-        byte[] sha256s = DigestUtil.digest(c.getBytes(), ZatcaConst.DIGEST_ALGORITHM);
-        String s1 = ByteArrayCoDesUtil.hexEncode(sha256s);
-        System.out.println("gened HASH3:"+ByteArrayCoDesUtil.base64Encode(s1.getBytes()));
-
-        sha256s = DigestUtil.digest(ByteArrayCoDesUtil.base64Decode(c), ZatcaConst.DIGEST_ALGORITHM);
-        String s4 = ByteArrayCoDesUtil.hexEncode(sha256s);
-        System.out.println("gened HASH4:"+ByteArrayCoDesUtil.base64Encode(s4.getBytes()));
-        System.out.println("right HASH5:ZDMwMmI0MTE1NzVjOTU2NTk4YzVlODhhYmI0ODU2NDUyNTU2YTVhYjhhMDFmN2FjYjk1YTA2OWQ0NjY2MjQ4NQ==");
-
-        System.out.println(ByteArrayCoDesUtil.hexEncode(DigestUtil.digest(ZatcaConst.CERTIFICATE,"MD5")));
-
+        //boolean verify = ecdsaSignVerifier.verify(data, sign);
+        // System.out.println("验证结果:"+verify);
 
     }
 
-    public static void test() {
+    public static void testBuildZatcaInvoice()  {
+        ZatcaInvoice zatcaInvoice = new ZatcaInvoice();
+        ZatcaInvoice.InvoiceInfo invoiceInfo = new ZatcaInvoice.InvoiceInfo();
+        invoiceInfo.setId("SME00010");  // 发票编号?
+        String uuid = "e8d654ac-99c0-4909-9940-fb93c03bf69e";
+        invoiceInfo.setUuid(uuid);
+        invoiceInfo.setIssueDateTime(LocalDateTime.of(2025,8,22,01,41,8));
+        invoiceInfo.setInvoiceTypeCode("388");
+        zatcaInvoice.setInvoiceInfo(invoiceInfo);
 
-        ArrayList<OrdersDetailModel> ordersDetailModelList = new ArrayList<>();
-        ordersDetailModelList.add(new OrdersDetailModel(2,"0001","000100001",BigDecimal.valueOf(2D)));
-        ordersDetailModelList.add(new OrdersDetailModel(3,"0001","000100001",BigDecimal.valueOf(4D)));
-        ordersDetailModelList.add(new OrdersDetailModel(4,"0001","000100001",BigDecimal.ONE));
-        ordersDetailModelList.add(new OrdersDetailModel(5,"0001","000100001",BigDecimal.ONE));
+        ZatcaInvoice.AdditionalDocumentReference additionalDocumentReference = new ZatcaInvoice.AdditionalDocumentReference();
+        additionalDocumentReference.setId("ICV");
+        additionalDocumentReference.setUuid("100");  // 单号
+        zatcaInvoice.getAdditionalDocumentReferences().add(additionalDocumentReference);
 
 
-        HashMap<OrdersDetailModel,BigDecimal> allowRetrurnQty = new HashMap<>();
-        for (OrdersDetailModel ordersDetailModel : ordersDetailModelList) {
-            allowRetrurnQty.put(ordersDetailModel, ordersDetailModel.getAllowReturnCopies());
-        }
 
-        Function<ImmutableRow<String,String, BigDecimal>,OrdersDetailModel> fun = (o) ->{
-            OrdersDetailModel secondResult = null;
-            for (OrdersDetailModel ordersDetailModel : ordersDetailModelList) {
-                if(o.getLeft().equals(ordersDetailModel.getGoodsCode())
-                        && o.getCenter().equals(ordersDetailModel.getBarNo())) {
-                    BigDecimal allowReturnCopies = allowRetrurnQty.get(ordersDetailModel);
-                    if(allowReturnCopies.compareTo(o.getRight()) == 0) {
-                        allowRetrurnQty.put(ordersDetailModel, BigDecimal.ZERO);  // 可退数量置零
-                        return ordersDetailModel;
-                    } else if(allowReturnCopies.compareTo(o.getRight()) > 0) {
-                        if(secondResult == null || allowRetrurnQty.get(secondResult).compareTo(allowReturnCopies) > 0) {
-                            secondResult = ordersDetailModel;
-                        }
-                    }
-                }
-            }
-            if (secondResult == null) return null;
-            BigDecimal arq = allowRetrurnQty.get(secondResult);
-            allowRetrurnQty.put(secondResult, arq.subtract(o.getRight()));
-            return secondResult;
-        };
+        zatcaInvoice.setCompanyID(ZatcaConst.VAT_NUMBER);
+        ZatcaInvoice.ShopInfo shopInfo = new ZatcaInvoice.ShopInfo();
+        shopInfo.setPartyIdentificationId(ZatcaConst.CR);
+        shopInfo.setStreetName(ZatcaConst.REGISTERED_ADDRESS);
+        shopInfo.setBuildingNumber(ZatcaConst.BUILDING_NUMBER);
+        shopInfo.setCitySubdivisionName(ZatcaConst.CITYSUBDIVISIONNAME);
+        shopInfo.setCityName(ZatcaConst.CITYNAME);
+        shopInfo.setPostalZone(ZatcaConst.POSTAL_ZONE);
+        shopInfo.setCountryIdentificationCode(ZatcaConst.COUNTRY_NAME);
+        shopInfo.setRegistrationName(ZatcaConst.COMMON_NAME);
+        zatcaInvoice.setShopInfo(shopInfo);
 
-        ArrayList<OrdersDetailModel> returnDetailList = new ArrayList<>();
-        returnDetailList.add(new OrdersDetailModel(1,"0001","000100001",BigDecimal.valueOf(4D)));
-        returnDetailList.add(new OrdersDetailModel(3,"0001","000100001",BigDecimal.valueOf(2D)));
-        returnDetailList.add(new OrdersDetailModel(5,"0001","000100001",BigDecimal.valueOf(1D)));
-        returnDetailList.add(new OrdersDetailModel(6,"0001","000100001",BigDecimal.valueOf(1D)));
-        for (OrdersDetailModel ordersDetailModel : returnDetailList) {
-            OrdersDetailModel apply = fun.apply(new ImmutableRow<>(ordersDetailModel.getGoodsCode(), ordersDetailModel.getBarNo(),ordersDetailModel.getAllowReturnCopies()));
-            if(apply == null) {
-                System.out.println(String.format("退单商品(%s)在原单找不到退可商品行",ordersDetailModel.getGoodsCode()));
-                continue;
-            }
-            System.out.println(String.format("退单商品(%s)找到可退商品行:%d",ordersDetailModel.getGoodsCode(),apply.getRowNo()));
-        }
+        ArrayList<ZatcaInvoice.PaymentMean> paymentMeans = new ArrayList<>();
+        paymentMeans.add(new ZatcaInvoice.PaymentMean("10"));
+        zatcaInvoice.setPaymentMeans(paymentMeans);
 
+        zatcaInvoice.setInvoiceLines(new ArrayList<>());
+
+        ZatcaInvoice.InvoiceLine invoiceLine = new ZatcaInvoice.InvoiceLine();
+        invoiceLine.setId(1);
+        invoiceLine.setInvoicedQuantity(new BigDecimal("1.00"));
+        invoiceLine.setLineExtensionAmount(new BigDecimal("100.00"));
+        invoiceLine.setTaxTotal(new ZatcaInvoice.TaxTotal(new BigDecimal("15.00"), new BigDecimal("115.00")));
+        ZatcaInvoice.Price price = new ZatcaInvoice.Price(new BigDecimal("100.00"));
+        price.setAllowanceCharge(new ZatcaInvoice.AllowanceCharge(false,new BigDecimal("0.00"),"discount"));
+        invoiceLine.setPrice(price);
+        ZatcaInvoice.Item item = new ZatcaInvoice.Item("GOOD1");
+        item.setClassifiedTaxCategory(new ZatcaInvoice.ClassifiedTaxCategory("S", new BigDecimal("15.00"), "VAT"));
+        invoiceLine.setItem(item);
+        zatcaInvoice.getInvoiceLines().add(invoiceLine);
+
+        zatcaInvoice.setTaxTotalAmount(new BigDecimal("15.00"));
+
+
+        ZatcaInvoice.LegalMonetaryTotal legalMonetaryTotal = new ZatcaInvoice.LegalMonetaryTotal();
+        legalMonetaryTotal.setLineExtensionAmount(new BigDecimal("100.00"));
+        legalMonetaryTotal.setTaxExclusiveAmount(new BigDecimal("100.00"));
+        legalMonetaryTotal.setTaxInclusiveAmount(new BigDecimal("115.00"));
+        legalMonetaryTotal.setAllowanceTotalAmount(BigDecimal.ZERO);
+        legalMonetaryTotal.setPrepaidAmount(BigDecimal.ZERO);
+        legalMonetaryTotal.setPayableAmount(new BigDecimal("115.00"));
+        zatcaInvoice.setLegalMonetaryTotal(legalMonetaryTotal);
+
+        ZatcaInvoice.TaxTotal taxTotal = new ZatcaInvoice.TaxTotal(new BigDecimal("15.00"),null);
+        ZatcaInvoice.TaxSubtotal taxSubtotal = new ZatcaInvoice.TaxSubtotal(new BigDecimal("100.00"), new BigDecimal("15.00"));
+        taxSubtotal.setTaxCategory(new ZatcaInvoice.TaxCategory("S", "15.00", "VAT"));
+        taxTotal.setTaxSubtotal(taxSubtotal);
+        zatcaInvoice.setTaxTotal(taxTotal);
+
+        ZatcaInvoice.InvoiceAuthentication invoiceAuthentication = new ZatcaInvoice.InvoiceAuthentication();
+        zatcaInvoice.setInvoiceAuthentication(invoiceAuthentication);
+
+        ZatcaInvoice.AdditionalDocumentReference picRefrence = new ZatcaInvoice.AdditionalDocumentReference();
+        picRefrence.setId("PIH");
+        picRefrence.setAttachment(new ZatcaInvoice.Attachment(PihValueHolder.INSTANCE.getPihValue()));  // QRCODE
+        zatcaInvoice.getAdditionalDocumentReferences().add(picRefrence);
+
+        ZatcaInvoice.AdditionalDocumentReference qrcdoerefrence = new ZatcaInvoice.AdditionalDocumentReference();
+        qrcdoerefrence.setId("QR");
+        zatcaInvoice.getAdditionalDocumentReferences().add(qrcdoerefrence);
+
+        String binarySecurityToken = "TUlJQ096Q0NBZUNnQXdJQkFnSUdBWmpHc1I2M01Bb0dDQ3FHU000OUJBTUNNQlV4RXpBUkJnTlZCQU1NQ21WSmJuWnZhV05wYm1jd0hoY05NalV3T0RJd01EZzFOVFE0V2hjTk16QXdPREU1TWpFd01EQXdXakJmTVFzd0NRWURWUVFHRXdKVFFURVdNQlFHQTFVRUN3d05VbWw1WVdSb0lFSnlZVzVqYURFVk1CTUdBMVVFQ2d3TVZHaGxJRlpsZHlCTllXeHNNU0V3SHdZRFZRUUREQmhEYjIxd1lXNTVJRk5CUkVZZ1JtOXlJRlJ5WVdScGJtY3dWakFRQmdjcWhrak9QUUlCQmdVcmdRUUFDZ05DQUFSVGtoN3pGaTdIVzZjSUdjdmI0VWx1dXdWMkVtNmxuaTRBMkxncVdmSG5iNzdvZG5wQkxRTVRqU1IzNWFEeENuSjJrdDZCVGlPTzV5QzhHS3VGQ1VXem80SFVNSUhSTUF3R0ExVWRFd0VCL3dRQ01BQXdnY0FHQTFVZEVRU0J1RENCdGFTQnNqQ0JyekU3TURrR0ExVUVCQXd5TVMxVVUxUjhNaTFVVTFSOE15MWxaREl5WmpGa09DMWxObUV5TFRFeE1UZ3RPV0kxT0Mxa09XRTRaakV4WlRRME5XWXhIekFkQmdvSmtpYUprL0lzWkFFQkRBOHpNVEV5TWpjNU9ETXlNREF3TURNeERUQUxCZ05WQkF3TUJEQXhNREF4SkRBaUJnTlZCQm9NR3prMU1qWWdRV3d0VW1GNWVXRmtJREV5TnpNeExUUTROVGdnTnpFYU1CZ0dBMVVFRHd3UlUzVndjR3g1SUdGamRHbDJhWFJwWlhNd0NnWUlLb1pJemowRUF3SURTUUF3UmdJaEFLblZhRUdRM1VNVVJRNzE1RGtENlBHRE44VnlHR1hLS055Uk9pc2tzdnM0QWlFQXFiMGdLOUZ6YmNLK2RzMW4zUFhoOUlDT1BHMEljL0xvbzkwazRJQ3ovMXM9";
+        invoiceAuthentication.setBinarySecurityToken(binarySecurityToken);
+        BinarySecurityTokenParser.parseCertInfo(null,invoiceAuthentication);
+        invoiceAuthentication.setSigningTime(LocalDateTime.now());
+
+        // 创建生成XML小票
+        ZatcaInvoceWriter.wirteFile(null,zatcaInvoice,0x00);
+        HowSign.sign2(invoiceAuthentication);
+        System.out.println(invoiceAuthentication);
+
+        QrCodeDataModel qrCodeDataModel = QrCodeDataModel.buildByZatacInvoice(zatcaInvoice);
+        qrcdoerefrence.setAttachment(new ZatcaInvoice.Attachment(qrCodeDataModel.getQrCode()));  // QRCODE
+
+        String filePath = "C:\\Users\\zeimao77\\Desktop\\zatca_invoce_test.xml";
+        ZatcaInvoceWriter.wirteFile(filePath,zatcaInvoice,0x0F);
+        HashMap<String, String> requestBody = ZatcaInvoceWriter.getRequestBody(zatcaInvoice, 0x0f);
+        System.out.println(JsonBeanUtil.DEFAULT.toJsonString(requestBody));
     }
 
-    public static class OrdersDetailModel {
-        private Integer rowNo;
-        private String goodsCode;
-        private String barNo;
-        private BigDecimal allowReturnCopies;
 
-        public OrdersDetailModel(Integer rowNo,String goodsCode, String barNo, BigDecimal allowReturnCopies) {
-            this.rowNo = rowNo;
-            this.goodsCode = goodsCode;
-            this.barNo = barNo;
-            this.allowReturnCopies = allowReturnCopies;
-        }
-
-        public Integer getRowNo() {
-            return rowNo;
-        }
-
-        public String getGoodsCode() {
-            return goodsCode;
-        }
-
-        public String getBarNo() {
-            return barNo;
-        }
-
-        public BigDecimal getAllowReturnCopies() {
-            return allowReturnCopies;
-        }
-
-    }
 
 }
